@@ -1,0 +1,362 @@
+What are Build Tools?
+	A Build Tool is software that automates the process of compiling source code into executable applications, managing dependencies, packaging binaries, running tests, and deploying 	applications.
+	
+Common Examples of Build Tools:
+	Maven (Java ecosystem)
+	Gradle (Java, Kotlin, and more)
+	Ant (Older Java projects)
+	Make (C/C++, system programming)
+	npm/yarn (Node.js projects)
+	Webpack (JavaScript bundling)
+
+Key Responsibilities of Build Tools:
+✅ Compiling Code
+	Converts source code (e.g., .java, .cpp, .js) into machine-readable files.
+
+✅ Dependency Management
+	Automatically downloads and manages external libraries your project depends on (e.g., Apache Commons, Google Gson).
+
+✅ Running Tests
+	Executes unit tests automatically during the build process to ensure correctness.
+
+✅ Packaging
+	Bundles your compiled code and resources into a deployable format (like .jar, .war, .zip).
+
+✅ Deployment Automation
+	Some tools support deploying applications to servers or cloud platforms automatically.
+
+✅ Task Automation
+	Automates repetitive tasks, e.g., cleaning old files, generating documentation.
+
+Importance in Interviews:
+	In most software developer interviews, especially for Java or full-stack roles, interviewers may ask:
+	What build tools have you used?
+	What is the difference between Maven and Gradle?
+	How do you manage dependencies in your project?
+
+Interviewers expect you to know:
+	How to configure a build.gradle or pom.xml.
+	What is the purpose of a dependency manager.
+	How to execute test cases automatically in your build process.
+
+Why it matters:
+✔️ It shows you know how to make development efficient and scalable.
+✔️ Demonstrates you understand software automation, which is critical in real-world projects. 
+
+
+
+
+Phases of Java Project Development
+	Build – Converts source code into executable code.
+	Publish – Stores the build in a common location.
+	Test – Ensures software quality using testing frameworks.
+	Deploy – Makes the application available on servers for end users.
+
+Java ClassPath
+	Classpath tells the JVM and Java tools where to look for classes and libraries.
+	Two types:
+		Compile classpath – Needed to compile Java source code into .class files.
+		Runtime classpath – Needed to run compiled code.
+
+	Difference between PATH and CLASSPATH:
+		PATH → tells OS where to find Java binaries (java, javac).
+		CLASSPATH → tells JVM where to find classes and libraries.
+
+Traditional Java Build Process (via command line)
+	Compile – Using javac with -d (output directory) and -cp (classpath).
+	Run – Using java -cp to execute classes.
+	Test – Using JUnit with java -jar junit-platform-console-standalone.jar.
+	Package – Create a JAR file with jar cvfm (includes manifest for entry point).
+	Run JAR – Execute with java -jar app.jar.
+
+Problems with Manual Approach
+	Repetitive and time-consuming.
+	Error-prone (one mistake requires restarting).
+	Hard to maintain across teams when code or libraries change.
+
+Solutions
+	Shell Scripts or Makefile can automate tasks.
+	Build Tools (e.g., Gradle, Maven, Ant) are the industry-standard solution:
+	Automate compilation, testing, and packaging.
+	Handle dependencies.
+	Increase developer productivity.
+
+👉 In short:
+	Manually building Java projects using command-line tools is possible but inefficient. Build tools like Gradle automate the build lifecycle (compile, test, package, deploy), manage 	dependencies, reduce errors, and boost productivity, which is why they are widely adopted in professional development.
+
+What is a JAR File?
+	A JAR (Java ARchive) file is a package file format in Java used to combine many .class files, metadata, and resources (like images, text, XML, properties files) into a single 	compressed file (similar to a ZIP file).	
+	Extension: .jar
+
+	It makes distribution and deployment of Java applications easier because everything is bundled together.
+
+Features of a JAR File:
+	✅ Bundles multiple files into one archive.
+	✅ Portable – Can run on any machine with a JVM.
+	✅ Executable JARs – With a MANIFEST.MF file inside, you can specify a main class and run the jar directly using:
+		java -jar MyApp.jar
+	✅ Reusable libraries – Developers can distribute libraries as JARs, and other projects can include them as dependencies.
+		Example: mysql-connector-java.jar (MySQL driver).
+	✅ Compressed format – Saves space and improves loading time.
+
+
+
+
+What is Gradle and Why Use It?
+	Gradle is a build tool that automates compiling, testing, packaging, and running your application.
+	Instead of typing long commands, you just run:
+		./gradlew build
+
+	→ This compiles, runs tests, and builds your .jar automatically.
+	👉 Daily use: You’ll use Gradle commands (build, run, test, clean) constantly.
+
+📦 Dependencies and Libraries
+	A library = reusable code written by others (e.g., Spring Boot, JUnit).
+	You use them to avoid reinventing the wheel.
+	In Gradle, dependencies are declared inside build.gradle:
+		dependencies {
+		    implementation 'org.springframework.boot:spring-boot-starter-web:3.3.4'
+		    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.3.4'
+		}
+	
+	Dependency management: Gradle downloads the right versions of your libraries (and their sub-libraries) automatically.
+	👉 Daily use: You’ll add/edit dependencies frequently as your project grows.
+
+📂 Where Dependencies are Stored
+	Gradle downloads dependencies into your local cache:
+		~/.gradle/caches/
+
+	This way, you don’t download the same JARs again and again.
+	👉 Daily use: Usually invisible, but good to know when debugging version conflicts.
+
+🌍 Repositories
+	A repository = where dependencies are hosted.
+	Common one: Maven Central → https://mvnrepository.com
+	You search for dependencies there, copy the Gradle snippet, and paste into build.gradle.
+	👉 Daily use: Every time you add a new library, you’ll fetch it from Maven Central.
+
+🗂 Gradle Project Folder Structure
+	Gradle expects a standard structure:
+
+src/
+ └── main/java        (your main source code)
+ └── main/resources   (config files, images, etc.)
+ └── test/java        (unit test code)
+ └── test/resources   (test configs/resources)
+
+bin/ → compiled classes
+lib/ → optional manual JARs
+
+👉 Daily use: You’ll always organize your code this way (helps you switch projects easily).
+
+
+Common Gradle Commands
+./gradlew build → compile, test, and package your app.
+./gradlew clean → remove old build files.
+./gradlew test → run tests.
+./gradlew run (if using application plugin) → run the app directly.
+./gradlew dependencies → see dependency tree.
+
+👉 Daily use: These will be your go-to commands.
+
+📝 Classpath (Quick Recall)
+	PATH → tells OS where Java tools (java, javac) live.
+	CLASSPATH → tells JVM where to find your classes & dependencies.
+	With Gradle, you don’t manually handle -cp; it’s handled for you.
+
+👉 Daily use: Rarely touched directly (Gradle handles it). 
+
+
+
+
+Gradle vs Gradlew (Wrapper) – Summary
+Gradle (gradle)
+	Uses the locally installed Gradle on your machine.
+	Version depends on what you’ve installed.
+	Commands like gradle build, gradle tasks, gradle init rely on that local version.
+	Good for creating a new project (gradle init) or when you explicitly want to use your system’s Gradle.
+
+Gradle Wrapper (gradlew)
+	Script (gradlew, gradlew.bat) that comes with the project.
+	Does not require Gradle to be installed on your machine.
+	Ensures the project uses the exact Gradle version specified in gradle/wrapper/gradle-wrapper.properties.
+	First run → downloads that version of Gradle and caches it under:
+		~/.gradle/wrapper/dists/
+
+	Guarantees consistent builds across all environments (Mac, Windows, Linux, CI/CD).
+	Always recommended for building an existing project.
+
+Why Gradlew is Better
+	Solves version mismatch issues.
+	No need to manually install Gradle everywhere.
+	Works the same for every developer and in CI/CD pipelines.
+
+Version Issue Example
+	compile configuration removed in Gradle 7 → builds failed.
+	Solutions:
+		Update compile → implementation (may break legacy builds).
+	Use Gradle Wrapper and downgrade to a compatible version (recommended).
+
+Key Commands
+	Check Gradle wrapper version:
+		./gradlew --version
+
+	or inspect gradle-wrapper.properties.
+	Change wrapper version:
+		distributionUrl=https\://services.gradle.org/distributions/gradle-6.8.3-bin.zip
+
+✅ In Short
+	Use gradle only for setting up new projects (gradle init).
+	Use gradlew for everything else → ensures the project builds the same everywhere. 
+
+
+
+
+
+
+
+
+
+
+Notes on Gradle Tasks & Plugins
+	What are Gradle Tasks?
+		A task = smallest unit of work Gradle can do (e.g., compile code, run tests, package JARs).
+		Can run tasks individually from CLI.
+
+	Example:
+		compileJava → compiles source code.
+		test → runs tests.
+		jar → packages compiled classes into JAR.
+
+	Default vs Custom Tasks
+		Default Tasks → provided by Gradle (e.g., help, tasks).
+		Custom Tasks → created by developers in build.gradle.
+		Example custom task:
+		task hello {
+		    doLast {
+		        println 'Hello Gradle!'
+		    }
+		}
+
+Plugins in Gradle
+	A plugin = bundle of useful tasks & conventions.
+	Applying a plugin extends project’s capabilities.
+
+	Example:
+	id 'java' → adds tasks like compileJava, test, jar, build.
+	Other plugins: Spring Boot plugin, Kotlin plugin, etc.
+
+Build Task
+	./gradlew build = compiles, tests, and packages into JAR.
+	Depends on other tasks → executed in order.
+
+Output:
+	Compiled classes → build/classes
+	JAR → build/libs
+
+	Run with dry-run to see execution plan (without running tasks):
+		./gradlew --dry-run build
+
+Incremental Builds
+	Gradle remembers last executed tasks.
+	If no changes → task skipped (UP-TO-DATE).
+	Faster builds!
+
+	To rebuild from scratch:
+		./gradlew clean
+
+	(removes build/ folder).
+
+Custom Task with Parameters
+	Pass project properties using -P flag.
+	Pass system properties using -D flag.
+	Example (custom run task with args):
+		task runWeather(type: JavaExec, dependsOn: classes) {
+		   if ( project.hasProperty("args") ) {
+		       args project.args.split(',')
+		   }
+		   description = "Weather Advisor"
+		   main = "com.crio.session5.activity1.WeatherAdvisorApplication"
+		   classpath = sourceSets.main.runtimeClasspath
+		}
+		
+		
+Run with args:
+	./gradlew runWeather -q -Pargs=12.97,77.60,"2019-05-29 08:15","2019-05-29 09:15",v1
+
+⚠️ Case-sensitive → runWeather ≠ runweather.
+
+Debug Mode
+	To debug tests:
+		./gradlew test --debug
+
+✅ Quick Quiz Answers (from notes)
+	Build task functionality (Java Plugin) → Compiles, tests, and packages into a JAR.
+	Plugins provide → Predefined tasks + conventions (compilation, testing, packaging, dependency mgmt).
+	Run tests in debug mode → ./gradlew test --debug. 
+
+
+
+
+
+
+What is a Plugin?
+	A plugin in Gradle is a bundle of tasks, rules, and conventions that extend Gradle’s capabilities.
+	Think of it as a pre-built extension that saves you from writing repetitive tasks.
+
+	Instead of defining every build step yourself, you apply a plugin and instantly get common functionality (e.g., compile Java, run tests, package into JAR).
+
+Why are Plugins Important?
+	Code Reuse → You don’t reinvent the wheel; use standard build logic.
+	Consistency → Everyone on the team follows the same build process.
+	Productivity → One line of configuration = dozens of ready-to-use tasks.
+	Flexibility → You can combine multiple plugins in the same project.
+
+Types of Plugins
+	1. Core Plugins (built into Gradle)
+		Provided by Gradle itself.
+
+	Example:
+		java → Adds tasks like compileJava, test, jar.
+		application → Adds tasks to run a Java application (run task).
+		groovy, cpp, etc.
+
+	How to apply:
+	plugins {
+	    id 'java'
+	    id 'application'
+	}
+
+2. Community / Third-Party Plugins
+	Published by community or companies on repositories (like Maven Central, Gradle Plugin Portal).
+
+	Example:
+	org.springframework.boot → Spring Boot build tasks.
+	com.github.johnrengelman.shadow → Create fat/uber JARs.
+
+How to apply:
+	plugins {
+	    id 'org.springframework.boot' version '3.3.0'
+	}
+
+3. Custom Plugins (your own)
+	When you need specific build logic for your project.
+	You can write a plugin in Groovy or Kotlin and package it for reuse across projects.
+
+	Example – Java Plugin
+
+	When you apply the Java plugin:
+	plugins {
+	    id 'java'
+	}
+
+	It adds predefined tasks:
+		compileJava → compiles source code
+		processResources → copies resources
+		classes → compiles + processes resources
+		test → runs unit tests
+		jar → packages code into JAR
+		build → depends on all the above
+
+Without the plugin, you’d have to manually configure each step.
+

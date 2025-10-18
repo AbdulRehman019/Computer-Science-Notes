@@ -1,0 +1,63 @@
+Pattern3: Remove Elements Based on Condition
+
+In these type of problems, we need to maintain order and we need to maintain some conditions. If these conditions break, we remove elements. 
+Sometimes we need to maintain frequency and based on that we think ahead.
+To maintain frequency we use int[] freq = new int[26] or sometimes we store in pairs. 
+
+1. Remove All Adjacent Duplicates In String
+	First thoughts: I thought of iterating through array and and checking with next element and if they both are equal removing them. 
+			But it is going to be really complex, after removing where will i keep my "i"?
+
+	How i thought of stack? 
+			Everytime i wanted to hold the previous value. 
+			We could have used map then? Why stack?
+			We wanted to hold the previous value in order, the question was not what came before? the question what just came before?
+			And whenever my solution depends on previous or next values in order then stack. 
+
+	What was the approach?
+			I iterated over string and everytime i saw if that character is present in stack or not?
+			If it is present, i popped out because it just came before and making a pair with the current one.
+			If it is not present, i just pushed the current character.
+
+			Example: "abbaca"
+			I stored 'a', 'b' in stack and when 'b' came again i saw they are equal, i popped it. 
+			Now, i wanted to compare with 0th index 'a' and that is what is stored in the top of stack. 
+
+2. Make The String Great
+	Similar Problem with a little tweak. 
+
+3. Backspace String Compare
+	Everytime, i get a '#', i had to remove the previous element. 
+	I maintained a stack and did that.
+
+	Beautiful implentation. Look the solution for 27/7/25. 
+
+4. Remove Duplicate Letters
+	If we were required to maintain unique character, we could have used set.
+	But we were required to maintain order also. Hence, stack.
+
+	How did we approach the problem?
+		If we would have just used stack and popped the characters from stack we may have removed the characters which were not appearing later. 
+		In this example: [b,c,a,b] when we would have reached 'a', we may have removed 'c' and 'b'.
+		Hence, we will remove only when character in stack appears later too. 
+
+		How can we know if it appears later?
+		Maintain a frequency array and if freq[ch - 'a'] > 0, we can remove otherwise no.
+
+		If we follow this approach, we might add someone who is already present.
+		Like in this example: [b, c, a, b]
+		I will add b, c, a in stack and when 'b' comes again i will add again as it is greater than 'a'.
+
+		Hence, everytime first i decreased the freq then i checked if it is already present. 
+		If it is we continue and if it isn't we checked until the stack is empty and stack.peek() >= ch && freq[stack.peek() - 'a'] > 0.
+		And everytime we pop(), we make seen[stack.pop() - 'a'] = false. 
+		Finally, we make seen[ch - 'a'] as true and add "ch" in stack. 
+
+5. Remove All Adjacent Duplicates in String II
+	Here also we wanted to maintain the order and we also wanted the count of previous occuring characters. 
+	But we cannot store in int[] freq = new int[26] because we want to maintain the consecutive freq which means if characters appeared consecutively. 
+	Hence, we thought to store in form of pairs of (ch, freq). 
+
+	If the current character is not equal to the top of stack, we push (ch, 1)
+	If it is we increased the count and checks if it matches with k and if it does we removed until we have same characters. 
+	But if freq is not equal to k, we pushed (ch, stack.peek().freq + 1).

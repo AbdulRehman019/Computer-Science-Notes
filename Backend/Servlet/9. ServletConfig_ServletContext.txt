@@ -1,0 +1,68 @@
+1. ServletConfig – Per Servlet Configuration
+	🔹 What is it?
+		ServletConfig is an object provided by the servlet container to give initialization parameters to a specific servlet. It's useful when you want to 					configure a servlet with specific values (like database credentials, version info, etc.) without hardcoding them.
+
+	🔹 Where do we define these params?
+		In web.xml:
+			<servlet>
+    				<servlet-name>AddServlet</servlet-name>
+    				<servlet-class>com.ar.AddServlet</servlet-class>
+    				<init-param>
+        				<param-name>developer</param-name>
+        				<param-value>Aman</param-value>
+    				</init-param>
+			</servlet>
+
+	🔹 How to access them?
+		public class AddServlet extends HttpServlet {
+    			public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        		ServletConfig config = getServletConfig();
+        		String devName = config.getInitParameter("developer");
+
+        		res.getWriter().println("Developer: " + devName);
+    			}
+		}
+		
+	🔹 Key Points:
+		Feature			Value
+		Scope			Specific to one servlet
+		Defined in		<init-param> inside <servlet> in web.xml
+		Accessed via		getServletConfig().getInitParameter("name")
+
+2. ServletContext – Application-Wide Configuration
+	🔹 What is it?
+		ServletContext is a global object shared by all servlets in a web application. It's used to store application-level parameters, files, and resources that are needed by 		multiple servlets.
+
+	🔹 Where do we define parameters?
+		In web.xml, outside any <servlet> tag:
+			<context-param>
+			    <param-name>company</param-name>
+			    <param-value>OpenAI</param-value>
+			</context-param>
+
+	🔹 How to access?
+		public class AddServlet extends HttpServlet {
+    			public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        		ServletContext context = getServletContext();
+        		String company = context.getInitParameter("company");
+
+        		res.getWriter().println("Company: " + company);
+    			}
+		}
+
+	🔹 You can also use it to share objects/data between servlets:
+		context.setAttribute("appLevelData", "SomeValue");
+		String data = (String) context.getAttribute("appLevelData");
+
+3. Difference Between ServletConfig and ServletContext:
+
+	Feature				ServletConfig				ServletContext
+	Scope				One servlet only			Entire application (shared by all)
+	Purpose				Servlet-specific configuration		Application-wide configuration/data
+	Where defined			Inside <servlet> tag			Outside in <context-param>
+	Access method			getServletConfig()			getServletContext()
+	Used for			Init parameters for 1 servlet		Shared parameters or resources
+
+
+
+

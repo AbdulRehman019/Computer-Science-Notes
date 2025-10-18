@@ -1,0 +1,55 @@
+1. What is a Cookie?
+	A cookie is a small piece of data stored on the client’s browser by the server.
+	✅ It helps the server identify the client across multiple requests.
+
+	🔸 Real-World Example:
+	Ever noticed how websites remember your login or language preferences even after refreshing or closing the browser? That’s cookies in action!
+
+2. How Cookie Works (Step by Step)
+	Server sends a cookie to the client using Set-Cookie in response.
+	Browser stores the cookie.
+	For every subsequent request, the browser sends the cookie back to the server in the Cookie header.
+
+3.  Structure of a Cookie
+	A cookie is a key-value pair: username=JohnDoe
+
+	Each cookie also includes:
+		Name, Value, Expiry time, Domain, Path, Secure/HttpOnly flags
+
+Example:
+	🔸LoginServlet.java
+	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	    String user = req.getParameter("username");
+	
+	    Cookie c = new Cookie("username", user);
+	    c.setMaxAge(3600); // 1 hour
+	    res.addCookie(c);
+	
+	    res.sendRedirect("WelcomeServlet");
+	}
+	
+	🔸 WelcomeServlet.java
+	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	    PrintWriter out = res.getWriter();
+	    Cookie[] cookies = req.getCookies();
+	
+	    for (Cookie c : cookies) {
+	        if (c.getName().equals("username")) {
+	            out.println("Welcome back, " + c.getValue());
+        	}
+	    }
+	}
+
+4. Cookie vs Session
+
+	Feature				Cookie					Session
+	Stored in			Client's browser			Server
+	Max size			4 KB					No hard limit
+	Security			Less secure (stored in browser)		More secure (stored on server)
+	Persistence			Can persist beyond session		Ends when browser closes or session timeout
+	Use case			Remember preferences, language, etc.	Login tracking, user-specific data
+
+5. Pro Tips
+	Use cookie.setHttpOnly(true) to prevent access via JavaScript (XSS protection).
+	Use cookie.setSecure(true) to ensure it's sent only over HTTPS.
+	Avoid storing sensitive info directly in cookies — use session IDs or encryption.

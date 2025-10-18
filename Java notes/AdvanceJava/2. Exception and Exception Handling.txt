@@ -1,0 +1,152 @@
+✅ What is an Exception in Java?
+	An Exception in Java is an event that disrupts the normal flow of the program's execution. It typically occurs during runtime due to conditions like:
+		Dividing by zero
+		Accessing an invalid index in an array
+		Trying to open a file that doesn't exist
+
+	Java provides a powerful exception handling mechanism to manage such unexpected events gracefully.
+
+✅ Types of Exceptions
+	Java exceptions fall into two broad categories:
+		Checked Exceptions
+			Checked at compile-time
+			Must be either caught or declared using throws
+
+		Examples:
+			IOException
+			SQLException
+		
+		Unchecked Exceptions
+			Checked at runtime
+			Caused by bugs in the program
+
+		Examples:
+			ArithmeticException
+			NullPointerException
+			ArrayIndexOutOfBoundsException
+
+✅ What is Exception Handling?
+	Exception handling in Java is the process of responding to exceptions when they occur so the program can continue or exit gracefully instead of crashing.
+
+✅ Why Exception Handling?
+	Avoids program crashes
+	Provides a way to separate error-handling code from regular code
+	Makes code more robust and fault-tolerant
+
+✅ Keywords Used in Exception Handling
+	try
+	Block of code that might throw an exception.
+
+	catch
+	Block that handles the exception.
+
+	finally
+	Block that always executes (optional), used for cleanup code like closing files or releasing resources.
+
+	throw
+	Used to manually throw an exception.
+
+	throws
+	Declares the exception a method might throw.
+
+✅ Example of Exception Handling
+	public class ExceptionExample {
+	    public static void main(String[] args) {
+	        try {
+        	    int result = 10 / 0; // This will throw ArithmeticException
+	            System.out.println("Result: " + result);
+        	} catch (ArithmeticException e) {
+	            System.out.println("Exception caught: " + e.getMessage());
+	        } finally {
+	            System.out.println("Finally block executed.");
+	        }
+	    }
+	}
+
+	Output:
+		Exception caught: / by zero
+		Finally block executed.
+
+✅ Custom Exceptions
+	You can define your own exception by extending the Exception class.
+
+	class MyException extends Exception {
+	    public MyException(String message) {
+	        super(message);
+	    }
+	}
+
+✅ Java Exception Hierarchy
+	java.lang -> Object -> Throwable
+             Throwable
+             /      \
+        Exception   Error
+           /   \
+ Checked   Unchecked
+(compile)  (runtime)
+
+
+✅ 1. Checked Exceptions (Compile-Time Exceptions)
+	🔹 What:
+		These are exceptions that must be either caught or declared in the method using throws.
+		They are checked at compile-time, meaning the compiler will throw an error if they are not handled.
+
+	🔹 Examples:
+		IOException – when input/output operation fails (e.g., file not found)
+		SQLException – when database access error occurs
+		FileNotFoundException – when trying to open a file that doesn’t exist
+		ClassNotFoundException
+
+	🔹 Example Code:
+		import java.io.*;
+
+		public class CheckedExample {
+		    public static void main(String[] args) {
+		        try {
+		            FileReader fr = new FileReader("somefile.txt");
+		        } catch (FileNotFoundException e) {
+		            System.out.println("File not found: " + e);
+		        }
+		    }
+		}
+
+✅ 2. Unchecked Exceptions (Runtime Exceptions)
+	🔹 What:
+		These are exceptions that occur during runtime and are not checked by the compiler.
+		You are not required to handle or declare them (but you should handle them to prevent program crashes).
+
+	🔹 Examples:
+		ArithmeticException – e.g., division by zero
+		NullPointerException – when accessing a null object
+		ArrayIndexOutOfBoundsException – accessing invalid array index
+		NumberFormatException – invalid string to number conversion
+		IllegalArgumentException
+
+	🔹 Example Code:
+		public class UncheckedExample {
+		    public static void main(String[] args) {
+		        int[] arr = new int[3];
+		        System.out.println(arr[5]); // Throws ArrayIndexOutOfBoundsException
+		    }
+		}
+
+✅ 3. Errors (Not technically exceptions but part of Throwable)
+	🔹 What:
+		Errors are serious problems that a program should not try to handle, such as issues with the JVM or system resources.
+
+	🔹 Examples:
+		OutOfMemoryError
+		StackOverflowError
+		VirtualMachineError
+
+	These usually indicate that something went wrong at a low level, and recovery is not expected.
+
+✅ Common Exception Methods in Java
+	Method				Description
+	getMessage()			Returns the detail message (a description) of the exception.
+	toString()			Returns a short description of the exception (class name + message).
+	printStackTrace()		Prints the stack trace to help debug where the exception occurred.
+	getStackTrace()			Returns an array of StackTraceElement that represents the stack trace.
+	initCause(Throwable cause)	Initializes the cause of the exception (for exception chaining).
+	getCause()			dReturns the cause of the exception (used in chained exceptions).
+

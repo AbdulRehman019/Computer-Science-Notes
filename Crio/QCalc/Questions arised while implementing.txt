@@ -1,0 +1,9 @@
+Questions arised while implementing QCalc
+
+Only for crio:
+source /etc/profile.d/gradle.sh
+
+What is a build tool?
+What is Gradle?
+groupId and Artifact Id
+Difference between Gradle and Spring Boot? 

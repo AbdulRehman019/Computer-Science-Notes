@@ -1,0 +1,91 @@
+Sliding Window Subarray
+
+Pattern: f(k) - f(k - 1)
+
+1. In order to calculate subarray, we cannot say we have found this subarray hence add right - left + 1 because that for calculating the size or we cannot say
+   count++ because there won't be only that window which will be contributing to answer. Let's take an example:
+
+ 	For this problem: 992. Subarrays with K Different Integers
+ 	[1,2,1,2,3] and k = 2
+ 
+ 	If left = 0 and right = 3.
+ 	We cannot say right - left + 1 because that for size.
+ 	We cannot say count++ because that's not the only valid subarray.
+ 	Valid subarrays will include (0,3), (1, 3) and (2, 3).
+ 	Hence we will add last index(1 appeared last at 2) where first different number appeared(which is 2) - left + 1.
+	You can think of it like "Sabse pehle last baar kaun aaya tha?" 
+	1 -> 2nd index pr last baar aaya tha
+	2 -> 3rd index pr last baar aaya tha
+
+	Sabse pehle kaun last baar aaya tha. 1 right? Index kya hai one ka 2, right?
+	Hence, number of subarrays jo banenge wo hai: [1,2,1,2], [2,1,2] and [1,2]. 
+	Hence, ans = "Sabse pehle last baar kaun aaya tha(uska index)" - left + 1 
+		   = 2 - 0 + 1 
+		   = 3
+
+  In subarray problems we will mostly track the left most part where that appeared - left + 1.
+
+2. Another approach in subarray: f(k) - f(k - 1).
+   For this problem: 992. Subarrays with K Different Integers
+   We can calculate (Number of subarrays <= k) - (Number of subarrays <= k - 1)
+
+   Difficult to think. But more efficient.
+
+Problems solved:
+1. 1248. Count Number of Nice Subarrays
+2. 992. Subarrays with K Different Integers
+3. 930. Binary Subarrays With Sum (prefix + map version more common)
+4. 1004. Max Consecutive Ones III
+5. 904. Fruit Into Baskets (sliding window with map size ≤ 2)
+6. 239. Sliding Window Maximum (deque-based window)
+
+
+
+
+
+1. Subarrays with K Different Integers(#992) 
+	Solution 1: I started moving right and started added its index in map. 
+		    If map.size() > k, we started removing until map.size() becomes k again. 
+		    While removing if(map.get(nums[left]) == left), it means this was the last time this number occured, hence we can remove from map.
+
+		    If map.size() == k, then we find "Sabse pehle last baar kaun aaya tha(uska index)" and calculated accordingly. 
+		    Explained above. 
+
+	Solution 2: Instead of calculating k different integers, we calculated (Number of subarrays <= k) - (Number of subarrays <= k - 1) 
+		    We started moving right and for every number we stored the frequency in map. 
+
+		    if map.size() > k, we started moving left and started decreasing the count of the nums[left].
+		    As any number became 0, we removed if from map.
+
+		    if(map.size() <= k), we added right - left + 1.
+		    You may think, right - left + 1 is for calculating the size, but if you see clearly, it can also be used to calculate the number of subarrays 
+		    with right included. 
+
+2. Count Number of Nice Subarrays
+	Solved like previous problem. Instead of calculating k odd number we calculated (Smaller than equal to k) - (Smaller than equal to k - 1). 
+
+3. Binary Subarrays with Sum 
+	Same pattern. We have to calculate subarray with sum equal to goal - subarray with sum equal to (goal - 1). 
+
+	You can also use Prefix sum + Map(Classic solution if array contains non-negative integers also). 
+
+4. Max Consecutive Ones III 
+	Iterate over array. 
+	If nums[right] == 1, update maxLen. 
+	If nums[right] == 0, two conditions arise.
+		K > 0, flip 0 and update maxLen. 
+		K < 0, Move left till you reach first 0, means first flipped 0. Do left++ and again update (right - left + 1). 
+
+5. Fruit Into Baskets 
+	Similar to "Subarrays with K Different Integers". Here, we have to find maxLen with two different integers. 
+
+6. Sliding Window Maximum 
+	Used a TreeMap to store the maximum in that window. 
+	We moved till k and added k elements in treemap. And stored the maximum element in the list. 
+
+	We started moving right till n. 
+	Everytime we reduced the frequency of nums[left] and if it is zero we removed it. 
+	We also add nums[right] frequency to the TreeMap. 
+	And everytime store the highest number in that window to list. 
+
+

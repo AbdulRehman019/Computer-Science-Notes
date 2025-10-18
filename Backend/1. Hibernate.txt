@@ -1,0 +1,61 @@
+1. What is Hibernate?
+	Hibernate is a Java-based ORM (Object-Relational Mapping) framework that simplifies the interaction between a Java application and a relational database (like 	MySQL, PostgreSQL, etc.).
+
+2. What Problem Does Hibernate Solve?
+	Normally, if you're using JDBC, you have to:
+		Write SQL queries for every CRUD operation.
+		Manually manage connections, result sets, and exceptions.
+		Convert data from tables (rows, columns) to Java objects and back — a lot of boilerplate code.
+
+	Hibernate handles all this for you, so you can focus on Java code, not SQL.
+
+3.  What is ORM?
+	ORM = Object Relational Mapping
+	It maps Java objects to database tables automatically.
+	
+	Think of it like:
+		Java Class ↔ Database Table
+		Java Object ↔ Row in Table
+		Field in Java Object ↔ Column in Table
+
+4. Key Concepts in Hibernate:
+	🔸 1. Configuration File (hibernate.cfg.xml)
+		This file contains DB connection info and Hibernate settings (like dialect, driver, URL, etc.).
+
+			<hibernate-configuration>
+			  <session-factory>
+			    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+			    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/testdb</property>
+			    ...
+			  </session-factory>
+			</hibernate-configuration>
+
+	🔸 2. Entity Class
+		This is your Java POJO (Plain Old Java Object) that represents a table.
+
+			@Entity
+			@Table(name = "student")
+			public class Student {
+			    @Id
+			    private int id;
+					
+			    private String name;
+			    
+			    // getters & setters
+			}
+
+	🔸 3. Session
+		Main interface to interact with DB. You use it to save, retrieve, update, or delete objects.
+
+			Session session = factory.openSession();
+			Transaction tx = session.beginTransaction();
+			
+			session.save(student);
+			
+			tx.commit();
+			session.close();
+
+	🔸 4. HQL (Hibernate Query Language)
+		Hibernate provides its own object-oriented query language, similar to SQL, but uses class names instead of table names.
+
+			List<Student> students = session.createQuery("from Student").list();

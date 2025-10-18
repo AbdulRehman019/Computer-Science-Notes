@@ -1,0 +1,51 @@
+1. service() Method
+	Defined in: GenericServlet and overridden in HttpServlet.
+	Purpose: It is the main entry point for all types of HTTP requests (GET, POST, PUT, DELETE, etc.)
+
+	How it works:
+		The Servlet container (like Tomcat) calls the service() method whenever a request comes in.
+		In HttpServlet, this method automatically dispatches the request to doGet(), doPost(), etc., based on the HTTP method.
+
+	// Inside HttpServlet
+	protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	    String method = req.getMethod();
+	    if (method.equals("GET")) {
+	        doGet(req, res);
+	    } else if (method.equals("POST")) {
+	        doPost(req, res);
+	    }
+	    // and so on...
+	}
+
+   You usually don’t override service() in HttpServlet. You override doGet() and doPost() instead.
+
+2. doGet() Method
+	Called when: A request is made using the GET method.
+	Typical use: Fetching data, showing forms, search, or anything that doesn't modify server data.
+
+	Example: When a user types a URL in a browser or clicks on a link.
+
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    response.getWriter().println("This is a GET request.");
+	}
+
+3. doPost() Method
+	Called when: A request is made using the POST method.
+	Typical use: Submitting forms, uploading files, modifying data on the server.
+
+	Example: When you submit a login or registration form.
+
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    response.getWriter().println("This is a POST request.");
+	}
+
+Summary Table
+		Method		When It's Called		Usage				Common to Override?
+		service()	On every HTTP request		Dispatch to doX() methods	❌ Not usually
+		doGet()		When GET request is made	Read/display data (safe requests)	✅ Yes
+		doPost()	When POST request is made	Submit/update data (form actions)	✅ Yes
+
+Bonus: Can I Override service()?
+Yes, you can override service() if you want full control over how to handle different request types manually. But for most use cases, just override doGet() and doPost() based on the HTTP method.

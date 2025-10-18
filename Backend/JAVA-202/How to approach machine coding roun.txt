@@ -1,0 +1,16 @@
+How to approach machine coding round? 
+
+1. Clarify the Requirements(10 min) 
+2. Class Design(10 min)
+	a. Identify Objects 
+	b. Define Primary Attributes 
+	c. Identify Relationships 
+	d. Indicate Multiplicity for Relationships 
+	e. Define Combined classes for M:M relationships(if required) 
+
+3. Define Services and Repositories(10 min) 
+	a. Define CRUD Repositories 
+	b. Define Services 
+
+4. Code Implementation(60-90 min) 
+5. Code Refactoring(0-20 min)

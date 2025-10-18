@@ -1,0 +1,71 @@
+1.  What is JSP?
+	JSP (JavaServer Pages) is a server-side technology used to create dynamic web pages using Java. It's like HTML, but with the power to insert Java code inside the 	HTML structure.
+	It’s mainly used to:
+		Display dynamic content
+		Interact with Java back-end (like servlets)
+		Separate business logic from presentation (UI)
+
+2.  Why use JSP?
+	Easier to write HTML + Java together
+	Makes it easy to display data from backend
+	Ideal for simple UI logic (like showing results, messages, etc.)
+	Replaces writing res.getWriter().println(...) in servlets
+
+3. How it works
+	Client sends a request for a .jsp file.
+	The server (Tomcat) converts JSP to a servlet.
+	Servlet compiles and executes.
+	Output HTML is sent back to the browser.
+
+4. Example:
+	<%@ page language="java" contentType="text/html" %>
+	<html>
+	  <body>
+	    <h1>Welcome to JSP!</h1>
+	
+	    <% 
+	      String name = "Aman";
+	    %>
+	
+	    <p>Hello, <%= name %></p>
+	  </body>
+	</html>
+
+5. JSP Tags / Syntax Overview
+
+	Feature				Syntax				Description
+	Scriptlet			<% Java code %>			For writing normal Java code
+	Expression			<%= value %>			Output a value directly
+	Directive			<%@ ... %>			Control page behavior (e.g. import)
+	Declaration			<%! declaration %>		Declare variables or methods
+	Comments			<%-- comment --%>		JSP comments (won’t show in HTML)
+
+6. What is a JSP Directive?
+	A JSP directive provides global information about the page and influences how the JSP is processed.
+	Syntax: <%@ directiveName attribute="value" %>
+
+	1. Page Directive
+		This defines page-level settings like importing classes, error handling, session usage, etc.
+		Syntax: <%@ page attribute="value" %>
+
+		<%@ page import="java.util.Date" %>
+		<%@ page contentType="text/html" %>
+
+	2. Include Directive
+		Used to include static content (HTML, JSP, etc.) during the JSP compilation phase (before runtime).
+		Syntax: <%@ include file="header.jsp" %>
+
+	3. Taglib Directive
+		Used to import custom tags or JSTL libraries into your JSP page.
+		Syntax: <%@ taglib uri="uri" prefix="prefix" %>
+
+7. Implicit Object in JSP
+	request		HttpServletRequest
+	response	HttpServletResponse
+	pageContext	PageContext
+	out(JspWriter)	PrintWriter Object
+	session		HttpSession
+	application	ServletContext
+	config		ServletConfig
+
+	

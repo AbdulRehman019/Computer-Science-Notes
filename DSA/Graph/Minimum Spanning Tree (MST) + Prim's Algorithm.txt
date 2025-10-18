@@ -1,0 +1,77 @@
+Minimum Spanning Tree (MST) – Simple Notes
+🔹 What Is MST?
+	A Minimum Spanning Tree (MST) of a connected, undirected, weighted graph is a subset of edges that:
+		Connects all vertices (i.e., it’s a spanning tree).
+
+	Has the minimum possible total edge weight.
+	Contains no cycles (it’s a tree).
+
+✅ Why Do We Need MST?
+	Reduce the cost of connecting all points in a network (e.g., laying cables, designing efficient networks).
+
+	Applications:
+		Network design (telecom, computer networks).
+		Clustering algorithms (e.g., hierarchical clustering).
+		Approximation algorithms (e.g., TSP approximation).
+
+✅ Popular Algorithms to Find MST
+	Algorithm			Idea											Time Complexity
+	Kruskal’s Algorithm		Sort edges by weight → Pick smallest edges without forming a cycle (Union-Find).	O(E log E)
+	Prim’s Algorithm	Start from a node → Add the minimum weight edge connecting the growing MST to a new vertex.	O((V + E) log V)
+
+✅ Kruskal’s Algorithm – Steps
+	Sort all edges in increasing order of weight.
+	Initialize Union-Find (Disjoint Set) data structure.
+	Pick the smallest edge and check:
+		If it connects two different components → Add to MST.
+	Else (would form a cycle) → Skip it.
+	Repeat until we have (n - 1) edges in MST.
+
+✅ Prim’s Algorithm – Steps
+	Start from any arbitrary node.
+	Use a min-heap (priority queue) to store the next smallest edge.
+	At each step, pick the smallest edge connecting the MST so far to a new vertex.
+	Repeat until all vertices are connected.
+
+✅ Properties of MST
+	MST is unique if all edge weights are distinct.
+	Number of edges in MST = (n - 1), where n = number of vertices.
+	MST connects all nodes with the minimum total weight, without cycles.
+
+✅ Time Complexity
+	Algorithm		Time Complexity
+	Kruskal’s		O(E log E)
+	Prim’s			O((V + E) log V) (using Min Heap)
+	Space Complexity	O(V + E) (to store graph)
+
+✅ Difference Between MST and Shortest Path
+	Property	MST						Shortest Path
+	Goal		Minimize total weight to connect all nodes	Minimize cost from source to destination
+	Cycles		No cycles allowed				Cycles allowed if beneficial
+	Problem Type	Spanning Tree Problem				Single Source Shortest Path Problem (Dijkstra, Bellman-Ford)
+
+✅ Example Real-World Use Case
+	Building a telecommunication network where every office needs to be connected with the minimum cost of laying cables.
+
+
+
+
+
+
+
+
+
+
+
+
+2. ✅ Prim’s Algorithm – Steps
+	Step1: Start from any arbitary node. 
+	Step2: Push it into priority queue like this new int[]{node, parent, weight];
+	Step3: Run a loop until a priority queue is empty. 
+	Step4: Everytime remove top from priority queue. 
+		If the node is already visited continue. 
+		If parent is -1. Don't add in MST and don't take the weight else add new int[]{parent, node} in MST and sum += weight. 
+		Visit all neighbors and add in MST. 
+
+   Intution: Everytime we are visiting neighbor and adding in priority queue. 
+	     Everytime, taking the edge with minimum weight. 

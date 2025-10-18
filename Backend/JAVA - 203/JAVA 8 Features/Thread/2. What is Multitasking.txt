@@ -1,0 +1,90 @@
+What is Multitasking?
+	Multitasking means the ability of an operating system (OS) to execute multiple tasks (processes or programs) seemingly at the same time.
+
+	In reality, the CPU executes only one instruction at a time per core, but it switches rapidly between different tasks — so fast that it appears to users that everything runs 	simultaneously.
+
+	Example
+		Imagine you are:
+			Listening to music 🎵
+			Downloading a file 📥
+			Typing a document 📝
+
+		All these programs are running together — that’s multitasking.
+
+	How It Works Internally
+		The CPU scheduler in the OS divides CPU time into small units called time slices or quantum.
+		Each running process gets:
+			A small time slice of CPU
+			Then the CPU switches to another process
+			The previous process is paused (its state is saved in memory)
+
+		This rapid context switching gives the illusion of parallel execution.
+
+
+
+Key Concepts Behind Multitasking
+1. Context Switching
+	When the CPU switches from one process/thread to another:
+		The current state (registers, program counter, etc.) is saved.
+		The next process’s saved state is loaded.
+		This lets each process “resume” where it left off.
+
+	Context switching is fast but not free — it consumes CPU time.
+
+2. Scheduling
+	The scheduler decides which process runs next using algorithms like:
+		FCFS (First Come First Serve)
+		Round Robin
+		Priority Scheduling
+		Shortest Job Next (SJN)
+		Different OSes use variations of these to balance fairness and performance.
+
+3. Concurrency vs. Parallelism
+	Term		Meaning
+	Concurrency	Multiple tasks make progress overlapping in time (via time-sharing). 
+			First task1 then task2 then again task1 on a single CPU at different time but so fast it seems it is happening parallely. 
+
+	Parallelism	Multiple tasks execute exactly at the same time (requires multiple CPU cores).
+	
+	Example:
+		Single-core CPU → Concurrency via multitasking.
+		Multi-core CPU → True parallelism (multiple processes truly run at once).
+
+
+
+Types of Multitasking
+	1. Cooperative Multitasking (Old Method)
+		Each process voluntarily gives up control to allow others to run.
+		If a process never yields, others are starved.
+		Used in older systems like Windows 95.
+
+	2. Preemptive Multitasking (Modern Method)
+		The OS forces context switching after each time slice.
+		Ensures all processes get CPU time fairly.
+		Used in modern OSes like Windows, Linux, macOS, Android.
+
+Types Based on Task Level
+	Type				Description							Example
+	Process-based multitasking	Multiple programs (processes) run at the same time.		Listening to music + using Word
+	Thread-based multitasking	Multiple threads of the same program execute concurrently.	Browser loading multiple tabs
+
+Advantages of Multitasking
+✅ Efficient CPU utilization – CPU never stays idle
+✅ Improved user experience – Smooth multitasking experience
+✅ Better throughput – More jobs complete in a given time
+✅ Responsive systems – Background tasks don’t block the user
+
+⚠️ Disadvantages of Multitasking
+❌ Context switching overhead – CPU time wasted in saving/restoring states
+❌ Synchronization issues – Shared resources among threads can cause race conditions
+❌ Increased complexity – Harder to design and debug
+❌ Security risks – One faulty process can affect others (in poor designs)
+
+🧩 Real-life Analogy
+	Imagine you’re cooking dinner:
+		Boiling rice 🍚
+		Frying vegetables 🥦
+		Talking on the phone ☎️
+
+	You switch between tasks rapidly — not really doing all at once, but fast enough that it feels simultaneous.
+	That’s multitasking in real life.

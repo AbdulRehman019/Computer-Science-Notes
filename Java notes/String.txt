@@ -1,0 +1,52 @@
+
+1. String name = "Abdul";
+   Here String is a class and datatype too and it is created in stack which points towards the object in heap.
+   name is a reference variable.
+   Abdul is a object which will be created in heap memory.
+
+2. String Pool: It is a seperate memory structure inside a heap.
+   Ques. Why seperate memory for strings?
+   Ans. A seperate memory is created for strings because all the similar values of strings are not recreated in string.
+   Example:  String a = "Abdul"; String b = "Abdul";
+		Since string "Abdul" is already created. Hence, it will not be created again and both 'a' and 'b' will point to the same String.
+		Ques. So what if one reference variable try to make changes to the object, will it be change for both the variables.
+		Ans. Answer to this is the next point.
+		
+3. Immutability: Once string is declared, it cannot be changed but you can create a new object.
+		 In the previous point: Since strings are immutable, hence no variable will be able to make the change to the object.
+		 But you can say something like this:
+			String a = "Abdul";
+			a = "Rehman";
+			In this case you are not actually changing the object but creating a new object. Here, a new object "Rehman" will be created and 'a' will start pointing 
+			towards this new object and "Abdul will still lie in String Pool as a garbage collection.
+
+4. Comparison of Strings:
+	1. "==" : Checks if reference variables are pointing to the same object or not.
+		  For Example:  String a = "Abdul"; String b = "Abdul";		System.out.println(a == b) will give you true which means they are pointing towards same object.
+
+5. How to create different objects of same value?
+	String a = new String("Abdul");
+	Srring b = new String("Abdul");
+	It will create two different objects of same name and both 'a' and 'b' will point to different objects.
+	And the objects will be created outside pool in the heap.
+	Here a == b will give false.
+	But we usually don't create strings in this way, we create it in pool.
+	
+	a.equals(b) will give true because this method compares the values rather than comparing if two variables are pointing towards the same object or not.
+
+6. out is variable of type printstream and println is a method of printstream class.
+   Anything which is inside println is actually calling "value of" method which in turn is calling "toString" function and then printing it by converting into string.
+   Things which can be inside println can be int, string, objects etc.
+
+7. Objects can be of many types for example arrays, hash maps, student class, human class etc.
+   And objects have different variables such as roll no., name etc. and different functions but the compiler will not know what to print hence every object has its own 
+   default value which is the hash code and it add some random characters to it. And it prints something like this when you print object: Ie@....
+
+   Since array is object if we print it directly it will call default "toString" function and print the hash value and that's why we use Arrays "toString" method.
+
+8. If you want to use integer values as object then use "Integer" wrapper class.
+	Integer num = new Integer(56);
+	System.out.println(num);
+   Integer class objects are stored in heap whereas int primitive data types are stored in stack.
+   And if you use "Integer" wrapper class then you can use various different functions associated with "Integer" wrapper class.
+		 

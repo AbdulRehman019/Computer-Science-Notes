@@ -1,0 +1,7 @@
+1. JDK vs JVM vs JRE
+
+JDK: It is used to compile a code. It compiles a code and convert .java to .class(Byte code).
+
+JVM: It is used to run your compile code.
+
+JRE: Suppose you have written five files and running these on JVM. But maybe these files are depending on some other files(libraries) that is stored in JRE.

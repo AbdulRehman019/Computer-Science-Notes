@@ -1,0 +1,17 @@
+1. Kosaraju Algorithm
+	Strongly Connected Component are those components which can be reached starting from any node in that component. 
+	Kosaraju algorithm helps us to find strongly connected compnent. 
+
+Algorithm: 
+	1. Sort the nodes according to their finished time(Nodes which finished first should be at starting). 
+	2. Reverse the graph
+	3. Call the dfs. Number of times dfs is called is equal to number of Strongly Connected Component. 
+
+Why sort the nodes?
+	If the nodes are not sorted, and suppose if "0" belongs to the last component and we reverse the graph and start from 0. 
+	Everything will be covered in one dfs. 
+
+Time Complexity: O(V + E) 
+
+
+

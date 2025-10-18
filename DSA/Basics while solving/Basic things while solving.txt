@@ -1,0 +1,163 @@
+Basic things while solving:
+
+************************************************************ How to sort a map? *****************************************************
+1. Use TreeMap<>()
+	Map<Integer, Integer> map = new HashMap<>();
+	Map<Integer, Integer> treeMap = new TreeMap<>(map);
+
+2. Use List
+	List<Map.Entry<String, Integer>> list = new ArrayList<>(map.entrySet());
+	list.sort(Map.Entry.comparingByValue());
+	list.sort(Map.Entry.comparingByKey());
+
+3. Can use Streams
+	Will explore later
+
+************************************************************ Custom logic to sort objects of class ***************************************************
+1. 
+	class Pair implements Comparable<Pair> {
+	    int first;
+	    List<Integer> list;
+	
+	    Pair(int first, List<Integer> list) {
+	        this.first = first;
+	        this.list = list;
+	    }
+	
+	    @Override
+	    public int compareTo(Pair other) {
+	        return this.first - other.first; // ascending order by 'first'
+	    }
+	}
+	
+	// Now this will work
+	PriorityQueue<Pair> pq = new PriorityQueue<>();
+
+2. PriorityQueue<Pair> pq = new PriorityQueue<>((a, b) -> a.first - b.first);
+
+*********************************************************** Comparable vs Comparator ********************************************************
+1. Comparable
+	class Student implements Comparable<Student> {
+	    int marks;
+	
+	    Student(int marks) {
+	        this.marks = marks;
+	    }
+	
+	    @Override
+	    public int compareTo(Student other) {
+	        return this.marks - other.marks; // Ascending order
+	    }
+	}
+
+	List<Student> list = new ArrayList<>();
+	Collections.sort(list); // uses compareTo
+
+
+2. Comparator
+	class Student {
+	    int marks;
+	
+	    Student(int marks) {
+	        this.marks = marks;
+	    }
+	}
+
+	// Comparator as a separate class
+	class DescendingMarksComparator implements Comparator<Student> {
+	    public int compare(Student a, Student b) {
+	        return b.marks - a.marks; // Descending order
+	    }
+	}
+
+   If it is string you can compare using a.name.compareToIgnoreCase(b.name)
+   Comparator: Arrays.sort(arr, (a, b) -> {
+		return Integer.compare(a, b);
+	}
+
+	
+   Or use lambda for quick comparison:
+	Collections.sort(list, (a, b) -> b.marks - a.marks);
+
+
+   Perfect example of comparator: 
+	static class SortStudent implements Comparator<Student> {
+	        @Override
+	        public int compare(Student a, Student b) {
+	            int first = 0;
+	            int second = 0;
+	            for(int i = 0; i < 5; i++) {
+	                first += a.marks[i];
+	                second += b.marks[i];
+	            }
+	
+	            if(first != second) {
+	                return Integer.compare(second, first);
+	            }
+	            else if(!a.name.equals(b.name)) {
+	                return a.name.compareToIgnoreCase(b.name);
+	            }
+	            else {
+	                return Integer.compare(a.id, b.id);
+	            }
+	        }
+	    }
+
+   SortStudent Comparator
+	This comparator is used to sort Student objects based on three rules in order of priority:
+	Total Marks (Descending Order):
+		It first calculates the sum of marks of both students (first and second).
+		If the totals are different, the student with higher marks comes first.
+
+		Name (Ascending, Case-Insensitive):
+			If total marks are equal, it compares student names ignoring case (compareToIgnoreCase).
+			Names are sorted alphabetically (A → Z).
+
+		ID (Ascending Order):
+			If both marks and names are the same, it finally compares student IDs.
+			The student with smaller ID comes first.
+
+*************************************************************** Storing Pair in set ******************************************************** 
+Why do we need equals() and hashCode()?
+	In Java:
+		A Set decides uniqueness by calling .equals() and .hashCode() on its elements.
+		If two objects are equal (via .equals()) and have the same hash code, the Set treats them as the same.
+		By default, Java’s Object.equals() just checks memory addresses → so two different new Pair(1,2) objects are considered different even if their values are the same.
+
+	Solution → Override equals() and hashCode()
+		We tell Java:
+			Two Pair(i, j) are equal if both i and j match.
+			Their hashCode() must also match (so HashSet can bucket them correctly).
+
+	import java.util.Objects;
+
+	class Pair {
+	    int i, j;
+
+	    Pair(int i, int j) {
+	        this.i = i;
+	        this.j = j;
+	    }
+	
+	    @Override
+	    public boolean equals(Object o) {
+	        if (this == o) return true; // same object
+	        if (!(o instanceof Pair)) return false; // not a Pair
+	        Pair p = (Pair) o;
+	        return i == p.i && j == p.j; // values match
+	    }
+	
+	    @Override
+	    public int hashCode() {
+	        return Objects.hash(i, j); // consistent with equals
+	    }
+	
+	    @Override
+	    public String toString() {
+	        return "(" + i + "," + j + ")";
+	    }
+	}
+
+	
+
+	

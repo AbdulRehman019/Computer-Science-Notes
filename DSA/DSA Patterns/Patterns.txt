@@ -1,0 +1,605 @@
+🔹 1. Sliding Window (10 Problems)
+	Easy (4)
+		Maximum Average Subarray I (#643)		--> Fixed Size Sliding Window
+		Minimum Size Subarray Sum (#209)		--> Notes available
+		Subarray Product Less Than K (#713)		--> Notes available
+		Longest Repeating Character Replacement (#424)
+
+	Medium (4)
+		5. Longest Substring Without Repeating (#3)
+		6. Subarrays with K Different Integers (#992)
+		7. Permutation in String (#567)
+		8. Longest Substring with At Most K Distinct (#159)
+		
+	Hard (2)
+		9. Minimum Window Substring (#76)
+		10. Sliding Window Maximum (#239)
+
+🔹 2. Two Pointers
+	Easy (3)		
+		Remove Duplicates from Sorted Array (#26)
+		Squares of a Sorted Array (#977)
+		Reverse String (Array-based)
+
+	Medium (4)
+		4. Container With Most Water (#11)
+		5. 3Sum (#15)
+		6. Two Sum II – Input Sorted (#167)
+		7. Valid Palindrome II (#680)
+		
+	Hard (3)
+		8. 4Sum (#18)
+		9. Trapping Rain Water (#42)
+		10. Smallest Range Covering Elements from K Lists (#632)
+
+🔹 3. Fast & Slow Pointers
+	Easy (4)
+		Middle of the Linked List (#876)		
+		Linked List Cycle (#141)
+		Happy Number (#202)
+		Linked List Cycle II (#142)
+
+	Medium (3)
+		5. Reorder List (#143)
+		6. Find the Duplicate Number (#287)
+		7. Implement Queue using Stacks (related)
+		
+	Hard (3)
+		8. Split Linked List in Parts (#725)
+		9. Copy List with Random Pointer (#138)
+		10. Circular Array Loop (#457)
+		
+🔹 4. Binary Search
+	Easy (3)		
+		Binary Search (#704)		
+		First Bad Version (#278)
+		Sqrt(x) (#69)
+
+	Medium (4)
+		4. Search in Rotated Sorted Array (#33)
+		5. Find Peak Element (#162)
+		6. Search Insert Position (#35)
+		7. Koko Eating Bananas (#875)
+
+	Hard (3)
+		8. Find Kth Smallest Pair Distance (#719)
+		9. Median of Two Sorted Arrays (#4)
+		10. Split Array Largest Sum (#410)
+
+🔹 5. Greedy
+	Easy (3)
+		Jump Game (#55)
+		Lemonade Change (#860)
+		Gas Station (#134)
+
+	Medium (4)
+		4. Non-overlapping Intervals (#435)
+		5. Minimum Number of Arrows to Burst Balloons (#452)
+		6. Queue Reconstruction by Height (#406)
+		7. Candy (#135)
+			
+	Hard (3)
+		8. Course Schedule III (#630)
+		9. Remove K Digits (#402)
+		10. Minimum Cost to Connect Sticks (#1167)
+
+🔹 6. Backtracking
+	Easy (3)
+		Permutations (#46)
+		Subsets (#78)
+		Combination Sum (#39)
+
+	Medium (4)
+		4. Word Search (#79)
+		5. Letter Combinations of a Phone Number (#17)
+		6. Generate Parentheses (#22)
+		7. Palindrome Partitioning (#131)
+
+	Hard (3)
+		8. N‑Queens (#51)
+		9. Word Search II (#212)
+		10. Sudoku Solver (#37)
+
+🔹 7. Dynamic Programming
+	Easy (3)
+		Climbing Stairs (#70)
+		House Robber (#198)
+		Fibonacci Number (recursion → DP)
+
+	Medium (4)
+		4. Longest Increasing Subsequence (#300)
+		5. Coin Change (#322)
+		6. Unique Paths (#62)
+		7. Decode Ways (#91)
+		
+	Hard (3)
+		8. Edit Distance (#72)
+		9. Word Break II (#140)
+		10. Longest Palindromic Substring (#5)
+		
+🔹 8. Bit Manipulation
+	Easy (4)		
+		Single Number (#136)
+		Number of 1 Bits (#191)
+		Power of Two (#231)
+		Sum of Two Integers (bit-based add)
+	
+	Medium (3)
+		5. Missing Number (#268)
+		6. Subsets (bitmasking) (#78)
+		7. Counting Bits (#338)
+		
+	Hard (3)
+		8. Maximum XOR of Two Numbers (#421)
+		9. Bitwise AND of Numbers Range (#201)
+		10. Reconstruct Itinerary (bitmask + DP)
+
+🔹 9. Union-Find (DSU)
+	Easy (3)
+		Number of Provinces (#547)
+		Friend Circles (similar)
+		Flood Fill (#733)
+
+	Medium (4)
+		4. Accounts Merge (#721)
+		5. Graph Valid Tree (#261)
+		6. Redundant Connection (#684)
+		7. Satisfiability of Equality Equations (#990)
+		
+	Hard (3)
+		8. Redundant Connection II (#685)
+		9. Connecting Cities With Minimum Cost
+		10. Escape The Fire (DSU variant)
+
+🔹 10. Graph Traversal (BFS / DFS)
+	Easy (3)
+		Number of Islands (#200)
+		Flood Fill (#733)
+		Clone Graph (#133)
+
+	Medium (4)
+		4. Word Ladder (#127)
+		5. Rotten Oranges (#994)
+		6. Course Schedule (#207)
+		7. Pacific Atlantic Water Flow (#417)
+		
+	Hard (3)
+		8. Minimum Height Trees (#310)
+		9. Word Ladder II (#126)
+		10. Cheapest Flights Within K Stops (#787)
+
+🔹 11. Topological Sort
+	Easy (3)
+		Course Schedule (#207)		
+		Alien Dictionary (short version)
+		Sequence Reconstruction (#444)
+
+	Medium (4)
+		4. Course Schedule II (#210)
+		5. Task Scheduler
+		6. Parallel Courses II
+		7. Task Scheduling using Topo + DP (GFG)
+		
+	Hard (3)
+		8. Alien Dictionary (#269)
+		9. All Tasks Scheduling Orders
+		10. Minimum Height Trees (#310)
+
+🔹 12. Trie
+	Easy (3)
+		Implement Trie (#208)
+		Add and Search Word (#211)
+		Longest Word in Dictionary (#720)
+
+	Medium (4)
+		4. Word Search II (#212)
+		5. Replace Words (#648)
+		6. Stream of Characters (implement suffix trie)
+		7. Maximum XOR of Two Numbers in an Array (using trie)
+		
+	Hard (3)
+		8. Design Search Autocomplete System (#642)
+		9. Word Squares
+		10. Concatenated Words (#472)
+
+🔹 13. Heap / Priority Queue
+	Easy (3)
+		Kth Largest Element in an Array (#215)
+		Top K Frequent Elements (#347)
+		Merge Two Sorted Lists (#21)
+
+	Medium (4)
+		4. Merge K Sorted Lists (#23)
+		5. Sliding Window Maximum (#239)
+		6. Task Scheduler
+		7. Find Median from Data Stream (#295)
+
+	Hard (3)
+		8. Connecting Cities With Minimum Cost (MST)
+		9. Super Ugly Number (#313)
+		10. Reorganize String (#767)
+
+🔹 14. Stack / Monotonic Stack
+	Easy (3)
+		Valid Parentheses (#20)
+		Min Stack (#155)
+		Evaluate Reverse Polish Notation (#150)
+
+	Medium (4)
+		4. Daily Temperatures (#739)
+		5. Next Greater Element II (#503)
+		6. Simplify Path (#71)
+		7. Maximal Rectangle (#85)
+
+	Hard (3)
+		8. Largest Rectangle in Histogram (#84)
+		9. Trapping Rain Water II (#407)
+		10. Sliding Window Maximum (#239) (heap vs stack)
+
+🔹 15. Prefix Sum / Difference Array
+	Easy (3)
+		Range Sum Query – Immutable (#303)
+		Num Array Range Sum (#304)
+		Matrix Region Sum (#304)
+
+	Medium (4)
+		4. Subarray Sum Equals K (#560)
+		5. Binary Array With Subarrays Count
+		6. Longest Subarray of 1’s After Deleting One Element
+		7. Min Operations to Make Array Equal
+
+	Hard (3)
+		8. Count of Smaller Numbers After Self (#315)
+		9. Range Frequency Queries (#2080)
+		10. Count Subarrays with Sum Less than K
+
+🔹 16. Hashing / HashMap / Set
+	Easy (3)
+		Two Sum (#1)
+		Contains Duplicate (#217)
+		Happy Number (#202)
+
+	Medium (4)
+		4. Group Anagrams (#49)
+		5. Longest Consecutive Sequence (#128)
+		6. Subarray Sum Equals K (#560)
+		7. Top K Frequent Words (#692)
+
+	Hard (3)
+		8. Minimum Window Substring (#76)
+		9. Largest Subarray with Equal 0s and 1s
+		10. Longest Substring with At Most K Repeating Characters
+
+🔹 17. Recursion / Divide & Conquer
+	Easy (3)
+		Merge Two Sorted Lists (#21)
+		Binary Tree Preorder Traversal (#144)
+		Maximum Depth of Binary Tree (#104)
+
+	Medium (4)
+		4. Kth Smallest Element in BST (#230)
+		5. Validate Binary Search Tree (#98)
+		6. Unique Binary Search Trees (#96)
+		7. Balanced Binary Tree (#110)
+
+	Hard (3)
+		8. Merge k Sorted Lists (#23)
+		9. Kth Smallest Prime Fraction (#786)
+		10. Count of Range Sum (#327)
+
+🔹 18. Segment Tree / Fenwick Tree
+	Easy (3)
+		Range Sum Query – Mutable (#307)
+		Range Sum Query – Immutable (#303)
+		Count Smaller Numbers After Self (#315)
+
+	Medium (4)
+		4. Segment Tree Build & Query
+		5. Count of Smaller Numbers After Self (#315)
+		6. Num of Range Sum (#327)
+		7. Count of Range Frequency Queries (#2080)
+
+	Hard (3)
+		8. Range Frequency Queries (#2080)
+		9. Count of Range Sum (#327)
+		10. Maximum Sum of a Rectangle in 2D Matrix
+
+🔹 19. Matrix Traversal
+	Easy (3)
+		Spiral Matrix (#54)
+		Rotate Image (#48)
+		Diagonal Traverse (#498)
+
+	Medium (4)
+		4. Number of Islands (#200)
+		5. Rotting Oranges (#994)
+		6. Word Search (#79)
+		7. Surrounded Regions (#130)
+
+	Hard (3)
+		8. Word Ladder II (#126)
+		9. Largest Rectangle in Matrix
+		10. Maximal Square (#221)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Patterns and Sub Categories
+1. Arrays & Strings
+	Subarray problems (Kadane’s, sliding window, prefix sum, two pointers)
+	Subsequence problems (LIS, LCS, subsequence counting)
+	Rearrangement (rotate, shuffle, rearrange elements)
+	Searching (binary search variations, ternary search)
+	Sorting (basic, advanced, custom sorting with comparators)
+	Prefix/Suffix arrays
+	Difference array / range updates
+	String matching (KMP, Rabin-Karp, Z-function, prefix function)
+	String hashing / rolling hash
+
+2. Hashing & Maps
+	Frequency counting
+	Grouping (anagrams, word patterns)
+	Hash-based prefix/suffix tricks
+	Subarray with given sum
+	Unique elements / distinct queries
+
+3. Linked Lists
+	Reversal problems (reverse entire / in k-groups / partial)
+	Cycle detection & removal (Floyd’s algorithm)
+	Intersection of two linked lists
+	Merge sort on linked list
+	Flatten linked list
+	LRU cache (LinkedHashMap or custom doubly linked list + hashmap)
+
+4. Stacks & Queues
+	Monotonic stack/queue (next greater, sliding window max/min)
+	Expression evaluation (infix → postfix, evaluate postfix)
+	Histogram problems (largest rectangle, maximal rectangle)
+	Balanced parentheses
+	Design problems (Min stack, circular queue, deque operations)
+
+5. Trees
+	Binary tree traversals (recursive, iterative, Morris)
+	Tree construction (from inorder+preorder/postorder)
+	Diameter, height, balanced check
+	Lowest common ancestor (binary lifting, Euler tour)
+	Binary search tree (insert/delete/search, kth smallest/largest)
+	Segment trees & Fenwick tree (range queries, lazy propagation)
+	Trie (prefix tree)
+	Heap (priority queue, heapify, heap sort, kth largest/smallest)
+
+6. Graphs
+	Traversals (BFS, DFS, bidirectional BFS)
+	Shortest paths (Dijkstra, Bellman-Ford, Floyd-Warshall)
+	Minimum spanning tree (Prim’s, Kruskal’s)
+	Topological sorting (Kahn’s, DFS)
+	Strongly connected components (Kosaraju, Tarjan)
+	Bridges & articulation points
+	Union-Find (disjoint set with path compression, union by rank)
+	Bipartite graph (BFS/DFS, coloring)
+	Max flow / min cut (Ford-Fulkerson, Edmonds-Karp, Dinic)
+
+7. Dynamic Programming
+	1D DP (climb stairs, house robber, coin change)
+	2D DP (LCS, edit distance, matrix path problems)
+	Knapsack family (0/1, unbounded, bounded, subset sum, partition)
+	Digit DP (count numbers with certain properties)
+	Bitmask DP (TSP, subsets, state compression)
+	DP on trees (tree DP for paths, coloring, independent set)
+	DP on grids (unique paths, cherry pickup, minimum path sum)
+	Game DP (Grundy numbers, Nim, stone games)
+	Probability/Expected value DP
+
+8. Greedy Algorithms
+	Interval scheduling / activity selection
+	Huffman coding
+	Minimum spanning tree (Kruskal, Prim can be seen as greedy)
+	Fractional knapsack
+	Scheduling with deadlines
+
+9. Bit Manipulation
+	Set/unset/toggle/check bit
+	Subset generation using bits
+	XOR tricks (missing number, unique element in array)
+	Bit DP
+	Fast exponentiation (binary exponentiation)
+
+10. Mathematics & Number Theory
+	Prime numbers (Sieve of Eratosthenes, segmented sieve)
+	Modular arithmetic (mod inverse, Fermat’s theorem)
+	GCD/LCM (Euclidean algorithm)
+	Matrix exponentiation
+	Combinatorics (nCr, nPr, Pascal’s triangle, DP for nCr)
+	Modular exponentiation
+	Chinese remainder theorem
+	Fast Fourier Transform (FFT)
+
+11. Advanced Structures
+	Disjoint Set Union (DSU / Union-Find)
+	Ordered set / multiset (balanced BSTs, TreeMap in Java)
+	Rope / Treap / Splay trees
+	Sparse table (RMQ, LCA)
+	Mo’s algorithm (offline queries on arrays)
+
+12. Geometry
+	Convex hull (Graham scan, Jarvis march)
+	Line sweep algorithms (interval problems, closest pair)
+	Rotating calipers
+	Computational geometry basics (area, orientation, intersections)
+
+13. Specialized Categories
+	Sliding window problems
+	Two-pointer problems
+	Backtracking (N-queens, Sudoku, word search, permutations)
+	Recursion & divide & conquer
+	String problems with DP + hashing
+	Game theory (Grundy numbers, Nim variations) 
+
+
+
+
+// Algorithm
+1. Sorting Algorithms
+	Bubble Sort
+	Selection Sort
+	Insertion Sort
+	Merge Sort
+	Quick Sort
+	Heap Sort
+	Counting Sort
+	Radix Sort
+	Bucket Sort
+	Shell Sort
+	TimSort (used in Java/Python libraries)
+	IntroSort (used in C++ STL)
+
+2. Searching Algorithms
+	Linear Search
+	Binary Search
+	Ternary Search
+	Jump Search
+	Interpolation Search
+	Exponential Search
+
+3. Divide & Conquer
+	Merge Sort
+	Quick Sort
+	Binary Search
+	Karatsuba Multiplication
+	Strassen’s Matrix Multiplication
+
+4. Greedy Algorithms
+	Activity Selection
+	Huffman Coding
+	Kruskal’s Algorithm (MST)
+	Prim’s Algorithm (MST)
+	Dijkstra’s Algorithm (Shortest Path)
+	Fractional Knapsack
+	Job Sequencing with Deadlines
+	Egyptian Fraction
+
+5. Dynamic Programming (DP)
+	Fibonacci (Top-down, Bottom-up)
+	Longest Common Subsequence (LCS)
+	Longest Increasing Subsequence (LIS)
+	Longest Palindromic Subsequence
+	Longest Palindromic Substring
+	Matrix Chain Multiplication
+	Coin Change (min coins / number of ways)
+	Subset Sum
+	Knapsack (0/1, Unbounded, Bounded, Multi)
+	Egg Dropping Problem
+	Word Break Problem
+	Edit Distance
+	Palindrome Partitioning
+	Rod Cutting
+	Minimum Path Sum in Grid
+	Maximum Sum Increasing Subsequence
+	Kadane’s Algorithm (Maximum Subarray Sum)
+	Bitmask DP (TSP, etc.)
+	DP on Trees
+	DP on Graphs (Bellman-Ford, Floyd-Warshall)
+
+6. Graph Algorithms
+	BFS (Breadth-First Search)
+	DFS (Depth-First Search)
+	Topological Sort
+	Kosaraju’s Algorithm (SCC)
+	Tarjan’s Algorithm (SCC, Bridges, Articulation Points)
+	Bellman-Ford (Shortest Path with negative weights)
+	Dijkstra’s Algorithm
+	Floyd-Warshall (All-Pairs Shortest Path)
+	Johnson’s Algorithm	
+	Prim’s (MST)
+	Kruskal’s (MST)
+	Borůvka’s Algorithm (MST)
+	A* Search Algorithm
+	Union-Find / Disjoint Set (with path compression + union by rank)
+	Eulerian Path & Circuit	
+	Hamiltonian Path & Cycle
+	Hopcroft-Karp (Maximum Bipartite Matching)
+	Dinic’s Algorithm (Max Flow)
+	Edmonds-Karp (Max Flow)
+	Kahn’s Algorithm (Topological Sort)
+	Warshall’s Transitive Closure
+
+7. String Algorithms
+	Naive String Matching
+	KMP (Knuth-Morris-Pratt)
+	Rabin-Karp
+	Z Algorithm
+	Boyer-Moore
+	Aho-Corasick (Multi-pattern matching)
+	Manacher’s Algorithm (Longest Palindromic Substring)
+	Suffix Array Construction (O(N log N))
+	Kasai’s Algorithm (LCP from Suffix Array)
+	Suffix Tree (Ukkonen’s Algorithm)
+	Trie-based algorithms (Autocomplete, Spell Check)
+	Rolling Hash (Rabin-Karp, String Hashing)
+
+8. Tree Algorithms
+	Traversals (Inorder, Preorder, Postorder, Level Order)
+	Binary Search Tree operations
+	Lowest Common Ancestor (Binary Lifting, Euler Tour + RMQ)
+	Segment Tree (Range Queries, Lazy Propagation)
+	Fenwick Tree / Binary Indexed Tree
+	Interval Tree
+	Trie
+	AVL Tree, Red-Black Tree, Splay Tree, Treap
+	K-D Tree (Multidimensional data)
+
+9. Mathematical Algorithms
+	Euclidean Algorithm (GCD)
+	Extended Euclidean Algorithm
+	Sieve of Eratosthenes
+	Segmented Sieve
+	Modular Exponentiation
+	Miller-Rabin Primality Test
+	Fermat’s Little Theorem
+	Chinese Remainder Theorem
+	Matrix Exponentiation
+	Fast Fourier Transform (FFT)
+	Pollard’s Rho Algorithm (Factorization)
+	Euler’s Totient Function
+	Modular Inverse (Extended GCD / Fermat)
+	
+10. Bit Manipulation Algorithms
+	Brian Kernighan’s Algorithm (Count set bits)
+	XOR Tricks (Finding missing number, unique number)
+	Subset Generation using Bitmask
+	Fast Exponentiation with Bits
+	Gray Code
+	Bit DP
+
+11. Backtracking Algorithms
+	N-Queens Problem
+	Rat in a Maze
+	Sudoku Solver
+	Word Search
+	Hamiltonian Cycle
+	Knight’s Tour Problem
+	Subset / Permutation Generation
+
+12. Advanced Graph/Flow/Cut Algorithms
+	Min-Cut Max-Flow (Ford-Fulkerson, Edmonds-Karp, Dinic’s)
+	Stoer-Wagner Min Cut
+	Hungarian Algorithm (Assignment Problem)
+	Karger’s Algorithm (Min Cut) 
+

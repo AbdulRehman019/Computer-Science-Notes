@@ -1,0 +1,59 @@
+	
+1. An Interface in Java programming language is defined as an abstract type used to specify the behavior of a class. 
+   An interface in Java is a blueprint of a class. It has static constants and abstract methods.
+
+2. Syntax:
+
+			Interfaces					Abstract Class
+
+	1. Can't provide the implementation of abstract class.	1. Can provide the implementation of interface.
+
+	2. Members of java interface are public	.		2. Members of java interface can be public, protected etc.
+
+	3. A class can implement multiple interface.		3. A class can inherit only one Abstract class.
+	   (Multiple Inheritance)				   (No Multiple Inheritance)
+
+	4. They can only have abstract methods.			4. They can have both abstract as well as non-abstract method.
+
+	5. Interface has only static and final variables.	5. Can have final, non-final, static and non-static variables.
+
+	6. Can extend another Java interface only.		6. Can extend another Java class and implement multiple Java interfaces.
+
+	7. Can be implemented using keyword "implements".	7. Can be extended using keyword "extends".
+
+	8. Example:						8. Example:
+		public interface Drawable {				public abstract class Shape {
+			void draw();						public abstract void draw();
+		}							}
+
+
+3. Every other rule is same for Interfaces as in Inheritance.
+   For example, If you "Engine" Interface and "Car" Class then you can have:
+		Car car = new Car();
+   as well as 	Engine car = new Car();
+   All the rules applied will be same as before.
+
+4. Both in Inheritance as well as Interfaces, overridden methods should be with same access modifier as in parent class
+   (or interface) or it should be better.
+   For example if the method which need to be overridden is protected, then in subclass it should be protected or better
+   such as public.
+
+5. When to use Interfaces and when to use Abstract Classes?
+	If you have a class with all abstract methods and no static or other normal methods, it's better to create interfaces.
+	Syntax will be more readable.
+
+6. Why interfaces can only have static and final variable?
+
+	static (Shared by Everyone):
+		Think of a signboard in a school. It has rules like "No running in the hallways." That signboard is the same for all students. Similarly, variables in an interface are 		shared by everyone (all classes using the interface). You don’t need to make a new signboard for every student.
+
+	final (Cannot Change):
+		Imagine that rule on the signboard says, "No running in the hallways." No teacher or student can change it to "Running is allowed." Similarly, variables in an interface are 		constants—they are fixed and cannot be changed.
+
+	Why Not Regular Variables?
+		If interfaces allowed variables to change, it would be like giving each student their own version of the signboard with different rules. This would defeat the purpose of 		having a common blueprint.
+
+7. Types of Interfaces
+	1. Normal Interface: Interface with two or more methods.
+	2. Functional/Single Abstract Method(SAM) Interface: Interface with only one method.
+	3. Marker Interface: Interface with no method.(We use it to allow somethings like serialization).

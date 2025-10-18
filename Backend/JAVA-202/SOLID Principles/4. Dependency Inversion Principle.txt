@@ -1,0 +1,91 @@
+Definition
+	The Dependency Inversion Principle states:
+
+	👉 High-level modules(our implementation User Service) should not depend on low-level modules(Third Party APIs). Both should depend on abstractions.
+	👉 Abstractions should not depend on details. Details should depend on abstractions.
+
+	🔍 Breaking it down
+		High-level modules = classes that define complex business logic or policies.
+		(e.g., PaymentProcessor)
+
+		Low-level modules = classes that implement specific details.
+		(e.g., CreditCardPayment, PaypalPayment)
+
+		Abstractions = interfaces or abstract classes that define contracts without specifying implementation.
+		(e.g., PaymentMethod interface) 
+
+	*********************
+	Suppose you are using third party API(example Yahoo) at 50 places and now you need to shift to some other third pary API(example Google). 
+	Since, you were using directly, you will need to change it at 50 places. 
+	If you would have created a class which would be calling this third party API and at every 50 place you are calling this class. 
+	Now, if you need to shift to Google, you only need to change at one place. 
+
+	🚫 Problem without DIP
+		Imagine we design a system like this:
+
+		class CreditCardPayment {
+		    void pay(double amount) {
+		        System.out.println("Paid " + amount + " using Credit Card");
+		    }
+		}
+
+		class PaymentProcessor {
+		    private CreditCardPayment payment = new CreditCardPayment();
+		
+		    void process(double amount) {
+		        payment.pay(amount);
+		    }
+		}
+
+
+❌ Issues:
+	PaymentProcessor depends directly on CreditCardPayment (a low-level module).
+	If tomorrow we add PaypalPayment, we must modify PaymentProcessor.
+	This breaks the Open/Closed Principle and makes code rigid.
+
+✅ Solution with DIP
+	Introduce an abstraction (PaymentMethod) that both classes depend on:
+
+	interface PaymentMethod {
+	    void pay(double amount);
+	}
+	
+	class CreditCardPayment implements PaymentMethod {
+	    public void pay(double amount) {
+	        System.out.println("Paid " + amount + " using Credit Card");
+	    }
+	}
+	
+	class PaypalPayment implements PaymentMethod {
+	    public void pay(double amount) {
+	        System.out.println("Paid " + amount + " using PayPal");
+	    }
+	}	
+
+	class PaymentProcessor {
+	    private PaymentMethod paymentMethod;
+
+	    // Dependency is injected (constructor injection here)
+	    PaymentProcessor(PaymentMethod paymentMethod) {
+	        this.paymentMethod = paymentMethod;
+	    }
+	
+	    void process(double amount) {
+	        paymentMethod.pay(amount);
+	    }
+	}
+	
+	
+Now:
+	PaymentProcessor depends on PaymentMethod (abstraction), not on CreditCardPayment.
+	Adding new payment methods (like UPIPayment) doesn’t affect PaymentProcessor.
+	Dependencies are inverted: details (low-level) depend on abstractions, not the other way.
+
+⚡ Key Benefits of DIP
+	Loose coupling – modules don’t depend on each other’s implementation.
+	Flexibility & Extensibility – easily add new implementations without changing high-level code.
+	Testability – easier to test by injecting mock implementations.
+	Reusability – high-level code is independent of details.
+
+✅ In short:
+	The Dependency Inversion Principle ensures that your high-level business logic is not tied to low-level details. Instead, both rely on abstractions, making the system flexible, 	testable, and maintainable. 

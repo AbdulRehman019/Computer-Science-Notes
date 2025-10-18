@@ -1,0 +1,39 @@
+
+1. Database: Electronic place where you want to store your data. 
+2. DBMS: SOftware that help to maintain DB. Use to perform CRUD operations. 
+3. Keys: Primary Key, Foreign Key, Candidate Key, Super Key. 
+4. SQL: Query Language used to interact with DB. Create tables, fetch data from tables, update data, manage user permissions. 
+
+SQL Statement 
+1. DDL(Data Definition Language) 
+	Create, Drop, Alter, Truncate, Rename
+	Change the structure of table. 
+
+2. DQL(Data Query Language) 
+	Select 
+
+3. DML(Data Manipulation Language) 
+	Insert, Update, Delete, Lock call, Explain Plan 
+	Change the data in the table. 
+
+4. DCL(Data Control Language) 
+	Grant, Revoke 
+
+5. TCL(Transaction Control Language) 
+	Commit, Rollback, Save Point 
+
+
+
+1. DDL 
+	1. Create: DB, Table 
+	2. Drop: DB, Table 
+	3. Alter: Table 
+			1. Add --> Column 
+				--> Constraint(Uinque, NOT NULL, Primary Key, Foreign Key, Check, Default) 
+
+			2. Remove --> Column 
+				  --> Contraint 
+
+			3. Modify --> Data Type 
+				  --> Data Type Length 
+

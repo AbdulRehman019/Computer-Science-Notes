@@ -1,0 +1,31 @@
+
+Java Servlet is a Java program that runs on a Java-enabled web server or application server. It handles client requests, processes them, and generates responses dynamically. Servlets are the backbone of many server-side Java applications due to their efficiency and scalability.
+
+When a client sends a request to the server for a dynamic response or page that isn't already available, the server needs to create it dynamically and then send it back to the client. To handle such dynamic requests, the server uses a helper application known as a web container (e-g.. Apache Tomcat).
+
+Here's how the process works:
+	Request Handling: When a dynamic request comes in, the server forwards it to the web container.
+
+	Deployment Descriptor: The web container uses a file called the "Deployment Descriptor" (usually web.xml) to map each request to the appropriate servlet. This file 			       contains the mappings that specify which servlet should handle which request.
+
+	Servlet Mapping: Every request is mapped to a specific servlet. A servlet is a regular Java class that extends HTTP servlet. This extension provides all the 				 necessary features to handle HTTP requests, process them, and generate responses.
+
+	Processing the Request: The servlet takes the request from the server, processes it (e-g., interacts with a database, performs business logic), generates the 					appropriate response.
+
+	Sending the Response: Finally, the servlet sends the dynamically generated response back to the client. This process ensures that dynamic content is created on-the-			      fly and delivered to the client efficiently.
+
+Servlet Lifecycle
+	The Lifecycle of a servlet is managed by the servlet container (e.g., Apache Tomcat). The lifecycle consists of the following phases:
+		Initialization (init method): 
+			The servlet is instantiated and initialized by the container.
+			The init method is called once when the servlet is first loaded into memory.
+			This method is used to perform any servlet-specific initialization tasks.
+
+		Service (service method):
+			The service method is called to handle each request made to the servlet.
+			This method processes the request and generates a response.
+			The service method can handle multiple types of requests (e.g., GET, POST) by delegating to specific methods like doGet and doPost.
+
+		Destruction (destroy method):
+			The destroy method is called once when the servlet is being removed from memory.
+			This method is used to perform any cleanup tasks before the servlet is destroyed.

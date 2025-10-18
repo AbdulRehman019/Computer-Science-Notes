@@ -1,0 +1,49 @@
+
+1. What is Recursion?
+	Recursion means a function calling itself until base condition is met.
+
+2. Why Recursion?
+	Recursion helps us in solving bigger/complex problems in a simple way.
+
+
+Some points related to recursion:
+
+1. Recursion solution can be converted to iteration and vice versa.
+
+2. Though problems are solved easily using recursion but the space complexity increases since at every call it needs memory in stack.
+
+
+How to solve using recursion?
+
+1. If a problem can be break into smaller problem and smaller problem can be solved using recurrence relation then it can be solved for bigger problems.
+	Fib(n) = Fib(n-1) + Fib(n-2)		// It is known as recurrence relation.
+
+	Hence break the bigger problem into smaller one and write the reurrence relation if nedded.
+
+2. The base condition is represented by answers we already have.
+	For example in fibonacci series we know Fin(0) = 0 and Fib(1) = 1.
+
+3. Draw the recursive tree.
+
+4. About the recursive tree:
+	1. See the flow of functions, how they are getting in stack.
+	2. Identify and focus on left tree calls and right tree calls.
+		Both left and right tree calls will not happen simultaneously. One will happen first and then the other will happen while returning.
+		For example 
+			Fib(3) will call Fib(2) and Fib(1) but Fib(2) will be executed first
+			Fib(2) will call Fib(1) and Fib(0) but Fib(1) will be executed first
+			Fib(1) will return 1 to Fib(2) but before returning to Fib(3), Fib(0) will be executed for Fib(2) and Fib(0) will return 0 to Fib(2).
+			Fib(2) will add the values recieved from Fib(1) and Fib(0) and it will return to Fib(3).
+			Then Fib(3) will execute Fib(1) and add the values recieved from Fib(2) and Fib(1) and will return to main.
+
+			Try to run it using debug pointer as well as using pen and paper.
+
+	3. See how the values are returned at each step.
+
+5. You always need to take care of the variables. There can be three type of variables which need to be take in consideration:
+	1. Return Type
+	2. Arguements/Parameters: The predefined variables for the call. For example 's' and 'e' in binary search.
+	3. In body: The variables specific to a particular call. For example mid in binary search. You need new mid depending on 's' and 'e' in every call.
+
+6. Always return while calling the recursive function.
+	For example: return binarySearch(arr, target, mid+1, e);

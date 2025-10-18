@@ -1,0 +1,126 @@
+DP
+
+Recursion
+ 	Use recursion to solve the problem.
+
+ 	Steps to sovle using recursion:
+ 		1. Try to represent the problem in terms of index.
+ 		2. Do all possible stuffs on that index according to the problem statement.
+ 		3. Sum of all stuffs: Count all ways
+ 		   Min of all stuffs: find min
+
+ 	Template:
+ 		// Climbing stairs
+ 		public void f(int i, int n) {
+ 			if(i == n) return 1;
+
+ 			int one = f(i + 1, n);
+ 			int two = 0;
+ 			if(i + 2 <= n) {
+two = f(i + 2, n);
+ 			}
+
+ 			return one + two;
+ 		}
+
+ 	Time Complexity: O(2^n)
+ 	Space Complexity: O(n)
+
+2. Memoization
+ 	Use memoization to optimize the recursion solution.
+
+ 	Steps to memoize:
+ 		1. Introduce a dp array[1D or 2D] either of size n + 1 or n depending on problem[Most of the time n size will suffice]
+ 		2. Fill it with -1(Or any other value depending on problem, very rare)
+ 		3. Check whether that particular part has been computed already.
+ 		4. If yes, return the stored value.
+ 		5. Once call for a function is over, store it in dp.
+
+ 	Template:
+ 		// Climbing Stairs
+ 		public void f(int i, int n, int[] dp) {
+ 			if(i == n) return 1;
+
+ 			if(dp[i] != -1) return dp[i];
+
+ 			int one = f(i + 1, n, dp);
+ 			int two = 0;
+ 			if(i + 2 <= n) {
+ 				two = f(i + 2, n, dp);
+ 			}
+
+ 			return dp[i] = one + two;
+ 		}
+
+ 	Time Complexity: O(n)
+ 	Space Complexity: O(n) + O(n)[Recursive Stack + Dp array]
+
+3. Tabulation
+ 	Use tabulation to remove the recursive stack space.
+
+ 	Steps to convert memoization into tabulation:
+ 		1. Introduce a dp array[1D or 2D] as in memoization of size n or n + 1[Most of the time size will be n + 1 in order to handle base case].
+ 		2. See the memoization part and according to its base condition fill the dp array.
+ 			For example:
+ 				// Base Case
+ 				if(i == n) return 0;
+
+ 			Hence, dp[n] = 0;
+
+ 		3. Start moving reverse. If in memoization you went from 0 to n. Now go from n to 0
+ 		   [Start according to base condition, if base condition included i == n, then start from n - 1].
+ 			for(int i = n - 1; i >= 0; i--) {
+ 				// Rest of the code
+ 			}
+
+ 		4. Copy everything else from memoization part and replace functions with dp array.
+ 			For example:
+ 				f(i + 1, n, dp) to dp[i + 1].
+
+ 		5. Remove the return statement and store in dp[i].
+
+ 	Template:
+ 		class Solution {
+ 			public int climbStairs(int n) {
+ 		        int[] dp = new int[n + 1];
+ 		        dp[n] = 1;
+ 
+ 		        for(int i = n - 1; i >= 0; i--) {
+ 		            int one = dp[i + 1];
+ 		            int two = 0;
+ 		            if(i + 2 <= n) {
+ 		                two = dp[i + 2];
+ 		            }
+ 
+ 		            dp[i] = one + two;
+ 		        }
+ 
+ 		        return dp[0];
+ 		    }
+ 		}
+
+ 	Time Complexity: O(n)
+ 	Space Complexity: O(n)[Dp array, No recursive stack space]
+
+4. Space Optimization
+ 	Use space optimization on tabulation.
+
+ 	Steps to convert tabulation into space optimization:
+ 		1. If you see closely every time you require previous two numbers.
+ 		   Hence, instead of using DP array use two variables(prev and prev2)
+
+ 	Template:
+ 		public int climbStairs(int n) {
+ 			int prev = 1, prev2 = 0;
+ 
+ 		        for(int i = n - 1; i >= 0; i--) {
+ 		            int curr = prev + prev2;
+ 		            prev2 = prev;
+ 		            prev = curr;
+ 		        }
+ 
+ 		        return prev;
+ 	    	}
+
+ 	Time Complexity: O(n)
+ 	Space Complexity: O(1)

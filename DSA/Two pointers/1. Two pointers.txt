@@ -1,0 +1,117 @@
+
+********************************************************************** Two pointer approach **********************************************************
+📘 Quick Tips for Two-Pointer Patterns
+	Opposite End Pointers: Usually when you compare extremes—e.g., Container With Most Water, Sort Squared
+	Same Direction Pointers: When you sweep an array with a window—e.g., Subarray Sum, Max Consecutive Ones
+	Expand/Around-Center: For palindromes (Longest/Valid Palindrome)
+	Reducing Complexity: Multi-sum problems (3Sum, 4Sum) turn nested loops into O(n²)+ vs brute of O(n³)
+
+1. Opposite End Pointers
+	Use two pointers from both ends of the array and move them toward each other.
+	You do this when:
+		You're checking pairwise combinations (e.g., nums[i] + nums[j])
+		The array is sorted or can be sorted
+		Checking for palindrome
+		You often need to optimize space over brute force
+
+	Template:
+		int left = 0;
+		int right = nums.length - 1;
+	
+		while (left < right) {
+		    // process nums[left] and nums[right]
+		    if (condition) {
+		        left++;
+		    } else {
+		        right--;
+		    }
+		}
+
+
+	💡 Intuition Tips:
+		Think of squeezing the problem from both ends.
+		Opposite direction shines when one side of the array complements the other (e.g., largest-smallest pairing).
+		Always ask: "Do I need to compare extremes and move inward?"
+
+	In this type of problems, the direction in which we have to move is either dependent on if left is smaller or if right is smaller 
+	Or if left is greater or right is greater. Find the dependency and solve the problem.
+
+	Problems Solved:
+		1. Two Sum II – Input array is sorted
+		2. Valid Palindrome
+		3. Reverse String
+		4. Squares of a Sorted Array(Intution written in leetcode notes)
+		5. Container with most water
+		6. Trapping rain water(Intution written)
+		7. Minimum Difference Between Largest and Smallest Value in Three Moves
+
+2. Sliding Window (Same Direction)
+	This pattern is a game-changer when it clicks — so let’s master it.
+
+	🔍 Sliding Window: Core Idea
+		You maintain a window (usually a subarray or substring), using two pointers:
+			right pointer: expands the window to include more elements
+			left pointer: shrinks the window when a constraint is violated
+
+		This pattern shines when the problem says:
+			“Find the longest/shortest subarray/subsequence that satisfies a condition”
+			“Count subarrays with something…”
+			“Minimize/maximize something in a window”
+
+	🧠 Template
+		int left = 0;
+		for (int right = 0; right < n; right++) {
+		    // Expand the window by including nums[right]
+		
+		    while (window violates condition) {
+		        // Shrink the window from the left
+		        left++;
+		    }
+		
+		    // Update result based on current window size or contents
+		}
+
+	Problems Solved: 
+		1. Longest Substring Without Repeating Characters
+		2. Minimum size subarray sum
+		3. Maximum consecutive Ones III
+		4. Longest Repeating Character Replacement
+		5. Fruit into Baskets
+
+
+🧠 Two-Pointer LeetCode Problems (Medium)
+	Container With Most Water (LeetCode 11)
+		Two pointers from ends → maximize area 
+
+	3Sum (LeetCode 15)
+		Sort + fix one pointer, then two-pointer scan in remaining array 
+
+	3Sum Closest (LeetCode 16)
+		Similar setup to 3Sum; find closest sum to target 
+
+	3Sum Smaller (LeetCode 259)
+		Count triplets with sum less than target using two-pointers 
+
+	4Sum (LeetCode 18)
+		Extend 3Sum by double loop then two-pointer inner scan 
+
+	Valid Palindrome (LeetCode 125)
+		Two pointers from ends, skipping invalid chars 
+
+	Valid Palindrome II (LeetCode 680)
+		Same approach but allow one character removal 
+
+	Longest Palindromic Substring (LeetCode 5)
+		Expand around center using left/right pointers 
+
+	Minimum Size Subarray Sum (LeetCode 209)
+		Sliding window two-pointer to find minimal length ≥ target 
+
+	Max Consecutive Ones III (LeetCode 1004)
+		Sliding window that allows at most k zeroes 
+
+	Interval List Intersections (LeetCode 986)
+		Merge two sorted interval lists with two pointers 
+
+	Sorted Squares (LeetCode 977)
+		Compare squares from ends to fill result 

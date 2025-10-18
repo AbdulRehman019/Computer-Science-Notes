@@ -1,0 +1,143 @@
+What is System Design?
+	System Design is the process of designing the architecture of a software system — defining how the system will be structured, how different components will interact, and how the 	system will handle scale, performance, and reliability.
+
+	It has two levels:
+	1. High-Level Design (HLD) – the big picture
+		Focus: System architecture and modules
+		Describes:
+			Major components/services (e.g., Authentication Service, Payment Service, Database)
+			Communication between them (APIs, message queues, databases)
+			Tech choices (SQL vs NoSQL, caching strategy, load balancers, etc.)
+
+		Analogy: Map of a city (shows highways, districts, and routes but not street-level details).
+
+	2. Low-Level Design (LLD) – the detailed blueprint
+		Focus: Class-level and module-level details
+		Describes:
+			Classes, interfaces, methods, and their relationships
+			Database schema (tables, columns, constraints)
+			Algorithms and data structures used inside modules
+			How design patterns (Factory, Singleton, Observer, etc.) are applied
+
+		Analogy: Construction blueprint of a building (exact wiring, materials, room dimensions).
+
+	Example (Online Course Platform)
+	HLD:
+		Components → User Service, Course Service, Payment Service
+		Communication → REST APIs or GraphQL
+		Storage → MySQL for user/course data, Redis for caching, S3 for video storage
+
+	LLD:
+		User class (id, name, email, enrolledCourses[])
+		Course class (id, title, instructor, students[])
+		EnrollmentService class with enrollUser(userId, courseId)
+		Database schema:
+			Users(id, name, email)
+			Courses(id, title, instructorId)
+			Enrollments(userId, courseId, enrollmentDate)
+
+
+
+
+
+
+Class Diagram Relationships: 
+1. Association(has-a relationships) 
+	A general connection between two classes. 
+
+	An association represents a bi-directional relationship between two classes. 
+	It indicates that instances of one class are connected to instances of another class. 
+	Associations are typically depicted as a solid line connecting the classes, with optional arrows indicating the direction of the relationship. 
+
+	Association are those type of relationships where objects have an independent lifecycle and where there is no ownerships between the objects. 
+	My observation: Both classes have one to many and many to one relationship. 
+	Example: Student ↔ Course
+	A student can enroll in courses, and a course can have students.
+
+2. Aggregation (→ “has-a but independent”) 
+	A weaker form of association: one object contains another, but both can exist independently.
+
+	Aggregation is a specialized form of association that represents a "whole-part" relationship. 
+	It denotes a stronger relationship where one class (the whole) contains or is composed of another class (the part). 
+	Aggregation is represented by a diamond shape on the side of the whole class. In this kind of relationship, the child class can exist independently of its parent class. 
+
+	Aggregation are those type of relationships where objects have an independent life cycle, but there is a ownership. 
+	Child objects can exist independently but cannot belong to another parent. 
+
+	Example: Library has Books, but if the library is closed, books can still exist.
+	Shown with an empty diamond (◊) in UML. 
+
+3. Composition (→ “part-of and dependent”)
+	strong form of association: one object is part of another, and cannot exist without it. 
+
+	Composition is a stronger form of aggregation, indicating a more significant ownership or dependency relationship. 
+	In composition, the part class cannot exist independently of the whole class. 
+	Composition is represented by a filled diamond shape on the side of the whole class. 
+
+	Composition refer to relationships whose object don't have independent lifecycle, and if the parent object is deleted, all child objects will also be deleted. 
+	Example: House has Rooms, Car has Engine 
+
+4. Inheritance (→ “is-a” relationship) 
+	A class derives from another class (parent-child). 
+	
+	Inheritance represents an "is-a" relationship between classes, where one class (the subclass or child) inherits the properties and behaviors of another class (the superclass or 	parent). 
+	Inheritance is depicted by a solid line with a closed, hollow arrowhead pointing from the subclass to the superclass. 
+
+	Example: Car is a Vehicle 
+
+5. Dependency (→ “uses” relationship) 
+	One class depends on another temporarily (method parameter, local variable). 
+
+	A usage dependency relationship in a UML class diagram indicates that one class (the client) utilizes or depends on another class (the supplier) to perform certain tasks or access 	certain functionality. The client class relies on the services provided by the supplier class but does not own or create instances of it.
+
+	In UML class diagrams, usage dependencies are typically represented by a dashed arrowed line pointing from the client class to the supplier class.
+	The arrow indicates the direction of the dependency, showing that the client class depends on the services provided by the supplier class.
+
+	Example: A PaymentService uses CreditCardValidator inside processPayment().
+	Shown with a dashed arrow (---►) in UML. 
+
+
+
+
+
+Cardinality Basics
+	Cardinality defines the number of instances in a relationship between two classes.
+
+	1. One-to-One (1:1)
+		One instance of Class A is related to only one instance of Class B.
+		Example:
+			Person ↔ Passport
+
+		A person has one passport, and a passport belongs to one person.
+
+	2. One-to-Many (1:N)
+		One instance of Class A is related to many instances of Class B.
+		Example:
+			Teacher → Students
+
+		A teacher can teach many students, but each student has one main teacher.
+
+	3. Many-to-One (N:1)
+		Many instances of Class A are related to one instance of Class B.
+		Example:
+			Students → School
+
+		Many students go to one school.
+
+	4. Many-to-Many (M:N)
+		Many instances of Class A are related to many instances of Class B.
+		Example:
+			Users ↔ Courses
+
+		A user can enroll in multiple courses, and each course can have multiple users.
+
+Representation in UML
+	1:1 → 1 ---- 1
+	1:N → 1 ---- *
+	N:1 → * ---- 1
+	M:N → * ---- *
+
+✅ In short:
+	Cardinality tells how many objects of one class are associated with how many objects of another class.
+
+	

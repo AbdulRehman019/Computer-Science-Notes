@@ -1,0 +1,70 @@
+// Refer to javapoint
+// https://www.javatpoint.com/java-arraylist
+
+1. It works in the same as normal array i.e. arr is created in stack, and it points to the reference variable in heap
+   which in turn point to the actual array at some other location in heap.
+
+2. Size is fixed internally.
+
+3. Say array list fills by some amount then
+   * It creates a new array list of double the size.
+   * Old elements are copied in new one and the old array is deleted.
+
+4. Memory is non-continuous and size is not defined.
+
+// Important
+5. Array can store primitive data type as well as objects whereas array list stores only objects and don't store primitive data types.
+   To store primitive data types we need to use classes of primitive data types. For example to store int we need to use "Integer" class
+   ArrayList<Integer> list = new ArrayList<Integer>();
+
+6. Various operation which can be performed on arraylist are-
+	Add, Get, Modify, Delete/Remove, Iterate etc.
+
+7. // Add elements
+        list.add(0);
+        list.add(5);
+        list.add(8);
+
+8. // Print Elements
+	System.out.println(list);
+
+9. // Get Elements
+	int element = list.get(0);
+	System.out.println(element);
+
+10. // Add element in between
+	list.add(1,2);
+	// Here 1 is index and 2 is the element to be added.
+
+11. // Set element at any index
+	list.set(0,5);
+	// It will add 5 at index 0
+
+12. // Delete element
+	list.remove(3);
+	// It will remove third index
+
+13. // Find the size of list
+	int size = list.size();
+
+14. // Loops
+	for(int i = 0; i < list.size(); i++){
+	System.out.print(list.get(i));
+	}
+	System.out.println();
+
+15. // Sorting
+	Collections.sort(list);
+	System.out.println(list);
+	// Collection is a class which has different function such as sort, maps, etc.
+	// It doesnot work on arrays. It works only in arraylist.
+	// To use collections class you need to import java.util.collections
+
+16. // Converting ArrayList to Array
+	// https://www.geeksforgeeks.org/arraylist-array-conversion-java-toarray-methods/
+
+	First Method: Integer[] ans = nums3.toArray(new Integer[len]);
+	Second Method: Object[] objects = al.toArray();
+	Third Method: Integer[] arr = new Integer[al.size()];
+	It returns an array of Objects, that can't be assigned to array of primitive integer types.
+	

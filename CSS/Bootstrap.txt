@@ -1,0 +1,7 @@
+Bootstrap
+
+https://interviewbit.com/bootstrap-interview-questions/
+
+
+
+1. .propTypes, .defaultProps

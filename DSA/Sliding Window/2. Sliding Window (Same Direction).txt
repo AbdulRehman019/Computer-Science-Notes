@@ -1,0 +1,198 @@
+Sliding Window (Same Direction)
+	This pattern is a game-changer when it clicks — so let’s master it.
+
+	🔍 Sliding Window: Core Idea
+		You maintain a window (usually a subarray or substring), using two pointers:
+			right pointer: expands the window to include more elements
+			left pointer: shrinks the window when a constraint is violated
+
+		This pattern shines when the problem says:
+			Type1: “Find the longest/shortest subarray/subsequence that satisfies a condition” --> Use Sliding window
+			Type2: “Count subarrays with something…” Or "No. of subarrays with some conditions" --> Difficult one but solved using the given template only.
+			Type3: “Minimize/maximize something in a window” Or "Shortest/Minimum window with some conditions"
+
+		*** Important *** right - left + 1 gives you size and number of subarrays including right. 
+ 		count++ will give you that valid subarray. 
+
+	🧠 Template
+		int left = 0;
+		for (int right = 0; right < n; right++) {
+		    // Expand the window by including nums[right]
+		
+		    while (window violates condition) {
+		        // Shrink the window from the left
+		        left++;
+		    }
+		
+		    // Update result based on current window size or contents
+		}
+
+	Logic: 
+		Usually in these type of problem we will have three things common: left = 0, right = 0. maxLen = 0. 
+		Fourth variable will vary: sum, count.
+		We will go: 
+			while(right < n), 
+			perform some operation(Expand no matter what), 
+			check whether we are violating the condition or not,
+			if yes, we will shrink and move back to right condition and update our answer
+			if no, we will go ahead and update our answer 
+			Like in above template
+
+	Notes:
+		1. Instead of jumping left to a index, try to do left++, you will avoid mistakes.
+		2. Problems including maximum/minimum number we play on whaterver maximum or minimum we need to find. 
+		   Like in Maximum consecutive ones, we play on count of flipped zeroes
+		   And in Fruit into Baskets, we played on number of type of fruits in the window.
+
+	✅ How to Build & Memorize These Links
+		🧩 1. Make Pattern Families
+			Create a mental (or written) “pattern family” for:
+			
+			Sliding Window → Based on:
+				Count (e.g., max 2 types, at most k zeros)
+				Frequency
+				Sum
+
+			When a new problem pops up, ask:
+				“Is this just a general or special case of another problem I’ve seen?”
+
+		🧠 2. Ask These Trigger Questions While Solving:
+			Does the window require counting types, frequency, or values?
+			Is the goal to find the longest/shortest valid window?
+			Is there a K in the problem? → Likely a generalization.
+
+			Can I solve this by adapting a known problem with a different constraint?
+
+		🛠️ 3. Keep a Pattern Sheet (Or Flashcards)
+			Pattern Name			Problem	K Involved?				Key Trick
+			SW - At Most K Distinct		Longest Substring with ≤K distinct chars	✅ Yes	HashMap + window
+			SW - At Most 2 Types		Fruit Into Baskets / Substring with ≤2		✅ Yes (K=2)	Same structure
+			SW - At Most K Zeros		Max Consecutive Ones III			✅ Yes	Count zeros
+
+			Review these weekly → helps retention through repetition.
+
+		🧠 4. Recognize the Constraint Type
+			Let’s categorize a few:
+				Problem	Constraint 			Type			Pattern
+				Longest Substring Without Repeats	Unique Only (Set)	SW + HashSet
+				Longest Substring w/ ≤ K Distinct	At Most K Types		SW + HashMap
+				Max Consecutive Ones III		At Most K Zeros		SW + Counter
+				Fruit Into Baskets			At Most 2 Types		SW + HashMap
+				Min Size Subarray Sum			Window Sum ≥ Target	SW + Shrinking Sum
+
+
+	Problems Solved: 
+		1. Longest Substring Without Repeating Characters
+		2. Minimum size subarray sum
+		3. Maximum consecutive Ones III
+		4. Longest Repeating Character Replacement
+		5. Fruit into Baskets
+
+	Similar Problems
+		1. Max Consecutive Ones III, Longest Repeating Character Replacement --> Depends on number of flips --> Play on number of flips --> 
+		   Make flips in correct range
+		2. Minimum Size Subarray Sum, Fruit Into Baskets, Longest Substring with At Most K Distinct Characters --> Depend on sum or frequency --> 
+		   Play on frequency
+
+*************************************************** Minimum Size Subarray Sum ************************************************
+**************** Solution1: 
+1. Tracking Condition: Sum; sum >= target
+
+2. Updating Result: Min size
+
+3. Window: right - left + 1
+
+4. Tracking: I am tracking sum, if sum is greater than equal to target, it means it can be the possible answer. Since, it is greater, we start shrinking the size 
+	     and subtract nums[left] we are trying to minimize the length until size is greater than equal to target.
+
+5. When do we shrink?
+	When we are in the correct range, we are trying to minimize. 
+	sum >= target	-->	left++
+
+6. Edge Case Thought: 
+	When if array is 1, 0, 0, 0 and target = 0, in that case left will keep moving ahead and ans will become negative that's why we only if left <= right.
+
+****************** Solution2:
+1. You can think that answer will lie between 1 and n, so what if i check that okay if one as a minimum size is okay or not, if not we nove to two, then three and so on.
+   And if we get the answer we won't go ahead because we want the smallest.
+
+2. But instead of traversing one by one, use binary search. Minimum possible: 1, Maximum possible: n - 1. 
+
+
+*************************************************** Subarray Product Less Than K (#713) ********************************************
+Similar to above problem. 
+But, if we had calculated count as count++, then we would have missed some of the counts.
+Hence, we calculated it like, how many subarrays can be formed with this length - how many subarrays were possible with previous length.
+
+
+*************************************************** Maximum Consecutive Ones III ************************************************
+
+*************************************************** Longest Repeating Character Replacement ************************************************
+
+
+
+*************************************************** Fruit into Baskets *********************************************************
+First i thought of the approach in which i will track two types of fruits with their last appeared index.
+And when third type comes, i will remove the first type index, make second as first and third as second.
+But this approach fails when the input is scattered like: 1, 2, 1, 3, 1, 2
+
+Hence, i take into account the frequency and remove a element only when frequency of that element is 0 in that window.
+Hence, i take into account
+We track the number of elements in a window.
+When the first type came i inserted it in map with its frequency 1.
+When the second type came i inserted it in map with its frequency 1.
+If any of the type comes again i increased the frequency.
+Since, number of elements in map exceeds two, i removed elements from left and start decreasing the frequency of removed type. 
+If that type becomes 0, i will remove that type and the number of elements in map will again become two(Again in correct window).
+
+
+*******************************************************  Longest Substring with At Most K Distinct Characters **********************************************
+Extension of "Fruit into Baskets", instead of two unique we have k unique.
+
+
+
+******************************************************* Longest Repeating Character Replacement *******************************************************
+Instead of map, i used int[] freq = new int[26]. We can go with map too.
+
+First i expanded, did right++, increased freq[char] and updated maxFreq.
+
+Second i checked (r - l + 1) - maxFreq > k, it will give the number of characters changed, if it is greater than k, it means the number of characters changed 
+are greater than allowed. This means window is violated we will shrink the window and bring it back in valid range.
+
+We will update the maxLen.
+
+Why we didn't updated maxFreq while removing characters from left?
+	If suppose, k = 1 and we reached somewhere this condition: r - l + 1 = 5 and maxFreq = 3 then (r - l + 1) - maxFreq > k(1).
+	We have 5 - 3 > 1. 
+	Now, we will want two things either to increase the length (r - l + 1) because we want the maxLen. Or Increase the maxFreq so that window can be in correct range.
+	If we don't decrease the maxFreq, then also all the length greater than current one(5) like 6, 7, 8, 9... will be invalid for maxFreq 3.
+	6 - 3 > 1 or 7 - 3 > 1 and by decreasing the maxFreq we will increase the number of change characters.
+	6 - 2 > 1.
+	Hence the decreased maxFreq can never give the answer. 
+	Difficult to think first time. 
+	But if we decrease the maxFreq, by checking everytime the complexity won't increase much. And that is thinkable. 
+
+******************************************************* Permutation in String ******************************************************* 
+Solution 1: I thought of storing the frequency of characters in map1. 
+	    Then, I started moving on second string. 
+	    At ith index: If map1 doesnot contain charAt(i), then we resetted the map2.
+
+			  If map2 doesnot contain charAt(i) or frequency of that character in map2 is less than frequency of that character in map1. 
+			  Then put in map2 and increase the count and if count == s1.length(), permutation exists. 
+
+			  But if the frequency increases in map2 then we start moving from left and remove the characters from left until we reach s.charAt(i) == ch.
+			  Everytime we remove from left, we decrease the count. 
+
+Solution 2: It's similar to the problem, in a window of s1.length() size, it contains all the characters of s1. 
+	    int n = s1.length(), int n = s2.length() 
+	    
+	    Maintain the frequency of s1, in int[] freq1 = new int[26]
+	    Maintain the frequency of s1.length() in int[] freq2 = new int[26]. 
+
+	    Iterate from 0 to s1.length() and maintain the frequency of s2. 
+	    Check if this contains the exact same character and exact same frequency. 
+
+	    Now move from n to m and everytime decrease the count of s2.charAt(left) and increase the count of s2.charAt(right). 
+	    Everytime, check the frequency of freq1 and freq2, if they both are same for all characters, it means it exists otherwise move ahead. 
+
+	    See the code for easier explaination. 

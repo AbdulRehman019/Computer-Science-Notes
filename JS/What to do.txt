@@ -1,0 +1,8 @@
+1. Intro
+2. OOPs
+3. DBMS
+4. MYSQL
+5. Javascript
+6. React
+7. Project
+8. HR Questions

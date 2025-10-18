@@ -1,0 +1,58 @@
+1. Program vs Process vs Thread 
+	1. Program
+		A program is just a passive set of instructions stored on disk (e.g., .exe, .py, .class, .c file).
+		It is not running, just a file.
+
+		Becomes a process only when executed.
+
+		Example:
+			notepad.exe     ← program file
+
+		When you double-click it → it becomes a process (running instance of Notepad).
+
+	2. Process
+		A process is an active instance of a program in execution.
+		It has its own memory space, data, resources (files, sockets), and CPU time.
+
+		Each process runs independently.
+
+		Crashing one process does not affect others.
+
+		Communication between processes requires Inter-Process Communication (IPC) mechanisms (like pipes, shared memory, sockets).
+
+		Example:
+			If you open Notepad twice → there are two processes of Notepad running.
+
+		Key Characteristics:
+		Property	Description
+		Memory		Has its own address space
+		Communication	Difficult (needs IPC)
+		Dependency	Independent of other processes
+		Overhead	Heavyweight (more resources)
+
+	3. Thread
+		A thread is a lightweight sub-unit of a process — also called a path of execution inside a process.
+		Threads share the same memory and resources of the parent process.
+
+		Faster communication (since they share memory).
+
+		But, if one thread crashes, it can bring down the entire process.
+
+		Example:
+			Your browser (one process) has multiple threads:
+			One thread handles UI
+			One thread loads web pages
+			One thread plays a video
+
+		Key Characteristics:
+		Property	Description
+		Memory		Shares process memory
+		Communication	Easy (shared memory)
+		Dependency	Threads in same process are interdependent
+		Overhead	Lightweight
+
+Analogy
+	Imagine:
+		🗂️ Program = Recipe in a cookbook (instructions only)
+		🍳 Process = Chef cooking the dish (executing the recipe)
+		👩‍🍳 Threads = Multiple helpers in the kitchen working on parts of the same dish

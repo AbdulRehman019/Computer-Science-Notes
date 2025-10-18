@@ -1,0 +1,27 @@
+Prime Number: 
+	Instead of going from 2 to n - 1, go to Sqrt of n.
+	Why? 
+	Example: 36
+	Pairs which exists are (1, 36), (2, 18), (3, 12), (4, 9), (6, 6)
+
+	So, if went till 6 for 36, we will cover every possiblity. If it is not divisible till 6, it won't be divisible further.
+	So we just went from 2 to 6, which are only 5 times.
+	If we would have gone from 2 to 35, it was 34 times.
+
+	If you see 6 is a square root of 36.
+
+GCD: 
+	Brute: Start from min(a, b) and move till 1 and whichever number divides both "a" and "b" first is our GCD.
+
+	Optimal: Euclidean 
+		 You start from "a" and "b" and everytime your denominator become numerator and your denomiator become b % a. 
+
+		 If we start from "a" and "b". Where b = numerator and a = denominator
+		 At next step a becomes numerator and b % a becomes denominator. 
+
+
+		static long gcd(long a, long b) {
+		        if(a == 0) return b;
+		
+		        return gcd(b % a, a);
+		}	

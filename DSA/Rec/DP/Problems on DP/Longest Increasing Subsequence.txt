@@ -1,0 +1,118 @@
+Longest Increasing Subsequence 
+
+1. Longest Increasing Subsequence 
+	Sol1: Recursion 
+		Everytime we have two options, we can either take it or not take it. 
+		In order to take it we should know what we took previously, then only we can decide whether to take it not. 
+		Hence, we need to maintain two indices (idx, prevIdx)
+
+		Initially, prevIdx will not lie between 0 to n - 1 because you haven't taken anything yet. 
+		We will take prevIdx as "n" in starting. We can also take -1 or any other number. 
+		But taking n or -1 we can write our solution easily. 
+		
+		Every time you will have two options:
+		If not taken: 0 + f(i + 1, prevIdx)
+		If taken: 1 + f(i + 1, i) // curr idx became the prev idx. 
+
+	Sol2: Memoization 
+		public int f(int curr, int prev, int n, int[] nums, int[][] dp) {
+        		if(curr == n) return 0;
+
+		        if(dp[curr][prev] != -1) return dp[curr][prev];
+		
+		        int ntake = f(curr + 1, prev, n, nums, dp);
+		        int take = -1;
+		
+		        if(prev == n || nums[curr] > nums[prev]) {
+		            take = 1 + f(curr + 1, curr, n, nums, dp);
+		        }
+		
+		        return dp[curr][prev] = Math.max(take, ntake);
+		    }
+
+	Sol3: Tabulation
+		We will use two loops. 
+		But in it the previous can become greater than curr idx which is not possible. Hence, we will not take that case. 
+		public int lengthOfLIS(int[] nums) {
+        		int n = nums.length;
+		        int[][] dp = new int[n + 1][n + 1];
+		
+		        for(int i = n - 1; i >= 0; i--) {
+		            for(int j = 0; j <= n; j++) {
+		                int ntake = dp[i + 1][j];
+		                int take = -1;
+		
+		                if(j == n || nums[i] > nums[j]) {
+		                    take = 1 + dp[i + 1][i];
+		                }
+		
+		                dp[i][j] = Math.max(take, ntake);
+		            }
+		        }
+		
+		        return dp[0][n];
+		    }
+
+	Sol4: Space Optimization 
+
+	Sol5: At every index we start from 0 till index - 1 and if current index is greater than prev index we took the max of dp[idx], 1 + dp[prev]. 
+	      It calculates the subsequence which was possible till prev idx + 1. 
+
+		public int lengthOfLIS(int[] nums) {
+        		int n = nums.length;
+
+		        int[] dp = new int[n];
+		        Arrays.fill(dp, 1);
+		        for(int idx = 1; idx < n; idx++) {
+		            for(int prev = 0; prev < idx; prev++) {
+		                if(nums[idx] > nums[prev]) 
+		                    dp[idx] = Math.max(dp[idx], 1 + dp[prev]);
+		            }
+		        }
+		
+		        int lis = 1;
+		        for(int i = 0; i < n; i++) 
+		            lis = Math.max(lis, dp[i]);
+		
+		        return lis;
+		    }
+
+2. Print Longest Increasing Subsequence 
+	We will use solution 5 of "Longest Increasing Subsequence". 
+	We will use two arrays: dp and hash array. 
+	Dp array will store length and hash array will store the previous index from which we came here. 
+	We stored max index also, and trace back from there until hash[maxIdx] != maxIdx. 
+
+	int maxIdx = 0;
+        for(int idx = 1; idx < n; idx++) {
+            for(int prev = 0; prev < idx; prev++) {
+                if(arr[idx] > arr[prev]) {
+                    if(1 + dp[prev] > dp[idx]) {
+                        dp[idx] = 1 + dp[prev];
+                        hash[idx] = prev;
+                    }
+                }
+            }
+
+            if(dp[idx] > dp[maxIdx]) {
+                maxIdx = idx;
+            }
+        }
+
+        List<Integer> list = new ArrayList<>();
+        while(hash[maxIdx] != maxIdx) {
+            list.add(0, arr[maxIdx]);
+            maxIdx = hash[maxIdx];
+        }
+
+        list.add(0, arr[maxIdx]); 
+
+3. Longest Divisible Subset
+	Similar to LIS, only inner condition is changed. 
+
+4. Longest String chain 
+	Similar to LIS, we need to sort the array because we can take any string first.
+
+5. Number of Longest Increasing Subsequence 
+	As we use hash array to store the previous index in Print LIST. 
+	We use count array to store the count of that length. 

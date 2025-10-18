@@ -1,0 +1,70 @@
+1. What is Spring Boot?
+	Spring Boot is a framework for building applications in the Java.
+	Spring Boot makes it easy to create stand-alone, production-grade Spring based applications that you can just run.
+	
+2. Why Spring Boot?
+	The core Spring framework already reduces boilerplate code and provide a lot of helpful features for java applications.
+	However, Spring Boot takes this convenience to the next level by focusing specifically on reducing the effort required to set up and configure a Spring Application.
+	While Spring simplify many tasks like:
+		Creating web applications
+		Working with Databases
+		Manage Transactions and more.
+
+	But setting a Spring project can still involve quite a bit of manual configuration.
+	This is where Spring Boot steps in.
+
+3. Setting up a basic Restful API requires manual configuration
+	We need to manually set up the Spring Application Context in the main method.
+	But in Spring Boot we use the @SpringBootApplication annotation on the main class. This single annotation replaces the need for setting up a manual Spring Application Context.
+	We no longer need to explicitly create an application context using "AnnotationConfigApplicationContext" as Spring Boot handles that behind the scenes.
+	We use "SpringBootApplication.run()" to start the application, and Spring Boot takes care of configuring the embedded web server and other neccessary components.
+	The "@SpringBootApplication" annotation alone brings in a lot of pre-configured features, including "automatic component scanning" and "embedded server configuration", which would
+	have requied more steps in a traditional Spring Setup.
+
+4. What is IOC?
+	In Spring Boot, Inversion of Control (IoC) is a design principle that shifts control of object creation and dependency management from the developer to the Spring IoC container. 
+	This helps in creating loosely coupled applications, making them more maintainable and scalable.
+
+	How It Works:
+		Spring has an IoC Container (also called ApplicationContext).
+		When the application starts, Spring scans for beans (@Component, @Service, etc.)
+		It creates, configures, and manages those objects.
+		Then it injects them wherever needed using @Autowired or constructor injection.
+
+5. What is application context?
+	Application context is a way to implement IOC container. So we can use IOC and application context interchangebly.
+
+6. How IoC container holds the objects?
+	IoC container scans the packages we mention and stores the objects of classes.
+	So does it stores the object of all classes found in our project?
+	No, it scans for special classes with annotations @Component
+	And when we ask for it's object using @Autowired, it searches the IOC container and give the object or bean.
+
+7. Differnce between @Component and @Bean?
+	In Spring Framework, both @Component and @Bean are used to define beans (i.e., objects managed by the Spring container), but they serve different purposes and are used in different 	contexts.
+
+	@Component
+		Purpose: Used to mark a class as a Spring-managed component (bean).
+		Usage: Placed directly on the class.
+		Scanning: Detected automatically via classpath scanning with @ComponentScan.
+		Scope: Usually used for application-level components like services, repositories, controllers, etc.
+
+		@Component
+		public class MyService {
+		    // Spring will automatically detect and register this as a bean
+		}
+
+
+	@Bean
+		Purpose: Used to define a bean explicitly inside a configuration class.
+		Usage: Placed on a method inside a @Configuration class.
+		Scanning: Not automatically scanned — must be returned from a method in a config class.
+		
+		@Configuration
+		public class AppConfig {
+
+		    @Bean
+		    public MyService myService() {
+		        return new MyService(); // Spring registers this return object as a bean
+		    }
+		}

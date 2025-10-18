@@ -1,0 +1,32 @@
+
+/*
+    To change style using CSS you can use either of three methods: 
+    1. Using Tags
+        The problems with tag is every tags style will change. It is not specific.
+        Meaning, if you select h1 tag then property of every h1 present in the site will change,
+        which we don't want.
+        
+    2. Using Class
+        We can provide different tags, different class name and can change style.
+        The property of tags only with the class's name will change.
+
+    3. Using ID
+        Works similar to classes but there can be only one id with the same name present in
+        whole page alike classes which can be present more than once.
+
+        ID > Class > Tag
+*/
+
+/*
+  1. We use classes when we need to apply the same style to a group of related items
+  2. We use ID when we need to specific style to a single element on our web page
+  3. More than one classes can be defined in a single HTML element
+  4. More than one ID cannot be defined in a single HTML element
+  5. IDs and Classes overwrite tag selector
+  6. IDs are rarely used
+  7. A pseudo-class is used to define a special state of an element. It starts with colon For eg. a:visited
+        For example, it can be used to:
+          Style an element when a user mouses over it
+          Style visited and unvisited links differently
+          Style an element when it gets focus
+*/

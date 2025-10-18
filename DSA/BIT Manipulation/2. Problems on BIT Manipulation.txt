@@ -1,0 +1,121 @@
+Problems on BIT Manipulation 
+
+1. Xor of two numbers makes the different bits in two numbers 1. 
+2. n & n - 1 converts all the bits from right most set bit to Least signficant bit to 0. [Use to count number of set bits]
+
+1. Swap two numbers
+	a = a ^ b
+	b = a ^ b
+	a = a ^ b
+
+   Xor of same numbers is 0. 
+
+   Explaination
+	a = a ^ b
+	b = a ^ b = (a ^ b) ^ b = a
+	a = a ^ b = (a ^ b) ^ b = (a ^ b) ^ a = b
+
+2. Check if the ith bit is set
+	Solution 1: Left Shift 1 by "i" and perform and operation with number. 
+		    If it is 0, then ith bit is not set otherwise set. 
+
+		    Example: Check if 2nd bit of 13 is set or not 
+				13 = (1101) 
+				Left shift 1 by 2. It will become "0100" 
+				Now, if i perform and operation of (1101) and (0100) 
+				It will give non zero number, hence ith bit is set. 
+
+	Solution 2: Right shift number by i bit. 
+		    Hence, the ith bit will come at 0th index 
+		    Perform "AND" operation with "1" 
+		    Output will be 0 if it is not set otherwise 1 if it is set. 
+
+3. Set the ith bit to 1
+	Left shift 1 by i
+	Perform Or operation with number. 
+	ith bit will be set. 
+
+	n ^ (1 << i)
+
+4. Clear the ith bit
+	Left shift 1 by i
+	Take the "NOT" of it
+	Perform And operation with number. 
+	ith bit will be clear. 
+
+	n & ~(1 << i)
+
+5. Toggle the ith bit
+	Left shift 1 by i
+	Perform the "XOR" operation. 
+	ith bit will be toggled. 
+
+	n ^ (1 << i)
+
+6. Remove the last set bit
+	n & (n - 1)
+
+	n = 40 = (101000)
+	n - 1 = 39 = (100111)
+
+	If you see every bit after the right most set bit(in 40) is converted to 1(in 39)
+	If we do n & n - 1: 
+		Every bit after right most set bit will be 0
+		Right most set bit will become 0 
+		All the bits before Right Most Set Bit will remain as it is 
+
+7. Check if the number is a power of two or not
+	If a number is a power of 2, n & n - 1 will be 0. 
+
+8. Count number of set bits
+	Solution 1: Brute Force. We will convert the decimal to binary and while converting we will count the number of 1's. 
+		while(n != 1) {
+			if(n % 2 == 1) count++;
+			n /= 2;
+		}
+
+		But we can write, (n & 1 == 1) instead of (n % 2 == 1) 
+		Instead of n /= 2, we can write n = n >> 1. 
+
+		Bit Manipulations are faster. 
+
+		Time Complexity: O(log(n))
+
+	Solution 2: We know n & n - 1, convert the Right Most set bit to 0.
+		    Hence, everytime we will do n & n - 1, until n becomes 0. 
+			while(n != 0) {
+				n = n & n - 1;
+				count++;
+			}
+
+		Time Complexity: O(Set Bits)
+
+9. Reverse Bits
+	static long reverseBits(long n) {
+	        long result = 0;
+	        for (int i = 0; i < 32; i++) {
+	            result <<= 1;       // shift left to make space
+	            result |= (n & 1);  // add last bit of n
+	            n >>= 1;            // drop the last bit of n
+	        }
+	        return result;
+    }
+
+10. Every number appears thrice except one 
+	If we think all the bits will be divisible by three except for the bits which occur in one number. 
+	We can traverse to all bits and for every bit we can check in each number if that bit is set or not. 
+	If set we can increase the count and after traversing every number if the count of ith set bit is not divisible by three. 
+	It means that bit is set in that one number. 
+	Hence, we set that bit of our answer. 
+
+	int ans = 0;
+        for(int i = 0; i <= 31; i++) {
+            int count = 0;
+            for(int j = 0; j < n; j++) {
+                if((nums[j] & (1 << i)) != 0) count++;
+            }
+
+            if(count % 3 == 1) {
+                ans |= (1 << i);
+            }
+        }

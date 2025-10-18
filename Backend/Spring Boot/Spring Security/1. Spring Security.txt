@@ -1,0 +1,178 @@
+1. Spring Boot is a powerful and highly customizable security framework that is often used in Spring Boot applications to handle authentication and authorization.
+   Authentication: The process of verifying a user's identity(e.g. username and password)
+   Authorization: The process of granting or denying access to specific resources or actions based on the authenticated user's roles and permissions.
+
+2. There is a depenendency: 
+	spring-boot-starter-security
+
+   -> As you will add it, it will secure all your endpoints.
+   -> Once the dependency is added, Spring Boot's auto-configuration feature will automatically apply security to the application.
+   -> By default, Spring Security uses HTTP Basic Authentication.
+   -> The client sends an Authorization header "Authorization: Basic <encoded-string>". The server decodes the string, extracts the username and password, and verifies them.
+      If they are correct, access is granted. Otherwise, an unauthorized response is sent back.
+   -> Encoding credentials are combined into a string like username:password which is then encoded using Base64
+   -> By default, all endpoints will be secured.
+   -> Spring Security will generate a default user with a random password that is printed in the console logs on startup. You can also configure username and password in 
+      application.properties. Although we will have in our db. But then, if you want it can be achieved by this:
+		spring.security.user.name=user
+		spring.security.user.password=password
+
+3. By adding the above dependency, spring security is added to all the endpoints, but there are some problems like you have only one user and all the endpoints are 
+   authenticated using one password, all the enpoints are secured but we want to secure some endpoints, and which one?
+
+   Now we make one @Configuration calss to customize the security.
+
+4. Annotations related to Spring Security:
+	-> EnableWebSecurity: This annotation signal Spring to enable its web security support. This is what makes your application secured. It's used in conjuction with 
+			      @Configuration(XML file replica) 
+
+			      How it is different from "spring-boot-starter-security" dependency if it also enables web security support?
+			      It tells the spring, I am going to configure the Spring security.
+
+
+
+
+
+****************************************** More explaination in ******************************************
+
+
+
+
+
+1. Basic Authentication, by it's design, is stateless which means if you are sending the request with authorization header(username and password) and you are authenticated and 
+   the response is sent back.
+   The next request won't have any idea of previous request and authentication. Hence the request needs to be authenticated again.
+
+2. Some applications do mix Basic Authentication with session management for various reasons. This isn't standard behavior and requires additional setup and logic.
+   In such scenarios, once the user's credential's are verified via Basic Authentication, a session might be established, and the client is provided a session cookie.
+   This way, the client won't need to send the authorization header with every request, and the server can rely on the session cookie to identify the authencticated user.
+
+3. When you login with Spring Security, it manages your authentication across multiple requests, despite HTTP being stateless.
+	1. Session Creation: After successful authentication, an HTTP session is formed. Your authentication details are stored in this session.
+	2. Session Cookie: A JSESSIONID cookie is sent to your browser, which gets sent back with subsequent requests, helping the server recognize your session.
+	3. Security Conext: Using the JSESSIONID, Spring Security fetches your authentication details for each request.
+	4. Session Timeout: Sessions have a limited life. If you are inactive past this limit, you are logged out.
+	5. Logout: When logging out, your session ends, and the related cookie is removed.
+	6. Remember-Me: Spring Security can remember you even after the session ends using a different persistent cookie(typically have a longer lifespan).
+
+   In essence, Spring Security leverages sessions and cookies, mainly JSESSIONID, to ensure you remain authenticated across requests.
+
+4. We want our Spring Boot application to authenticate users based on their credentials stored in Mongo DB.
+   This means that our users and their passwords(hashed) will be stored in MongoDB, and when a user tries to login, the system should check the provided credentials against what
+   stored in DB.
+
+Steps to authenticate the users:
+Step 1: A user entity to represent the user data model.
+Step 2: A repository UserRepository to interact with MongoDB.
+Step 3: UserDetailsService implementation to fetch user details.
+Step 4: A configuration SecurityConfig to integrate everything with Spring Security.
+
+
+Flow without Spring Security:
+	Request -> Dispatcher Servlet(Internally) -> Controller -> Service -> Repository -> DB -> Response
+
+With Spring Security:
+	Request -> Spring Security(Spring Security Check) 
+			Two option arises:
+				matches "authenticated"
+					-> Extract credentials(In Spring Security inside BasicAuthenticationFilter) -> Use UserDetailsServiceImpl to load details from DB
+					   Where it is compared?
+						Internally in Spring Security’s DaoAuthenticationProvider, which uses your UserDetailsServiceImpl and your PasswordEncoder
+						Two option arises:
+							-> If Valid -> Controller -> Service -> DB -> Response
+
+				matches "permitAll"
+					-> controller -> service -> DB -> Response
+
+
+
+
+
+✅ Summary of Your Setup:
+	Component				Purpose
+	SecurityFilterChain			Configures which endpoints require authentication
+	UserDetailsServiceImpl			Used only when an endpoint is protected — loads user from DB
+	BCryptPasswordEncoder			Encrypts passwords before saving them
+	permitAll()				Allows public access (used for /user)
+	authenticated()				Requires valid credentials (used for /journal/**)
+
+
+Full Authentication Flow Using This Config
+	1. You send a request to /journal/** with an Authorization header (Basic Auth).
+	2. Spring Security:
+		Detects it’s a secured path.
+		Triggers BasicAuthenticationFilter.
+		Extracts and decodes username + password.
+		Calls your UserDetailsServiceImpl.loadUserByUsername(username) to fetch:
+			username
+			hashed password
+			roles
+
+	3. Compares raw password (you sent) to the stored hash using BCryptPasswordEncoder.matches(raw, hash).
+	4. If successful, the request goes to your controller.
+	   If not, returns 401 Unauthorized.
+
+✅ Summary
+	Part				Purpose
+	SecurityFilterChain		Defines what endpoints require auth.
+	UserDetailsServiceImpl		Fetches user info from DB.
+	configureGlobal()		Tells Spring to use your service and BCrypt.
+	PasswordEncoder			Handles hashing and verifying passwords.
+
+
+
+**************************************************** More Detail *****************************************************
+Authentication Flow (Behind the Scenes)
+	Here’s what happens step-by-step:
+		1. A request comes in with Authorization header (e.g., Basic Auth).
+		2. Spring’s BasicAuthenticationFilter sees the header and extracts:
+			username
+			password
+
+		3. It creates a UsernamePasswordAuthenticationToken with those credentials.
+		4. It passes this token to the AuthenticationManager, which:	
+			Uses the DaoAuthenticationProvider.
+			DaoAuthenticationProvider calls your:
+				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+			This is where your UserDetailsServiceImpl is actually called.
+
+			Then it does:
+				passwordEncoder.matches(rawPassword, userDetails.getPassword())
+
+		5. If it matches → authentication succeeds.
+		   Otherwise → throws BadCredentialsException
+
+
+Kul mila jula kr baat itni si hai:
+Agar koi request hoti hai "/users" to wo SpringSecurity ke paas jaati hai 
+Aur agar ye authenticated request hoti hai to internally hi credentials extract honge,
+Tumhare "configureGlobal" wale function se "AuthenticationManager" ke madad se "UserDetails" call hogi aur db se username aur password aayega 
+Aur password ki matching hogi.
+Jo tumne passwordEncoder() bana rakha hai usse pata chalega BCryptPasswordEncoder() use krna hai hashing ke liye.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

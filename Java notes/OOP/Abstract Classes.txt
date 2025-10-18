@@ -1,0 +1,65 @@
+
+                                            ABSTRACT CLASSES AND METHODS 
+
+1. Abstract methods are those types of methods that don't require implementation for its declaration. 
+   These methods don't have a body which means no implementation.
+
+*****************************************************************************************************************
+
+2. Syntax: 
+	abstract void career(String name);
+
+*****************************************************************************************************************
+
+3. If a class contains one or more abstract methods, the class must also be declared as abstract.
+
+*****************************************************************************************************************
+
+4. Abstract methods must be overriden in subclasses.
+
+*****************************************************************************************************************
+
+5. You cannot create object of abstract class.
+   But you can use it as reference variable. For example: Parent mom = new Daughter();
+   If you want to create object of abstract class, you need to define abstract methods at the time of constructing
+   objects. For example:
+		Parent mom = new Parent() {
+			@Override
+			void career() {
+
+			}
+		}
+
+   Reason: If you create object of abstract class and call abstract method, it will be unable to do so because 
+	   abstract method don't have body.
+
+*****************************************************************************************************************
+
+6. You cannot create abstract constructors.
+
+   Although you cannot create object of abstract class, you can create its constructor because it can be called 
+   through subclass constructor using "super".
+
+*****************************************************************************************************************
+
+7. You cannot create "abstract static" methods because abstract methods need to be overridden and static methods 
+   can't be overridden.
+
+*****************************************************************************************************************
+
+8. You can create abstract methods as well as static methods in abstract classes.
+
+*****************************************************************************************************************
+
+9. "Abstract" class cannot be "final" because "final" class cannot be inherited but "Abstract" class need to be 
+   overridden in "subclass".
+
+*****************************************************************************************************************
+
+			Do's and Dont's in Abstract classes and methods
+
+			Do's				Dont's
+			1. Abstract methods		1. Abstract constructor
+			2. Static methods		2. Abstract Static methods
+			3. Non-static methods		3. Cannot create object (Some conditions)
+							4. Cannot be final

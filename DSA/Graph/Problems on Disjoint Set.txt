@@ -1,0 +1,30 @@
+Problems on Disjoint Set
+
+1. Number of provinces 
+	Approach 1: You can use BFS/DFS, and everytime a call is made it is a new province. 
+
+	Approach 2: You can also use Disjoint Set. 
+		    Steps: 
+			1. Traverse over all the edges. 
+			2. Add them in disjoint set. 
+			3. Once traversed over all edges, you can find Ultimate parents of all nodes. 
+			   Number of unique ultimate parents will be your number of provinces. 
+
+2. Number of Operations to Make Network Connected 
+	Approach: Use Disjoint Set. 
+	Steps: 1. Traverse over all edges and them in disjoint set. 
+	       2. Everytime you get a edge which is already a part of same component, it is the extra edge. 
+	       3. Find ultimate parents of all nodes. If there are three unique ultimate parents, that means three different networks(set) exist. 
+		  To connect three sets, we need two edges. Hence, if number of extra edges are >= unique ultimate parents - 1 we can form a connected network. 
+		  You will need Unique ultimate parents - 1 number of edges. 
+	       4. If number of extra edges < unique ultimate parents - 1, it is not possible to make a connected network. 
+
+3. Most Stones Removed with Same Row or Column 
+	We treat rows and columns as index for disjoint set. 
+	Suppose, we have a (3 * 3) matrix, row will be represented from 0 to 2 and column is represented from 3 to 5. 
+	Suppose, a stone is present at (0,1). Hence, 0 and 1 point will belong to one set. 
+
+	From one set every stone can be removed except 1. 
+	Suppose there are n set, hence n unique ultimate parent. 
+	Hence, only these n stones cannot be removed which means (Total number of stones - n) number of stones can be removed. 
+

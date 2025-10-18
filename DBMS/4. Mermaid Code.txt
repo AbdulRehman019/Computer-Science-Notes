@@ -1,0 +1,63 @@
+erDiagram
+    
+    USER ||--o{ RECRUITER : is
+    USER ||--o{ JOBSEEKER : is
+
+    USER {
+        int user_id PK
+        string user_name
+        string email
+        string phone_number
+    }
+    
+    RECRUITER {
+        int user_id PK, FK
+        string company_name
+        string industry
+    }
+
+    JOBSEEKER {
+        int user_id PK, FK
+        string currently_working_company
+        int YOE
+        string current_role
+    }
+
+    RECRUITER ||--o{ JOBPOST : posts
+    JOBPOST {
+        int job_id PK
+        int recruiter_id FK
+        string company
+        string industry
+        string job_role
+        string job_description
+        date available_from
+        decimal salary_range_min
+        decimal salary_range_max
+        string country
+        string city
+        enum work_type "In-person, Fully Remote, Partially Remote"
+        enum employment_type "Full-time, Part-time"
+        enum contract_type "Permanent, Contract"
+        int contract_duration_months
+        enum status "Open, Filled"
+    }
+
+    JOBSEEKER ||--o{ APPLICATION : applies
+    JOBPOST ||--o{ APPLICATION : receives
+    APPLICATION {
+        int application_id PK
+        int user_id FK
+        int job_id FK
+        string uploaded_document
+        date application_date
+        enum status "Pending, Reviewed, Accepted, Rejected"
+    }
+
+    JOBSEEKER ||--o{ FAVORITE : favorites
+    JOBPOST ||--o{ FAVORITE : favorited_by
+    FAVORITE {
+        int user_id FK
+        int job_id FK
+        date favorited_on
+    }

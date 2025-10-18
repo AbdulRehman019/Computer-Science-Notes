@@ -1,0 +1,237 @@
+****************     Refer to TinDog webpage for implementation of theory         ****************
+/*
+  In CSS, a margin is the space around an element’s border, while padding is the space
+  between an element’s border and the element’s content. Put another way, the margin
+  property controls the space outside an element, and the padding property controls
+  the space inside an element.
+*/
+
+/*
+  1. Block elements take whole line. Eg. <p>, <h>, <div>, <ol>, <ul>, <li>, <form> etc.
+  2. Inline elements take only the space required. For eg. Spans(<span>), Images(<img>), and
+     anchors(<a>)
+  3. Span element can be inside <p> or <h> as well as it can be alone also.
+  4. The only problem with span element is that we cannot change width of line using import
+     whereas
+     In <p> we can change the width of the line.
+  5. We can make the block elements as inline elements by changing the display property from block
+     to Inline but it will loose the change in width property.
+     Similarly we can make inline elements as block elements and every word will start appearing
+     in the same line.
+	 display: line;
+  6. If you change display property as inline-block then you can manage the width as well as the
+     words will appear on the same line.
+  7. If you change display property to none it will simply disappear that word as if never existed.
+  8. display: inline;
+     display: block3B
+     display: inline-block
+     display: none;
+  9. If you make visibility as hidden (visibility: hidden;) then the word will disappear leaving
+     the space for that particular word/part.
+*/
+
+/*
+
+	// Box Model
+	In CSS, the term "box model" is used when talking about design and layout.
+
+	The CSS box model is essentially a box that wraps around every HTML element. It consists of: margins, borders, padding, and the actual content. The image below illustrates the box 	model:
+	Margin
+	Border
+	Padding
+	Content
+
+	Explanation of the different parts:
+
+	Content - The content of the box, where text and images appear
+	Padding - Clears an area around the content. The padding is transparent
+	Border - A border that goes around the padding and content
+	Margin - Clears an area outside the border. The margin is transparent
+
+	The box model allows us to add a border around elements, and to define space between elements. 
+
+*/
+
+/*
+  Positioning of elements:
+  Few default rules for positioning of contents without CSS:
+    1. Content is everything i.e. height and width is determined according to the content in inline
+       elements
+       whereas only height is determined in block elements.
+    2. Order comes from code i.e. your website will be displayed in the same order as your code.
+    3. Children sits on the top of parents. For eg.
+          <div>
+          <h1> A <span> Programmer </span> </h1>
+          </div>
+      In the above code span will appear closest to the viewer and farthest from the screen
+      and h1 will be in b/w span and div and div will be farthest from the viewer and closest
+      to the screen.
+
+  CSS positioning:
+    1. Static
+        It means all html elements are positioned by default and we go along with without
+        making any changes.
+    2. Relative
+        It means that elements will be positioned relative to the static(default) position.
+        For eg.
+          img{
+          position: relative;
+          left: 30px;
+          }
+        It will move the image to the right by 30px from the left of the default position.
+        It means the left edge of the image now will be 30px away from the previous left edge.
+        The other coordinates which can be affected from relative positioning are:
+          1. right
+          2. top
+          3. bottom
+
+        When we use the relative positioning for a particular element it does not affect
+        the position of other elements so if you do top: 50px; and there is any other image
+        just below that image then the moved image will overlap the below image.
+
+    3. Absolute
+        It means you are adding a margin to its parent element and in most cases parent is
+        the whole body.
+        When we use the absolute positioning for a particular element it affect the position
+        of other elements.
+        In some cases parent can be some other element(one div for another div).
+        For eg.
+        <div class="container">
+          <div class="red" > </div>
+        </div>
+
+        .container {
+          height: 300px;
+          width: 300px;
+          background-color: grey;
+          position: relative;
+        }
+
+        .red{
+          height: 100px;
+          width: 100px;
+          background-color: red;
+          position: absolute;
+          right: 0px;
+          }
+
+          In this case the absolute positioning is done relative to container div.
+	      In order to make the positioning of "red div" relative to "container div", the "container div" should be positioned relative.
+		Otherwise the "red div" will be relative to body.
+          And you need to make the parent as relative to make the child relative to parent
+          not the body.
+
+    4. Fixed
+          In this positioning the particular element is fixed on the screen.
+          It means that the element will remain at a particular position on screen even if we
+          scroll down the page.
+*/
+
+/*
+    text-align: center; inside the parent element will center everything inside, that does not
+    have a width set. For eg. Inline element and block element with no width set.
+    If it has a width set then you need to assign its margin value as auto to center the element.
+	h1 {
+    		margin-top: 0;
+    		width: 10%;
+    		margin: 0 auto 0 auto;	// top right bottom left
+	}
+*/
+
+/*  Font size means the size of the fonts where as line height means distance between
+    two lines.
+    Ways to change font size:
+      1. Using px. By this method the change is static that means if you change the appearance
+         of browser to large in preference then also the size of the font will remain same.
+      2. Using em. By this method the change is dynamic that means if you change the appearance
+         of browser to large in preference then the size of the font will also change.
+         1em = 100% = 16px. Hence 90px = 90/16 i.e. 5.625em
+      3. Using %. By this method also the change is dynamic that means if you change the
+         appearance of browser to large in preference then the size of the font will also change.
+         100% = 16px. Hence 90px = (100*90)/16 i.e. 562.5%
+
+      Note: If you change the font size in body and then change the font size in heading
+            section then the resultant font size will be the added result of both.
+            But if you use rem in place of em then font size of body will be ignored and
+            the font size of heading will be displayed.
+
+*/
+
+/*
+    FLOAT and clear
+    1. We use float when we want two elements side by side. As in our example we wanted
+       image and text to be side by side rather than below one another.
+       See CSS-My site .myskillimg in style.css
+
+    2. We use clear when we want the image and some part of the text(for eg, heading)
+       side by side and some of its part below. In this case we make class of <p>
+       and set its clear as right. It works like anti float and the particular particular
+       part remains below the image.
+       E.g.
+       .my_skillimg {
+         width: 250px;
+         border-radius: 250%;
+         float: left;
+         margin-right: 30px;
+         margin-bottom: 10px;
+       }
+
+       .code_skill_description{
+         clear: left;
+       }
+*/
+
+/*
+  Notes:
+  1. You can use button generator as used in CSS-My Site for creating contact me button.
+  2. You can directly copy the link from fonts.google.com for different font style and
+     paste in head section.
+*/
+
+/*
+      Advanced CSS Concepts
+
+      Z-index
+      It is the third dimension in the website. To use it on any particular element the element must
+      be positioned other than static.
+*/
+
+/*
+
+  Combining Selectors
+  1. Multiple Selectors
+      We select multiple selectors and separate them by comma.
+      For eg. h1,h2,h3{}
+
+  2. Hierarchical Selectors
+      In this type of selection the selectors are in Hierarchical order i.e. the first one is parent
+      and the other one is children. Selectors are separated by space.
+      Selector1(Parent) Selector2(Children)
+      For eg.
+      #title .container-fluid{
+        padding: 3% 15% 7%;
+        text-align: left;
+      }
+
+  3. Combined selectors
+      In this type of selection every selector is at same Hierarchical level.
+      In this case there is no space between selectors.
+      For eg. In this case
+      <div class="container">
+         <h1 id="heading" class="title"> Hello World! </h1>
+      </div>
+      The combined selectors will be like this
+        #heading.title{
+          color: red;
+        }
+      It will change the color of the text to red.
+
+*/
+
+/*
+
+  Selectors priority
+  Priority of inline css > internal css > external css.
+  Priority of id > class > element.
+
+*/

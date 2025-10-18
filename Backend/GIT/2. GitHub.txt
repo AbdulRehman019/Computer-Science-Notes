@@ -1,0 +1,57 @@
+1. To add other's github code in your local machine, you have various options:
+	1. Download zip file
+	2. Use Https link provided and use cmd: git clone link
+	3. Use ssh
+
+2. Create a new repository in your github.
+   Click "+" -> New Repository
+
+2. When connecting your local repository to remote repository(github) you need a ssh-key so your remote repository can identify your local repository.
+	Steps to generate ssh key
+		1. ssh-keygen -o (Can also use ssh-keygen -t ed25519 -C "your_email@example.com": more secure)
+		2. Navigate to the directory(C:\Users\Abdul\.ssh) in which your key is generated(Using cmd)
+		3. Use cmd: cat fileName(.pub) (Example: cat id_ed25519.pub (or id_rsa.pub ))
+		4. Copy the SSH Key
+		5. Your ssh key will be generated.
+		6. Go to Github -> Settings -> SSH Keys
+		7. Paste your SSH Key.
+
+3. Navigate to your working directory/local repository which you want to push to remote repository.
+	Use following cmd:
+		git remote add origin git@github.com:AbdulRehman019/GitStudy.git
+		git branch -M main
+		git push -u origin main
+
+4. Suppose you did 10 commits and now you think you are ready to release your product and want to give it version, you can use tags.
+	To create a tag: git tag -a v1.0 -m "First Release!"
+	To see all tags you have created: git tag
+	To push the tag: git push origin v1.0
+
+5. To create and switch to new branch:About SSH vs HTTPS 
+	git checkout -b branchName
+	git switch -c branchName
+
+6. To see all the branches in local repository: git branch
+   To see all the branches in local/remote repository: git branch --all
+   To delete a branch: git branch -d branchName
+	If the branch isn’t merged yet, Git will warn you. Use -D to force delete:
+		git branch -D branchName
+   To push local branch to remote repository: git push origin branchName
+   To pull changes from remote repo: git branch -D branchName
+
+7. .gitignore
+	 A .gitignore file prevents accidentally pushing sensitive or irrelevant files (like credentials, logs, or node_modules).
+		touch .gitignore
+		git add .gitignore
+		git commit -m "Add .gitignore"
+
+8. How to resolve conflict?
+	Checkout your branch which is behind
+	Pull the master branch
+	Resolved the conflict
+	Push it to your branch
+
+8. ssh vs Https
+	✅ SSH is preferred for regular contributors (no need to enter username/password).
+	🌐 HTTPS is easier for beginners or on systems without SSH keys.
+

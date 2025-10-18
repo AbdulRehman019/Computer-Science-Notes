@@ -1,0 +1,132 @@
+2. Array partition with minimum difference
+
+Used to be tough, but this time oh la la...
+
+Recursion:
+ 	We need the array partition with minimum difference.
+ 	If we follow the take/ntake approach, every time we reach at (i == n) we will have a subset with its sum.
+ 	We can easily calculate the sum of other subset by subtracting (Total Sum of array) - (Current Sum).
+ 	Then, we can return the difference between them.
+ 	And at every point we can return the minimum difference.
+
+ 	Solution:
+ 		public static int f(int i, int sum, int n, int tsum, int[] arr) {
+        		if(i == n) {
+ 		            return Math.abs((tsum - sum) - sum);
+ 		        }
+ 
+ 		        int take = f(i + 1, sum + arr[i], n, tsum, arr, dp);
+ 		        int ntake = f(i + 1, sum, n, tsum, arr, dp);
+ 
+ 		        return Math.min(take, ntake);
+ 		    }
+ 
+ 		    public static int minSubsetSumDifference(int []arr, int n) {
+ 		        int tsum = 0;
+ 		        for(int i = 0; i < n; i++) {
+ 		            tsum += arr[i];
+ 		        }
+ 
+ 		        return f(0, 0, n, tsum, arr, dp);
+ 		    }
+
+Memoization:
+ 	Solution:
+ 		public static int f(int i, int sum, int n, int tsum, int[] arr, int[][] dp) {
+ 		        if(i == n) {
+ 		            return Math.abs((tsum - sum) - sum);
+ 		        }
+ 
+ 		        if(dp[i][sum] != -1) return dp[i][sum];
+ 
+ 		        int take = f(i + 1, sum + arr[i], n, tsum, arr, dp);
+ 		        int ntake = f(i + 1, sum, n, tsum, arr, dp);
+ 
+ 		        return dp[i][sum] = Math.min(take, ntake);
+ 		    }
+ 
+ 		    public static int minSubsetSumDifference(int []arr, int n) {
+ 		        int tsum = 0;
+ 		        for(int i = 0; i < n; i++) {
+ 		            tsum += arr[i];
+ 		        }
+
+ 		        int[][] dp = new int[n][tsum + 1];
+ 		        for(int i = 0; i < n; i++) Arrays.fill(dp[i], -1);
+ 
+ 		        return f(0, 0, n, tsum, arr, dp);
+ 		    }
+
+Tabulation:
+ 	Tricky to convert this into tabulation.
+ 	Because in tabulation we will move two loops.
+ 	One from n - 1 to 0 and other from tsum to 0.
+
+ 	At any point if we did tsum + arr[i], it will go out of index.
+ 	Hence, we will give a condition: if (j + arr[i] <= tsum) then only we will go ahead.
+
+ 	Solution:
+ 		public static int minSubsetSumDifference(int []arr, int n) {
+        		int tsum = 0;
+ 		        for(int i = 0; i < n; i++) {
+ 		            tsum += arr[i];
+ 		        }
+ 
+ 		        int[][] dp = new int[n + 1][tsum + 1];
+
+ 			// This j repesents all the possible sums from 0 to tsum
+ 			// However this will never be possible to generate all the sums from 0 to tsum.
+ 			// For every sum we calculated the absolute difference of the subset sums.
+ 		        for(int j = 0; j <= tsum; j++) {
+ 		            dp[n][j] = Math.abs((tsum - j) - j);
+ 		        }
+ 
+ 		        for(int i = n - 1; i >= 0; i--) {
+ 		            for(int j = tsum; j >= 0; j--) {
+ 		                int take = (int)1e8;
+
+ 				// In memoization we went from 0 and add arr[i] at every level. Hence, we can never exceed tsum
+ 				// But in this case, we had to go to every sum j(0 to tsum)
+ 		                if(j + arr[i] <= tsum) {
+ 		                    take = dp[i + 1][j + arr[i]];
+ 		                }
+ 
+ 		                int ntake = dp[i + 1][j];
+ 
+ 		                dp[i][j] = Math.min(take, ntake);
+ 		            }
+ 		        }
+ 
+ 		        return dp[0][0];
+ 		    }
+
+Space Optimization:
+ 	Solution:
+ 		public static int minSubsetSumDifference(int []arr, int n) {
+ 		        int tsum = 0;
+ 		        for(int i = 0; i < n; i++) {
+ 		            tsum += arr[i];
+ 		        }
+ 
+ 		        int[] prev = new int[tsum + 1];
+ 		        for(int j = 0; j <= tsum; j++) {
+ 		            prev[j] = Math.abs((tsum - j) - j);
+ 		        }
+ 
+ 		        for(int i = n - 1; i >= 0; i--) {
+ 		            int[] curr = new int[tsum + 1];
+ 		            for(int j = tsum; j >= 0; j--) {
+ 		                int take = (int)1e8;
+ 		                if(j + arr[i] <= tsum) {
+ 		                    take = prev[j + arr[i]];
+ 		                }
+ 
+ 		                int ntake = prev[j];
+ 
+ 		                curr[j] = Math.min(take, ntake);
+ 		            }
+ 		            prev = curr;
+ 		        }
+ 
+ 		        return prev[0];
+ 		    }

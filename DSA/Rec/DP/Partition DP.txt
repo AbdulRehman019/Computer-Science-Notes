@@ -1,0 +1,165 @@
+Partition DP — Quick Notes
+
+Definition:
+	Partition DP is a type of dynamic programming where the main idea is:
+	Break the problem into parts by “cutting” at every possible partition point and combine results from subproblems.
+
+Key Idea
+	You are given a range or sequence.
+	You try every possible point k to split the range into two subproblems.
+	You combine the results of the two subproblems in a way specific to the problem.
+	Take the min/max depending on the goal.
+
+Partition DP usually means:
+	Try all valid cuts.
+	Take best among them.
+
+General Template (Recursive + Memoization)
+	int f(int i, int j) {
+	    if (base condition) return ...;
+
+	    if (dp[i][j] != -1) return dp[i][j];
+
+	    int ans = INF;
+	    for (int k = i; k <= j-1; k++) {
+	        int left = f(i, k);
+	        int right = f(k+1, j);
+	        int cost = left + right + combineCost(i, k, j);
+	        ans = Math.min(ans, cost); // or Math.max depending on problem
+	    }
+	    return dp[i][j] = ans;
+	}
+
+Points to remember:
+	i and j usually define the current range we are solving.
+	k is the partition point.
+	combineCost(...) is problem-specific (e.g., multiplication cost in MCM, or merge cost in burst balloons).
+	Memoization table is 2D for ranges: dp[i][j].
+	Without memoization, time complexity can blow up to O(2ⁿ); with memoization, usually O(n³) for range problems. 
+
+1. Matrix Chain Multiplication (MCM) 
+	Problem Statement:
+		Given an array arr[] of size n representing the dimensions of matrices such that:
+		First matrix: arr[0] x arr[1]
+		Second matrix: arr[1] x arr[2]
+		...
+
+		(n-1)th matrix: arr[n-2] x arr[n-1]
+
+	Find the minimum cost (scalar multiplications) to multiply all matrices.
+
+	Why it's Partition DP:
+		We have a range of matrices from i to j.
+		We pick a point k to split multiplication into:	
+		Multiply matrices from i to k
+		Multiply matrices from k+1 to j
+		Then multiply the two resulting matrices together. 
+
+	Pseudocode (Memoized)
+		int f(int i, int j, int[] arr, int[][] dp) {
+		    if (i == j) return 0;
+		    if (dp[i][j] != -1) return dp[i][j];
+		
+		    int minCost = Integer.MAX_VALUE;
+		    for (int k = i; k < j; k++) {
+		        int cost = f(i, k, arr, dp) + f(k+1, j, arr, dp)
+		                   + arr[i-1] * arr[k] * arr[j];
+		        minCost = Math.min(minCost, cost);
+		    }
+		    return dp[i][j] = minCost;
+		}
+
+	Complexity:
+		Time: O(n³) (n² states × n loop for k)
+		Space: O(n²) for dp table.
+
+5. Palindrome Partitioning II
+	"aab"
+	We started from f(0, 2), it means how many minimum cuts are required to make all the substrings palindrome. 
+	We can go from 0 to 2 and try making cut at every place.
+
+	We can make a cut at 0 and check if both the substrings formed are palindrome or not. 
+
+	public int f(int i, int j, String s, int[][] dp) {
+		// If i == j, it means it is a palindrome. 
+	        if(i == j) return 0;
+		
+		// If it became a palindrome, we don't need to make more cuts
+	        if(isPalindrome(i, j, s)) return 0;
+	
+	        if(dp[i][j] != -1) return dp[i][j];
+	
+	        int mini = (int)1e9;
+	        for(int k = i; k < j; k++) {
+		    // If we make a cut at k, two substrings are formed from i to k and k + 1 to j.
+	            int cost = 1 + f(i, k, s, dp) + f(k + 1, j, s, dp);
+	            mini = Math.min(mini, cost);
+	        }
+	
+	        return dp[i][j] = mini;
+	    }
+
+	This is the correct solution but suppose i am making a cut and (i to k) is not a palindrome, why to go ahead and check how many more cuts are required. 
+	It will never be possible because f(i, k) is not palindrome and we need substring to be palindrome. 
+	Hence, before making a cut we will check if that cut will make the first half palindrome. 
+	public int f(int i, int j, String s, int[][] dp) {
+	        if(i == j) return 0;
+	
+	        if(dp[i][j] != -1) return dp[i][j];
+
+	        if(isPalindrome(i, j, s)) {
+	            dp[i][j] = 0;
+	            return 0;
+	        }
+	
+	        int mini = (int)1e9;
+	        for(int k = i; k < j; k++) {
+	            // We will go ahead only if i to k is palindrome
+	            if(isPalindrome(i, k, s)) {
+	                int cost = 1 + f(k + 1, j, s, dp);
+	                mini = Math.min(mini, cost);
+	            }
+	        }
+	
+	        return dp[i][j] = mini;
+	    }
+
+6. Partition Array for Maximum Sum
+	If i am at index "i". 
+	I can partition array anywhere between idx = i to idx < i + k. 
+	If i make the partition anywhere between idx = i to idx < i + k, then the value will be (max from i till that index) * (length which will be idx - i + 1). 
+	And we will move further f(idx + 1). 
+
+	I don't know how i solved it but i solved it pretty easily. 
+
+	public int f(int i, int k, int n, int[] arr, int[] dp) {
+	        if(i == n) return 0;
+	
+	        if(dp[i] != -1) return dp[i];
+	
+	        int maxi = -(int)1e9;
+	        int maxVal = 0;
+	        for(int idx = i; idx < i + k && idx < n; idx++) {
+	            maxVal = Math.max(maxVal, arr[idx]);
+	            int total = (maxVal) * (idx - i + 1) + f(idx + 1, k, n, arr, dp);
+	
+	            maxi = Math.max(maxi, total);
+	        }
+	
+	        return dp[i] = maxi;
+	    }
+
+2. Warm-up with easier problems:
+	Stick Cutting problem
+	Burst Balloons (LeetCode #312)
+	Palindrome Partitioning II
+	
+   Understand the range indexing well
+	Practice drawing recursion trees to see overlapping subproblems.
+	Write templates
+	One template for min cost problems.
+	One for max score problems.
+	Gradually move to harder problems
+	Boolean Parenthesization (#True ways)
+	Scramble String
+	Optimal Binary Search Tree

@@ -1,0 +1,38 @@
+🔰 Phase 1: Foundational Patterns (Start Here)
+	Focus on gaining comfort with array/string patterns, subarrays, and simple logic.
+		Two Pointers
+		Sliding Window	
+		Fast & Slow Pointers
+		Prefix Sum / Difference Array
+		Hashing / HashMap / Set
+
+	📌 Goal: Build mastery in scanning arrays efficiently.
+
+🧩 Phase 2: Decision-Making & Recursion-Based Patterns
+	Now that you know how to navigate arrays/strings, explore recursive strategies and smart decisions.
+		Recursion / Divide & Conquer
+		Backtracking
+		Greedy
+		Binary Search
+		Bit Manipulation
+
+	📌 Goal: Strengthen problem-solving through recursion, bit tricks, and greedy logic.
+
+🧠 Phase 3: Dynamic Thinking & Optimization
+	Time to work on optimal solutions using states and memoization.
+		Dynamic Programming
+		Stack / Monotonic Stack
+		Heap / Priority Queue
+		Trie
+
+	📌 Goal: Master how to break down big problems into reusable subproblems.
+
+🧭 Phase 4: Graph & Tree Problems
+	Once you're strong with recursion and DP, move to graph algorithms and hierarchical data.
+		Graph Traversal (BFS/DFS)
+		Topological Sort
+		Union-Find (DSU)
+		Segment Tree / Fenwick Tree
+		Matrix Traversal
+
+	📌 Goal: Tackle complex structures and learn algorithms that power many real-world systems.

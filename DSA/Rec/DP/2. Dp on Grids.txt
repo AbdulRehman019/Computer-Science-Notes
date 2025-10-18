@@ -1,0 +1,135 @@
+Dp on Grids
+
+Note: If you ever find negative index, try to store in it positive index. Done in 494. Target Sum
+
+Recursion
+ 	Use recursion to solve the problem.
+
+ 	Steps to sovle using recursion:
+ 		1. Try to represent the problem in terms of index.
+ 		2. Do all possible stuffs on that index according to the problem statement.
+ 		3. Sum of all stuffs: Count all ways
+ 		   Min of all stuffs: find min
+
+ 	Template:
+ 		// Climbing stairs
+ 		public void f(int i, int n) {
+ 			
+ 		}
+
+ 	Time Complexity: O(2^(n*m))
+ 	Space Complexity: O(n*m)
+
+2. Memoization
+ 	Use memoization to optimize the recursion solution.
+
+ 	Steps to memoize:
+ 		1. Introduce a dp array[2D] either of size n + 1 or n depending on problem[Most of the time n size will suffice]
+ 		2. Fill it with -1(Or any other value depending on problem, very rare)
+ 		3. Check whether that particular part has been computed already.
+ 		4. If yes, return the stored value.
+ 		5. Once call for a function is over, store it in dp.
+
+ 	Template:
+ 		// Climbing Stairs
+ 		public int f(int i, int j, int m, int n, int[][] dp) {
+        		if(i >= m || j >= n) return 0;
+		        if(i == m - 1 && j == n - 1) return 1;
+		        
+		        if(dp[i][j] != -1) return dp[i][j];
+		
+		        int right = f(i, j + 1, m, n, dp);
+		        int down = f(i + 1, j, m, n, dp);
+		
+		        return dp[i][j] = right + down;
+		    }
+		
+		 public int uniquePaths(int m, int n) {
+		        int[][] dp = new int[m][n];
+		        for(int i = 0; i < m; i++) {
+		            Arrays.fill(dp[i], -1);
+		        }
+		
+		        return f(0, 0, m, n, dp);
+		 }
+	 	
+	Time Complexity: O(n * m)
+ 	Space Complexity: O(n * m) + O(n + m)[Recursive Stack + Dp array]
+
+3. Tabulation
+ 	Use tabulation to remove the recursive stack space.
+
+ 	Steps to convert memoization into tabulation:
+ 		1. Introduce a dp array[2D] as in memoization of size n or n + 1[Most of the time size will be n + 1 in order to handle base case].
+ 		2. See the memoization part and according to its base condition fill the dp array.
+ 			For example:
+ 				// Base Case
+ 				if(i == n) return 0;
+
+ 			Hence, for(int j = 0; j < m; j++) dp[n][j] = 0;
+
+ 		3. Start moving reverse. If in memoization you went from 0 to n. Now go from n to 0
+ 		   [Start according to base condition, if base condition included i == n, then start from n - 1].
+ 			for(int i = n - 1; i >= 0; i--) {
+				for(int j = m - 1; j >= 0; j--) {
+ 					// Rest of the code
+				}
+ 			}
+
+ 		4. Copy everything else from memoization part and replace functions with dp array.
+ 			For example:
+ 				f(i + 1, j, n, dp) to dp[i + 1][j].
+
+ 		5. Remove the return statement and store in dp[i][j].
+
+ 	Template:
+ 		class Solution {
+ 			public int uniquePaths(int m, int n) {
+        			int[][] dp = new int[m + 1][n + 1];
+			        dp[m - 1][n - 1] = 1;
+			
+			        for(int i = m - 1; i >= 0; i--) {
+			            for(int j = n - 1; j >= 0; j--) {
+			                if(i == m - 1 && j == n - 1)
+			                    continue;
+				
+			                dp[i][j] = dp[i][j + 1] + dp[i + 1][j];
+			            }
+			        }
+			
+			        return dp[0][0];
+			}
+
+ 	Time Complexity: O(n * m)
+ 	Space Complexity: O(n * m)[Dp array, No recursive stack space]
+
+4. Space Optimization
+ 	Use space optimization on tabulation.
+
+ 	Steps to convert tabulation into space optimization:
+ 		1. If you see closely every time you require previous two numbers.
+ 		   Hence, instead of using DP array use two variables(prev and prev2)
+
+ 	Template:
+ 		public int uniquePaths(int m, int n) {
+        		int[] prev = new int[n + 1];
+		        prev[n - 1] = 1;
+		
+		        for(int i = m - 1; i >= 0; i--) {
+		            int[] curr = new int[n + 1];
+		            for(int j = n - 1; j >= 0; j--) {
+		                if(i == m - 1 && j == n - 1) {
+		                    curr[n - 1] = 1;
+		                    continue;
+		                }
+		
+		                curr[j] = curr[j + 1] + prev[j];
+		            }
+		            prev = curr;
+		        }
+		
+		        return prev[0];
+		    }
+
+ 	Time Complexity: O(n * m)
+ 	Space Complexity: O(n)[n represents column]

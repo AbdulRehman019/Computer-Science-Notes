@@ -1,0 +1,12 @@
+1. What is computer network?
+2. What is www?
+3. What are protocols?
+4. Client-Server Architecture
+5. How data is transferred?
+6. To find your own ip address: $ curl ifconfig.me -s
+7. IP address and Ports
+	Port Number is a 16bit number
+	0 - 1023 port numbers are reserved(HTTP-80)
+	1024 - 49352 Reserved for applications(SQL-1433)
+
+8. Modem(Digital signal to Analog signal and vice versa)

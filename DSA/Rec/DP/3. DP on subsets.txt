@@ -1,0 +1,8 @@
+DP on subsets: 
+
+It is easy, you follow take/ntake approach. 
+If it includes subset with difference
+You calculate sum of the array beforeHand and when you reach at n. You already have tsum, the sum of current subset, you can easily calculate the sum of other subset(tsum - sum)
+And depending on the problem, you can return 1 or 0.
+
+Easy peasy

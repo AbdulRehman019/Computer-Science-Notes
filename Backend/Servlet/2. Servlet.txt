@@ -1,0 +1,88 @@
+What is a Servlet?
+	A Servlet is a Java class used to handle HTTP requests and responses in a Java web application. Servlets run on a server (like Apache Tomcat) and are part of the 	Java EE (Jakarta EE) platform.
+
+	Think of a servlet as a controller in an MVC pattern that:
+		Takes input from a web form (or any HTTP client),
+		Processes it (maybe talks to a database or performs logic),
+		Sends a response back to the client (like a success message, HTML page, etc).
+
+Servlet Lifecycle
+	There are 3 main methods in a servlet:
+		init() – Called once when the servlet is first created.
+		service() – Called each time a request is made.
+		destroy() – Called when the servlet is taken out of service.
+
+	For HTTP, we usually override doGet() and doPost() inside the HttpServlet class.
+
+-------- Front-End -----------
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Servlet Example</title>
+</head>
+<body>
+    <h2>Enter Your Name</h2>
+    <form action="hello" method="post">
+        <input type="text" name="username" required />
+        <input type="submit" value="Submit" />
+    </form>
+</body>
+</html>
+
+
+-------- Back-End -----------
+package com.example;
+
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class HelloServlet extends HttpServlet {
+    
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        // Set the content type to HTML
+        response.setContentType("text/html");
+        
+        // Get the PrintWriter to write response
+        PrintWriter out = response.getWriter();
+        
+        // Get the value entered in the form
+        String name = request.getParameter("username");
+        
+        // Write the response HTML
+        out.println("<html><body>");
+        out.println("<h2>Hello, " + name + "!</h2>");
+        out.println("</body></html>");
+        
+        out.close();
+    }
+}
+
+
+------- web.xml -------
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="3.0">
+    <servlet>
+        <servlet-name>HelloServlet</servlet-name>
+        <servlet-class>com.example.HelloServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HelloServlet</servlet-name>
+        <url-pattern>/hello</url-pattern>
+    </servlet-mapping>
+</web-app>
+
+
+
+----- How it works -----
+1. User opens index.html in browser.
+2. User enters their name and submits the form.
+3. Form sends a POST request to /hello.
+4.The servlet mapped to /hello (HelloServlet) handles the request.
+5. Servlet reads the username parameter and sends a greeting as the response.
+
+
+----- Output -----
+Hello, Alice!

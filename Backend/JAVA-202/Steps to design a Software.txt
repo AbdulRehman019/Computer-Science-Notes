@@ -1,0 +1,154 @@
+How to build design using the requirements? 
+
+Step 1: Identify Objects 
+	How to identify objects? 
+		Look for nouns in the requirements 
+		Something you would like to store or persist in the system. 
+		These entities are classes and tables in DB. 
+
+	How do we define attributes for a object? 
+		Identify properties which defines an object. 
+			For e.g. Student has name, age etc.  
+
+		Look for properties of an object in the requirements. 
+
+	Important objects in the system so far: 
+		Contest 
+		User 
+		Question 
+
+Step 2: Define Primary Attributes 
+	Contest: Id, Title, Level 
+	User: Id, name 
+	Question: Id, Title, Level, Score 
+
+Step 3: Identify the relationships 
+	How to identify relationships? 
+		Look for verbs/actions in the requirements between objects(Student enrolls in a course). 
+		Look for subtypes of a object(Student is a Member). 
+
+	Relationsips between objects/classes: 
+		Contest contains Question 
+		User creates contest 
+		User participates in a contest 
+		User solves Question in a particular Contest 
+
+Step 4: Indicate Multiplicity for Relationships 
+	How to indicate multiplicity? 
+		Define how many objects participate in a relationship 
+		It is the number of instances of one class related to one instance of other class. 
+		For example: 
+			Student enrolls in a course: 
+				A student can enroll in many courses 
+				A course can have many students. 
+
+	Relationships between Objects/classes: 
+		Contest contains Question		--> One to Many --> In our requirement, question needs to be unique. 
+ 		User creates contest			--> One to Many --> One user can create multiple contest, A contest can be created only by one user.  
+ 		User participates in a contest		--> Many to Many --> One user can participate in multiple contest, One contest can have multiple participants(users). 
+ 		User solves Question in a particular Contest --> Many to Many --> One user can solve multiple question, One question can be solved by multiple user. 
+
+Step 5: Based on the multiplicity, make new attributes 
+		Example: Contest contains Question
+ 			 User creates contest 
+
+		Attributes of Contest: 
+			id, title, level, createdByUser, List of Questions 
+
+		When we have one to many or many to one, a variable can be created on either side depending on requirement. 
+
+	Define Combined class for N:M relationships(if required) 
+	Since, a user can participate in multiple contest and one contest can have many participants. 
+	And we needed details about the relationship. For example: what is the score of a user for a contest. 
+	Hence, we made a combined class. 
+
+Combined Class: 
+Many-to-Many and the Combined (Association) Class
+	1. The Problem
+		Suppose you’re designing a system with Users and Courses:
+		A User can enroll in many Courses.
+		A Course can have many Users enrolled.
+		That’s a many-to-many (M:N) relationship.
+
+		If you only need to know who is in which course, you could store two lists:
+			User keeps a list of Courses.
+			Course keeps a list of Users.
+
+		But what if you also need to store details about the relationship itself, like:
+			When the user enrolled (enrollmentDate)
+			What grade they achieved (grade)
+			Whether they are currently active or dropped
+			This is where a combined class (also called association class or link entity) comes in.
+
+	2. The Solution: Association Class
+		Instead of connecting User ↔ Course directly, you introduce a third class — let’s call it Enrollment.
+		User ↔ Enrollment ↔ Course
+		Each Enrollment links one User and one Course.
+		But over time, you can have many Enrollments for different combinations.
+		This turns a many-to-many relationship into two one-to-many relationships:
+			One User can have many Enrollments.
+			One Course can have many Enrollments.
+
+	3. How it looks in a Class Diagram
+		User 1 ---- * Enrollment * ---- 1 Course
+		Where Enrollment stores additional attributes like enrollmentDate, grade, etc.
+
+	4. How it looks in a Database (System Design View)
+		Instead of two tables (users and courses), you need three:
+
+		users
+
+		user_id | name
+		----------------
+		1       | Alice
+		2       | Bob
+
+
+		courses
+
+		course_id | title
+		-----------------
+		101       | Math
+		102       | Physics
+
+
+		enrollments (association table)
+		
+		enrollment_id | user_id | course_id | enrollment_date | grade
+		----------------------------------------------------------------
+		1             | 1       | 101       | 2025-01-10      | A
+		2             | 1       | 102       | 2025-01-12      | B
+		3             | 2       | 101       | 2025-01-15      | A+
+
+
+	Here:
+		users ↔ enrollments is 1-to-many
+		courses ↔ enrollments is 1-to-many
+
+	Together, they allow many-to-many between users and courses.
+
+5. Why It’s Important in System Design
+	Flexibility: Adding attributes to relationships (like timestamps, roles, status).
+	Scalability: Relationship data is often the largest table (e.g., Facebook "User_Friendship", YouTube "User_VideoLike"). Optimizing this table is key for performance.
+	Clarity: Separates core entities (User, Course) from their interactions (Enrollment).
+
+6. Real-World Examples
+	E-commerce:
+		Order is an association class between Customer and Product (because you need quantity, price, status).
+
+	Social Media:
+		Friendship or Follow is an association between two Users.
+
+	Education System:
+		Enrollment is an association between User and Course.
+
+✅ So in System Design terms:
+	Many-to-many relationships are rarely modeled as just two-way links.
+	Instead, we use an association class/table (like Enrollment) to store not only the link but also the context and attributes of that link. 
+
+
+
+
+Service Layer doesnot have combined classes. 
+It belongs to database, hence repository layer have combined classes. 
+	

@@ -1,0 +1,182 @@
+How to implement Thread 
+
+How Java Handles Threads
+	Every Java program runs inside the Java Virtual Machine (JVM).
+	When you run a class with main():
+		JVM starts your program.
+		It creates one thread — the main thread.
+		main() executes inside this thread.
+
+SINGLE-THREADED EXAMPLE 
+	public class SingleThreadExample {
+	    public static void main(String[] args) {
+	        System.out.println("Starting main thread...");
+	
+	        for (int i = 1; i <= 5; i++) {
+	            System.out.println("Main thread: Count " + i);
+	        }
+	
+	        System.out.println("Main thread finished.");
+	    }
+	}
+
+Output: 
+	Starting main thread...
+	Main thread: Count 1
+	Main thread: Count 2
+	Main thread: Count 3
+	Main thread: Count 4
+	Main thread: Count 5
+	Main thread finished.
+
+	Here, only one thread (the main thread) is doing all the work.
+	Everything happens sequentially.
+
+MULTITHREADING IN JAVA
+	Multithreading means multiple threads running concurrently within the same process.
+	In Java, there are two main ways to create threads:
+
+1. Extending the Thread class
+	You can create a new class that extends Thread and override its run() method.
+
+	class MyThread extends Thread {
+	    public void run() {
+	        for (int i = 1; i <= 5; i++) {
+	            System.out.println(Thread.currentThread().getName() + " - Count " + i);
+	        }
+	    }
+	}
+
+	public class ThreadExample1 {
+	    public static void main(String[] args) {
+	        MyThread t1 = new MyThread();
+	        MyThread t2 = new MyThread();
+	
+	        t1.setName("Thread A");
+	        t2.setName("Thread B");
+	
+	        t1.start(); // start() creates a new thread and calls run()
+	        t2.start();
+	
+        	System.out.println("Main thread finished.");
+	    }
+	}
+
+	Output (order may vary):
+		Main thread finished.
+		Thread A - Count 1
+		Thread B - Count 1
+		Thread A - Count 2
+		Thread B - Count 2
+		... 
+
+		The order varies because the OS scheduler decides how CPU time is distributed between threads.
+
+2. Implementing the Runnable Interface
+	This is the preferred way in modern Java because:
+	Java supports single inheritance, so extending Thread can be limiting.
+	Using Runnable allows you to separate task logic from thread execution.
+
+	class MyRunnable implements Runnable {
+	    public void run() {
+	        for (int i = 1; i <= 5; i++) {
+	            System.out.println(Thread.currentThread().getName() + " - Count " + i);
+	        }
+	    }
+	}
+
+	public class ThreadExample2 {
+	    public static void main(String[] args) {
+	        Thread t1 = new Thread(new MyRunnable(), "Thread A");
+	        Thread t2 = new Thread(new MyRunnable(), "Thread B");
+	
+	        t1.start();
+	        t2.start();
+	
+	        System.out.println("Main thread finished.");
+	    }
+	}
+
+	Internally:
+		Thread class has a constructor that takes a Runnable object.
+		When you call start(), it calls the run() method of that Runnable object in a new thread. 
+
+
+
+
+Important Methods in Thread Class
+	Method				Description
+	start()				Starts a new thread and calls run() internally.
+	run()				Contains the code that will be executed by the thread.
+	sleep(ms)			Puts the thread to sleep for given milliseconds.
+	join()				Waits for a thread to finish before continuing.
+	isAlive()			Checks if thread is still running.
+	getName(), setName()		Gets or sets the thread’s name.
+	getPriority(), setPriority()	Sets thread priority (1 to 10).
+	yield()				Temporarily pauses the current thread to allow others to run. 
+
+Example: sleep() and join()
+	class SleepExample extends Thread {
+    		public void run() {
+		        for (int i = 1; i <= 3; i++) {
+		            System.out.println(getName() + " running... " + i);
+		            try {
+		                Thread.sleep(500); // sleep for 0.5 second
+		            } catch (InterruptedException e) {
+		                System.out.println(e);
+		            }
+		        }
+		    }
+		}
+		
+	public class ThreadSleepJoin {
+	   public static void main(String[] args) throws InterruptedException {
+	        SleepExample t1 = new SleepExample();
+	        SleepExample t2 = new SleepExample();
+
+	        t1.setName("Thread A");
+	        t2.setName("Thread B");
+	
+	        t1.start();
+	        t1.join();  // Wait for t1 to finish before starting t2
+	        t2.start();
+	
+	        System.out.println("Main thread ends.");
+		}
+	}
+
+	Output:
+		Thread A running... 1
+		Thread A running... 2
+		Thread A running... 3
+		Thread B running... 1
+		Thread B running... 2
+		Thread B running... 3
+		Main thread ends.
+
+
+
+Thread Lifecycle (States)
+	A thread goes through five major states:
+	State			Description
+	New			Thread object created but not started (new Thread()).
+	Runnable		Ready to run (after start() called).
+	Running			Currently executing.
+	Blocked/Waiting		Temporarily inactive (e.g., sleep(), join()).
+	Terminated (Dead)	Finished execution.
+
+Single-threaded vs Multithreaded Summary
+	Feature			Single Thread			Multi Thread
+	Execution		Sequential			Concurrent
+	Performance		Slower for multitask programs	Faster (on multicore CPUs)
+	Simplicity		Easier to write			Complex (synchronization needed)
+	Use case		Simple scripts, console apps	Games, servers, GUIs, etc. 
+
+Key Takeaways
+	Concept				Description
+	Thread				Smallest unit of execution
+	Runnable			Interface defining run() (task logic)
+	Thread class			Manages thread lifecycle and operations
+	start()				Starts a new thread (calls run() internally)
+	Synchronization			Prevents data corruption during concurrent access
+	Multithreading			Improves efficiency, responsiveness, and CPU usage

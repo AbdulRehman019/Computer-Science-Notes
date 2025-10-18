@@ -1,0 +1,44 @@
+
+1. int[] ros;   // Declaration of an array. ros is getting defined in the stack.
+                // It's a reference variable pointing towards nothing.
+
+2. ros = new int[5];   // Initialization. Here object is being created in the memory (heap).
+
+3. Declaration happens at compile time whereas initialization happens at run time.
+
+4. Array objects are in heap.
+
+5. Heap objects are not continuous.
+
+6. Dynamic Memory Allocation(DMA).
+
+7. Hence, array objects may not be continuous since they are stored in heap.
+   It will be continuous or not, it will depend on JVM.
+
+8. "new" keyword is used to create an object in heap memory at run time(DMA).
+
+9. int[] arr = {2, 3, 18, 19, 5}; This will also create the object in heap although no "new" keyword is used.
+
+10. IMP.
+    arr will be created in stack memory, and it will be pointing towards the reference variables(in form of array) in heap memory
+    which in turn will point to the objects in heap memory at different location.
+    arr -> stack memory
+    [ arr[o], arr[1], ... ,arr[n] ] -> in heap. It will point to object.
+    arr[0] = 4; It is pointing towards object at some other location in heap.
+
+
+    Enhanced for loop:
+
+11. for (int num : arr) {
+                System.out.print(num + " ");   // Here num represents element of the array.
+            }
+    Here, int represents the data type of element stored.
+    num  represents every single element of an array.
+    arr represents array itself.
+
+12. for(int[] a: arr) {
+                System.out.println(Arrays.toString(a));
+            }
+    Here, int[] represents the data type of element stored which is array in this case.
+    'a' represents every single element of array which in this case is itself an array.
+    arr represents the array of single row.

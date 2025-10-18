@@ -1,0 +1,87 @@
+How to Identify Stack Problems:
+	1. "Previous" or "Next" Element Logic
+		If a problem asks about:
+		Next greater/smaller
+		Previous greater/smaller
+
+		Stack is ideal for maintaining a monotonic sequence (increasing or decreasing).
+		🧩 Examples:
+			Next Greater Element
+			Stock Span Problem
+			Daily Temperatures
+			Largest Rectangle in Histogram
+
+	2. "Balanced" or "Valid" Structures
+		When checking for:
+			Matching brackets ()[]{} ✅
+			Valid parenthesis expressions
+			Nested or recursive patterns
+
+		Use a stack to track opening symbols and match them when closing appears.
+		🧩 Examples:
+			Valid Parentheses
+			Minimum Add to Make Valid Parentheses
+			Remove Invalid Parentheses
+
+	3. Reverse or Undo Behavior
+		If you need to:
+			Reverse elements
+			Implement undo functionality
+			Track history (like browsers, editors)
+
+		Stack works because it’s LIFO (Last-In-First-Out). 
+		Examples:
+			Reverse a string
+			Design browser history
+			Backtracking problems (e.g., path finding)
+
+	4. Expression Evaluation / Conversion
+		If problem involves:
+			Infix / Prefix / Postfix
+			Arithmetic expressions
+			Decoding patterns ("3[a2[c]]")
+
+		Stack helps keep track of operators, operands, and parentheses.
+		🧩 Examples:
+			Basic Calculator I/II/III
+			Evaluate Reverse Polish Notation
+			Decode String
+
+	5. Custom Stack Design
+		If you are asked to:
+			Track min/max at all times
+			Implement stack with extra constraints
+
+		Stack with auxiliary stack or modified push/pop
+		🧩 Examples:
+			Min Stack
+			Max Stack
+
+	6. Collision / Elimination Problems
+		If the problem mentions:
+			Objects moving and colliding
+			Elements being removed based on certain conditions
+
+		Stack helps in simulating behavior in one pass.
+		🧩 Examples:
+			Asteroid Collision
+			Remove K Digits
+			132 Pattern
+
+	7. Whenever we need to find minimum, maximum or sum in all the subarrays but we don't need to generate all the subarrays.
+	   We can think in terms of nge, pge, pse, nse.
+
+		🧩 Examples:
+			Sum of Subarray Minimums(Explaination in Stack other note)
+			Sum of Subarray Maximums
+			Sum of Subarray Ranges(Combination of above two)
+
+
+🧩 Summary Table
+	Pattern Type		Keywords in Question	
+	Next/Previous Element	next, previous, span, larger/smaller
+	Balanced/Matching	valid, balanced, match, brackets
+	Reverse/Undo		reverse, undo, backtrack
+	Expression Evaluation	infix, postfix, decode, calculator
+	Custom Stack Design	design, support min/max 
+	Elimination/Collision	remove, destroy, collide

@@ -1,0 +1,19 @@
+When discussing strengths, focus on qualities that are relevant to the role of a Software Development Engineer (SDE) 1. For example:
+
+Strengths:
+1. **Problem-Solving Skills:** Highlight your ability to break down complex problems into manageable tasks and devise effective solutions. You might mention instances where you successfully tackled challenging coding problems or implemented innovative solutions.
+
+2. **Technical Proficiency:** Emphasize your expertise in programming languages, frameworks, and technologies relevant to the position. Provide examples of projects where you demonstrated proficiency in coding and software development.
+
+3. **Team Collaboration:** Showcase your ability to work well in a team environment by mentioning experiences where you collaborated with colleagues to achieve common goals. Highlight your communication skills and willingness to listen to others' perspectives.
+
+4. **Adaptability:** Discuss your capacity to quickly learn new technologies and adapt to changing project requirements. Mention instances where you successfully adapted to new tools or methodologies in previous projects.
++
+5. **Attention to Detail:** Highlight your meticulous approach to coding and software development, emphasizing your commitment to writing clean, efficient code and conducting thorough testing to ensure quality.
+
+Now, regarding weaknesses, it's important to frame them in a positive light, demonstrating self-awareness and a proactive approach to improvement. Here's an example:
+
+Weakness:
+1. **Perfectionism:** While attention to detail is one of my strengths, I sometimes find myself spending too much time perfecting a solution. I've learned to balance the pursuit of excellence with the need to deliver results within deadlines by setting realistic goals and seeking feedback from colleagues to ensure I'm on the right track.
+
+This response acknowledges a potential weakness but also demonstrates self-awareness and a willingness to address it constructively. It's essential to choose weaknesses that are genuine and not critical to the core requirements of the job. Additionally, always follow up weaknesses with concrete steps you're taking to overcome or mitigate them.

@@ -1,0 +1,368 @@
+Dp on Strings
+
+Note: If you ever find negative index, try to store in it positive index. Done in 494. Target Sum
+Step By Step: 
+	Step 1: Find "Longest Common Susequence"[In tabulation]
+	Step 2: Print LCS using tabulation
+	Step 3: Find "Longest Common Substring"[Difficult using recursion, Easy with Tabulation]
+	Step 4: Print "Longest Common Substring"
+	Step 5: Shortest Common Supersequence[Combination of Step 1 and Step 2]
+
+	In all the above problems, we calculated tabulated form of LCS and modified inorder to print subsequences, substring or supersequence. 
+
+We only see if characters are equal or not. 
+If they are we perform some activity and move ahead with some condition. [Mostly we go f(i + 1, j + 1)]
+If they are not equal we perform some activity and move ahead. [Mostly, we go max or min of f(i, j + 1) or f(i + 1, j)]
+
+Whenever you have to try all the possiblities....
+Recursion
+
+Recursion
+ 	Use recursion to solve the problem.
+
+ 	Steps to sovle using recursion:
+ 		1. Try to represent the problem in terms of index(i, j).
+ 		2. Do all possible stuffs on that index according to the problem statement.
+ 		3. Sum of all stuffs: Count all ways
+ 		   Min of all stuffs: find min 
+
+	In Dp on String, if both the characters are equal we add 1 and move both index. 
+	And if both the characters are not equal. Two possibilities: Move index1 or index2. 
+
+ 	Template:
+ 		// Climbing stairs
+ 		public void f(int i, int j, int n, int m, String s1, String s2) {
+ 			
+ 		}
+
+ 	Time Complexity: O(2^n * 2^m)
+ 	Space Complexity: O(n)[Max of n,m]
+
+2. Memoization
+ 	Use memoization to optimize the recursion solution.
+
+ 	Steps to memoize:
+ 		1. Introduce a dp array[2D] either of size n + 1 or n depending on problem[Most of the time n size will suffice]
+ 		2. Fill it with -1(Or any other value depending on problem, very rare)
+ 		3. Check whether that particular part has been computed already.
+ 		4. If yes, return the stored value.
+ 		5. Once call for a function is over, store it in dp.
+
+ 	Template:
+ 		// Climbing Stairs
+		    public int f(int i, int j, int n, int m, String s1, String s2, int[][] dp) {
+		        if(i >= n || j >= m) return 0;
+		
+		        if(dp[i][j] != -1) return dp[i][j];
+		
+		        char ch1 = s1.charAt(i);
+		        char ch2 = s2.charAt(j);
+		        if(ch1 == ch2) {
+		            return 1 + f(i + 1, j + 1, n, m, s1, s2, dp);
+		        }
+		
+		        return dp[i][j] = Math.max(f(i + 1, j, n, m, s1, s2, dp), f(i, j + 1, n, m, s1, s2, dp));
+		    }
+
+		    public int longestCommonSubsequence(String text1, String text2) {
+		        int n = text1.length();
+		        int m = text2.length();
+		
+		        int[][] dp = new int[n][m];
+		        for(int i = 0; i < n; i++) 
+		            Arrays.fill(dp[i], -1);
+		
+		        return f(0, 0, n, m, text1, text2, dp);
+		    }
+	 	
+	Time Complexity: O(n * m)
+ 	Space Complexity: O(n * m) + O(n + m)[Recursive Stack + Dp array]
+
+3. Tabulation
+ 	Use tabulation to remove the recursive stack space.
+
+ 	Steps to convert memoization into tabulation:
+ 		1. Introduce a dp array[2D] as in memoization of size n or n + 1[Most of the time size will be n + 1 in order to handle base case].
+ 		2. See the memoization part and according to its base condition fill the dp array.
+ 			For example:
+ 				// Base Case
+ 				if(i == n) return 0;
+
+ 			Hence, for(int j = 0; j < m; j++) dp[n][j] = 0;
+
+ 		3. Start moving reverse. If in memoization you went from 0 to n. Now go from n to 0
+ 		   [Start according to base condition, if base condition included i == n, then start from n - 1].
+ 			for(int i = n - 1; i >= 0; i--) {
+				for(int j = m - 1; j >= 0; j--) {
+ 					// Rest of the code
+				}
+ 			}
+
+ 		4. Copy everything else from memoization part and replace functions with dp array.
+ 			For example:
+ 				f(i + 1, j, n, dp) to dp[i + 1][j].
+
+ 		5. Remove the return statement and store in dp[i][j].
+
+ 	Template:
+ 		class Solution {
+		    public int longestCommonSubsequence(String text1, String text2) {
+		        int n = text1.length();
+		        int m = text2.length();
+		
+		        int[][] dp = new int[n + 1][m + 1];
+		
+		        for(int i = n - 1; i >= 0; i--) {
+		            for(int j = m - 1; j >= 0; j--) {
+		                char ch1 = text1.charAt(i);
+		                char ch2 = text2.charAt(j);
+		                if(ch1 == ch2) {
+		                    dp[i][j] = 1 + dp[i + 1][j + 1];
+		                }
+		                else dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+		            }
+		        }
+		
+		        return dp[0][0];
+		    }
+		}
+		
+		 Time Complexity: O(n * m)
+		 Space Complexity: O(n * m)[Dp array, No recursive stack space]
+		
+4. Space Optimization
+ 	Use space optimization on tabulation.
+
+ 	Steps to convert tabulation into space optimization:
+ 		1. If you see closely every time you require previous two numbers.
+ 		   Hence, instead of using DP array use two variables(prev and prev2)
+
+ 	Template:
+	    public int longestCommonSubsequence(String text1, String text2) {
+		        int n = text1.length();
+		        int m = text2.length();
+		
+		        int[] prev = new int[m + 1];
+		
+		        for(int i = n - 1; i >= 0; i--) {
+		            int[] curr = new int[m + 1];
+		            for(int j = m - 1; j >= 0; j--) {
+		                char ch1 = text1.charAt(i);
+		                char ch2 = text2.charAt(j);
+		                if(ch1 == ch2) {
+		                    curr[j] = 1 + prev[j + 1];
+		                }
+		                else curr[j] = Math.max(prev[j], curr[j + 1]);
+		            }
+		            prev = curr;
+		        }
+		
+		        return prev[0];
+		    }
+		}
+		
+	 	Time Complexity: O(n * m)
+	 	Space Complexity: O(n)[n represents column]
+
+Approach to solve "DP on Strings" Problems: 
+1. Take two indices i and j for two strings s1 and s2 respectively. 
+2. If character at both indices are equal that means you add this one in your answer and move both index. 
+3. If character at both indices are not equal that means you can move in either direction f(i + 1, j) or f(i, j + 1) and take max or min accordinly. 
+
+
+
+
+1. Longest Common Subsequence
+	Recursion: Took two indices i and j on string s1 and s2 respectively. 
+		   If characters are equal we added 1 and move f(i + 1, j + 1)
+		   If characters are not equal we took max of f(i + 1, j) and f(i, j + 1). 
+
+		   What does f(i, j) means?
+			It means what is the longest subsequence is s1 and s2 from (i to n) and (j to m). 
+			Whenever if see both characters are equal we say this will contribute to the answer, hence add 1. 
+
+	Memoization: Can be easily memoized using int[][] dp = new int[n][m]
+			
+		     What does dp[i][j] holds?
+			It holds what will be the length of maximum subsequence from (i to n) and (j to m). 
+			Hence, dp[0][0] will hold the length of maximum subsequence from (0 to n) and (0 to m).
+			Hence, answer.
+
+	Tabulation: Can be easily converted to tabulation. 
+
+2. Print the Longest Common Subsequence
+	We can easily print using tabulation format. 
+	We can calculate the above tabulated format for "Longest Common Subsequence". 
+
+	We can start from (0,0) and if characters are equal at (i,j) we can add that in answer and move to (i + 1, j + 1). 
+	Because, we used to move to (i + 1, j + 1) when characters were equal. 
+	And if characters are not equal we will move to the max of (i + 1, j) or (i, j + 1). 
+
+3. Longest Common Substring
+	In tabulation of Longest Common subsequence, if characters were equal we used to add 1 + f(i + 1, j + 1). 
+	If characters were not equal, we used to take max of f(i + 1, j) and f(i, j + 1). 
+	But We used to do that becuase we didn't care if we don't have consecutive characters, we only wanted the matching characters. 
+
+	Now we care for consecutive characters. Hence, when the characters won't match we won't take the maximum but store 0 instead of it. 
+	Becuase from there new string will start matching. 
+
+	for(int i = 0; i < n; i++) {
+		for(int j = 0; j < m; j++) {
+			char ch1 = s1.charAt(i);
+			char ch2 = s2.charAt(j);
+
+			if(ch1 == ch2) {
+				dp[i][j] = 1 + dp[i + 1][j + 1];
+			}
+			else dp[i][j] = 0;
+		}
+	}
+
+	Now, we can iterate over int[][] dp and find the maximum. 
+
+4. Longest Palindromic Subsequence
+	It is of the similar pattern although it doesnot have two string. 
+
+	We took two indices (i, j) at (0, n - 1). 
+	If characters at both indices are equal we added 2 because they both contribute to palindrome and move to (i + 1, j - 1). 
+	If characters are equal and i and j are equal, we add only one becuase that one will contribute. 
+	If i > j, return 0. 
+	If characters are not equal at both indices, we have two options, max of f(i + 1, j) and f(i, j + 1). 
+
+5. Minimum Insertion Steps to Make a String Palindrome
+	Similar to above problem.
+	Since, we have only one string, we take two indices pointing to 0 and n - 1. 
+	
+	If characters are equal at i and j, that means they are already going to make palindrome we don't need to add anything. 
+	If characters are not equal at i and j, that means we need to add one character inorder to make palindrome.
+
+	Example: mbadm
+	Initially, we have i = 0 and j = 4(n - 1), since they both are equal we don't add anything and move to i = 1 and j = 3.
+	At i = 1 and j = 3, characters are not equal. Hence, we can either add 'd' in left or 'b' in right.
+	We tried both the possibilities, and whaterever gives minimum we added one and return. 
+	We didn't added it actually.  We only said if we added 'd' in left we matched with 'd' at 3rd index. Hence, j = 2 and i = 1.
+	If we added 'b' in right, we moved j = 3 and i = 2. 
+
+	Understand the code, it's much easier to visualize: 
+	public int f(int i, int j, String s, int[][] dp) {
+	        if(i >= j) return 0;
+	        if(dp[i][j] != -1) return dp[i][j];
+	
+	        char ch1 = s.charAt(i);
+	        char ch2 = s.charAt(j);
+	        if(ch1 == ch2) {
+	            return dp[i][j] = 0 + f(i + 1, j - 1, s, dp);
+	        }
+	        else {
+	            return dp[i][j] = 1 + Math.min(f(i, j - 1, s, dp), f(i + 1, j, s, dp));
+	        }
+	    }
+
+6. Delete Operation for Two Strings
+	DP On Strings never felt so easy. 
+	I wish i never forget how i am solving so easily. 
+	Similar to above problems.
+
+	Putting in HashMap for string1 and deleting for string2, won't work because we don't only want to store characters. 
+	We want to maintain order also because we need to convert one string to another. 
+
+	We use two indices i and j.
+	Base case: If i == n or j == m we return how much second string is left, because we need to convert that length of string. 
+
+	If characters at both indices are equal, we moved to (i + 1, j + 1) and added 0 to answer. 
+	If characters are not equal, we converted one of the character and moved ahead. Hence, added 1. 
+	We took the minimum of if i converted ith index character or if i converted jth index character. 1 + Math.min(f(i + 1, j), f(i, j + 1))
+
+	public int f(int i, int j, int n, int m, String s1, String s2, int[][] dp) {
+		// If one string ended, example: ""/t
+	        if(i == n) return m - j;
+	        if(j == m) return n - i;
+	
+	        if(dp[i][j] != -1) return dp[i][j];
+	
+	        char ch1 = s1.charAt(i);
+	        char ch2 = s2.charAt(j);
+	        if(ch1 == ch2) {
+		    // If characters are equal, no need to convert any character
+	            return dp[i][j] = 0 + f(i + 1, j + 1, n, m, s1, s2, dp);
+	        }
+	        else {
+		    // If characters are not equal, we said we converted one at a time either "ith" or "jth" and added 1. 
+	            return dp[i][j] = 1 + Math.min(f(i + 1, j, n, m, s1, s2, dp), f(i, j + 1, n, m, s1, s2, dp));
+	        }
+	    }
+
+7. Shortest Common Supersequence
+	Calculate LCS in tabular form. 
+	
+	Now dp[0][0] will store the "Longest Common Subsequence". 
+	We started from (0, 0). 
+	If characters are equal, we added them once in our answer.[We are trying to minimize the length, Why to take 2 if one can work?]
+	If characters are not equal, we will see who is giving maximum dp[i + 1][j] or dp[i][j + 1] and move towards who is giving maximum.
+
+	Why will you move towards who is giving you maximum?
+	Because on that path, i will again find someone who is equal in both string and hence reducing length of my supersequence. 
+	Isn't that what we wanted? 
+
+	If dp[i + 1][j] > dp[i][j + 1], we will move towards (i + 1, j) and since we are leaving i. We will add the character at i.
+
+	What if didn't need to print Shortest Common Supersequence? We only want length?
+	It can be calculated as n + m - LCS. Because LCS will be counted in both. 
+
+8. Distinct Subsequences
+	Similar Idea. 
+	If characters are equal at i and j, we have two options: we take it or we leave it so if there is any same character further it will match again. 
+	If we take it, we move to (i + 1, j + 1) and if not we move to (i + 1, j). 
+	If characters are not equal, we only have one option move i. 
+
+	A question can arise? What if i leave it and move ahead but there are no characters further which will match current j. 
+	We will get 0 from that side and some answer from this side where we took it.
+
+	If characters were equal at i and j, we added whatever we get from both side(f(i + 1, j + 1), f(i + 1, j)) and return. 
+	If characters were not equal we return what we get from f(i + 1, j). 
+
+9. Edit Distance
+	If characters are equal, we don't need to perform anything. Hence 0 + f(i + 1, j + 1)
+	If characters are not equal, we can perform three things: 
+		Replace: If we replaced, both characters became equal and hence we can move to 1 + f(i + 1, j + 1)
+
+		Insert: If we inserted in "s1", jth character became equal. Hence, we move to f(i, j + 1). 
+			If we inserted in "s2", ith character became equal. Hence, we move to f(i + 1, j). 
+			Hence, 1 + Math.min(f(i + 1, j), f(i, j + 1)). 
+
+		Delete: If we deleted in "s1", we moved to f(i + 1, j). 
+			If we deleted in "s2", we moved to f(i, j + 1). 
+			Hence, 1 + Math.min(f(i + 1, j), f(i, j + 1)). 
+
+		Since, both insert and delete are giving the same results, we will calculate only one of them. 
+
+	Base Case: if(i == n && j == m), hence both strings became equal. Hence, return 0.
+		   if(i == n), means string2 is left and we can only delete those characters, hence return m - j. 
+		   if(i == m), means string1 is left and we can only delete those characters, hence return n - i. 
+
+10. Wildcard Matching
+	We only have two options: 
+	First: Characters are matching, we move ahead f(i + 1, j + 1)
+	Second: Characters are not matching. In it three conditions can arise: 
+		1. ch2 == '*'
+			It can cover nothing in s1 to everything in s2.
+			We run a loop and took nothing at first, then one character, then two character and so on....
+			If any time we got true, we return true. 
+			If we cover all the possibilites, it means it is not possible to go ahead, hence return false. 
+
+		2. ch2 == '?' 
+			It means it matched with "ith" character. Hence, move ahead. f(i + 1, j + 1). 
+
+		3. ch2 != ch1 
+			If it is not matching, there is no way we can make two string equal. Hence, return false. 
+
+	Base Case: 
+		if(i == n && j == m) return true;
+		if(j == m) return false;
+	        if(i == n) {
+	            for(int k = j; k < m; k++) {
+	                if(t.charAt(k) != '*') return false;
+	            }
+	
+	            return true;
+	        }

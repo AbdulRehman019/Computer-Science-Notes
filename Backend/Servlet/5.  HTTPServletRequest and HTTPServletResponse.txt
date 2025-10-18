@@ -1,0 +1,40 @@
+*************************************************** HTTPServletRequest ***********************************************
+1. What is HttpServletRequest?
+	It is an object that represents the client’s request to the server.
+	When a user (browser) sends a request to the server, the Servlet container (like Tomcat) creates an HttpServletRequest object and passes it to the servlet’s doGet() 	or doPost() method.
+	
+2. ✅ Common Uses:
+	Get data sent from the client (form data, query params).
+	Get request-related info (URL, IP, headers, method).
+	Manage sessions and attributes.
+
+3. Common Methods of HttpServletRequest:
+	Method							Purpose
+	getParameter(String name)				Gets form or query string data.
+	getMethod()						Returns the HTTP method (GET, POST, etc.)
+	getRequestURI()						Returns the requested URI (like /login)
+	getHeader(String name)					Returns specific request header value.
+	getSession()						Returns current HTTP session object.
+	getContextPath()					Returns the context path (app root folder)
+
+
+
+*************************************************** HTTPServletResponse ***********************************************
+1. What is HttpServletResponse?
+	It is an object that represents the response from the server back to the client.
+	The Servlet container provides this object to your servlet. You use it to send data, files, redirects, headers, etc., back to the browser.
+
+2. ✅ Common Uses:
+	Sending output to the browser (PrintWriter).
+	Redirecting to another page.
+	Setting cookies or headers.
+	Controlling response status (200 OK, 404 Not Found, etc.).
+
+3. Common Methods of HttpServletResponse
+
+	Method					Purpose
+	getWriter()				Returns a PrintWriter to send text/html.
+	sendRedirect(String location)		Sends a redirect to the client.
+	setStatus(int statusCode)		Set HTTP status code (like 404).
+	setContentType(String type)		Sets response type like text/html.
+	addCookie(Cookie cookie)		Adds a cookie to the response.

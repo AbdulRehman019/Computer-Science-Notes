@@ -1,0 +1,290 @@
+What is Thread Termination?
+	Thread termination means a thread has finished execution and moved to the terminated (dead) state.
+
+	A terminated thread:
+		Has completed its run() method, or
+		Has been stopped by the system due to an error, or
+		Has been interrupted or aborted intentionally.
+
+	Once a thread is terminated, it cannot be restarted — if you call start() again on the same thread object, Java throws:
+		IllegalThreadStateException
+
+Ways a Thread Can Terminate
+	There are 4 main ways a thread can terminate in Java: 
+
+	1. Normal Termination (Natural completion)
+		The thread ends normally when its run() method completes execution.
+
+		class NormalEnd extends Thread {
+		    public void run() {
+		        for (int i = 1; i <= 3; i++) {
+		            System.out.println("Running... " + i);
+		        }
+		    }
+		}
+
+		public class NormalTerminationExample {
+		    public static void main(String[] args) {
+		        NormalEnd t = new NormalEnd();
+		        t.start();
+		        System.out.println("Main thread done.");
+		    }
+		}
+
+	Explanation:
+		Thread t executes run() from start to finish.
+		When it exits the loop → run() returns → thread moves to Terminated state. 
+
+	2. Abrupt Termination due to Exception 
+		If an uncaught exception occurs inside run(), the thread terminates immediately. 
+
+		class ExceptionThread extends Thread {
+		    public void run() {
+		        System.out.println("Thread started");
+		        int x = 10 / 0; // ArithmeticException
+		        System.out.println("This line will not execute");
+		    }
+		}
+
+		public class ExceptionTermination {
+		    public static void main(String[] args) {
+		        Thread t = new ExceptionThread();
+		        t.start();
+		    }
+		}
+
+	Output: 
+		Thread started
+		Exception in thread "Thread-0" java.lang.ArithmeticException: / by zero
+
+		The JVM kills the thread because no exception handler caught it. 
+
+	3. External Termination (Deprecated stop() method)
+		Earlier Java versions allowed forcibly killing a thread using stop(), but now it is deprecated (unsafe).
+		t.stop(); // ❌ Deprecated, unsafe
+
+		Why unsafe?
+		It can terminate the thread in the middle of updating shared data, causing inconsistent state.
+		Locks held by the thread are not released properly.
+
+		Always use flags or interrupts to stop a thread gracefully instead. 
+
+	4. Graceful Termination (via interrupt())
+		This is the recommended modern approach.
+		You signal a thread that it should stop by calling interrupt(), and the thread checks periodically whether it’s interrupted.
+
+		Example: 
+			class WorkerThread extends Thread {
+			    public void run() {
+			        for (int i = 1; i <= 10; i++) {
+			            System.out.println("Working on task " + i);
+			
+			            // Check if interrupt flag is set
+			            if (Thread.interrupted()) {
+			                System.out.println("Thread interrupted, stopping safely...");
+			                return; // end run() gracefully
+			            }
+			
+			            try {
+			                Thread.sleep(500);
+			            } catch (InterruptedException e) {
+			                System.out.println("Thread was sleeping and got interrupted, stopping...");
+			                return; // end gracefully
+			            }
+			        }
+			    }
+			}
+
+			public class InterruptTermination {
+			    public static void main(String[] args) throws InterruptedException {
+			        WorkerThread t = new WorkerThread();
+			        t.start();
+			
+			        Thread.sleep(2000);  // Let it run for 2 seconds
+			        t.interrupt();       // Request thread to stop
+			    }
+			}
+
+		********* Code explaination is below ************* 
+
+		Explanation:
+			The main thread calls t.interrupt().
+			Inside run(), the worker periodically checks Thread.interrupted().
+			If the thread was in sleep(), it throws InterruptedException.
+			The thread ends gracefully, releasing resources properly.
+
+	Checking Thread Termination
+		isAlive() Method
+			You can check whether a thread is still running.
+
+			Thread t = new MyThread();
+			t.start();
+			System.out.println(t.isAlive()); // true (while running)
+			t.join();                        // wait till thread ends
+			System.out.println(t.isAlive()); // false (after termination)
+
+	Graceful Termination with Flag (Alternate Way)
+		Instead of interrupt(), you can use a shared boolean variable.
+	
+		class MyTask extends Thread {
+		    private volatile boolean running = true;  // use volatile for thread visibility
+		
+		    public void run() {
+		        while (running) {
+		            System.out.println("Thread working...");
+		            try {
+		                Thread.sleep(500);
+		            } catch (InterruptedException e) {
+		                System.out.println("Interrupted during sleep");
+		            }
+		        }
+		        System.out.println("Thread stopped safely.");
+		    }
+		
+		    public void stopThread() {
+		        running = false;
+		    }
+		}
+		
+		public class FlagTermination {
+		    public static void main(String[] args) throws InterruptedException {
+		        MyTask t = new MyTask();
+		        t.start();
+		
+		        Thread.sleep(2000);
+		        t.stopThread();  // request to stop
+		    }
+		}
+
+		Benefits:
+			Gives thread time to finish current task.
+			No data corruption.
+			Completely safe. 
+
+
+
+
+
+
+
+
+
+
+
+
+Code Breakdown
+
+We have two classes:
+
+1️⃣ WorkerThread (extends Thread)
+
+It runs a loop from i = 1 to 10.
+
+For each iteration:
+
+It prints "Working on task i".
+
+Then it checks if the interrupt flag is set using Thread.interrupted().
+
+If interrupted, it prints a message and returns (ending the thread gracefully).
+
+Otherwise, it sleeps for 500ms to simulate work.
+
+If it gets interrupted while sleeping, an InterruptedException is thrown, which is caught, and the thread again stops gracefully.
+
+2️⃣ InterruptTermination (main class)
+
+Creates and starts a WorkerThread.
+
+The main thread then sleeps for 2 seconds, allowing WorkerThread to do some work.
+
+After 2 seconds, the main thread calls t.interrupt(), signaling the worker thread to stop.
+
+🧭 Step-by-Step Flow
+▶️ Step 1: Start
+WorkerThread t = new WorkerThread();
+t.start();
+
+
+This starts a new thread, and the run() method of WorkerThread begins executing in parallel with the main thread.
+
+▶️ Step 2: WorkerThread executes loop
+
+It prints:
+
+Working on task 1
+Working on task 2
+Working on task 3
+...
+
+
+Each task takes roughly 500 ms (because of Thread.sleep(500)).
+
+So, in 2 seconds, it completes roughly 4 tasks (since 2000 ms / 500 ms ≈ 4).
+
+▶️ Step 3: Main thread interrupts
+
+After 2 seconds:
+
+t.interrupt();
+
+
+This doesn’t instantly stop the thread.
+It just sets the “interrupted flag” of t to true.
+
+▶️ Step 4: WorkerThread detects interruption
+
+There are two possible moments when the thread will notice it’s been interrupted:
+
+Case 1️⃣ — If it’s awake (not sleeping)
+
+If it’s between iterations (after waking from sleep), this line detects the flag:
+
+if (Thread.interrupted()) {
+    System.out.println("Thread interrupted, stopping safely...");
+    return;
+}
+
+
+Then it exits gracefully.
+
+Case 2️⃣ — If it’s sleeping when interrupted
+
+Then Thread.sleep(500) throws an InterruptedException, jumping to:
+
+catch (InterruptedException e) {
+    System.out.println("Thread was sleeping and got interrupted, stopping...");
+    return;
+}
+
+
+This also ends the thread safely.
+
+🧾 Step 5: Thread ends
+
+Either way, the thread prints a message and returns from run(), which means the thread terminates gracefully.
+
+🧩 Example Output (approximate)
+Working on task 1
+Working on task 2
+Working on task 3
+Working on task 4
+Thread was sleeping and got interrupted, stopping...
+
+
+(The exact task number might differ slightly depending on timing.)
+
+⚙️ What’s Happening Behind the Scenes
+Step	Thread	Action
+1	main	Starts WorkerThread
+2	WorkerThread	Executes loop, prints tasks
+3	main	Waits 2 seconds
+4	main	Calls interrupt()
+5	WorkerThread	Detects interruption (either via flag or exception)
+6	WorkerThread	Stops safely without force killing
+✅ Key Takeaways
+Concept	Meaning
+interrupt()	Sends a polite request to stop — it does not kill the thread.
+Thread.interrupted()	Checks and clears the interrupt flag.
+InterruptedException	Thrown when a sleeping/waiting thread gets interrupted.
+Graceful stop	Thread finishes cleanly instead of being killed mid-task.

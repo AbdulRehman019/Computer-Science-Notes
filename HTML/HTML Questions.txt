@@ -1,0 +1,18 @@
+1. What is HTML?
+2. What are HTML elements?
+3. HTML tags
+4. HTML Attributes
+5. HTML Structure
+6. HTML Entities
+7. HTML Lists
+8. HyperLink
+9. What is url?
+	a, href, target,iframe
+10. Forms
+	Elements in form: 
+	input		Attributes: type, name, value		type: text, password, radio, checkbox, file, submit, reset, image
+	textarea	Attributes: cols, rows
+	select		Tags: option
+
+11. Semantic Tags
+12. Inline and Block Elements

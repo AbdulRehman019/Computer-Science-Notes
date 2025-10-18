@@ -1,0 +1,62 @@
+What is RequestDispatcher?
+	RequestDispatcher is an interface provided by the Servlet API that allows one resource (like a Servlet) to:
+		Forward a request to another resource(servlet), or
+		Include the output of another resource in the response.
+
+Why Use RequestDispatcher?
+	To forward a request from one servlet to another or to a JSP.
+	To include reusable content (like a common header/footer).
+	To separate logic and presentation, e.g., do the business logic in a servlet and forward to a JSP for display.
+
+Methods of RequestDispatcher
+	forward(request, response): Forwards the request to another resource (no return to original servlet).
+	include(request, response): Includes the content of another resource in the current response.
+
+How to Get a RequestDispatcher
+	RequestDispatcher rd = request.getRequestDispatcher("resourceName");
+
+	You can pass:
+		a JSP ("output.jsp")
+		another Servlet ("/secondServlet")
+		a static page ("about.html")
+
+
+---- forward() Example – Forward to JSP after processing
+🔹 Servlet1.java
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+	    String name = request.getParameter("username");
+    
+	    // Storing data to be forwarded
+	    request.setAttribute("greeting", "Hello " + name);
+	    
+	    // Forwarding to output.jsp
+	    RequestDispatcher rd = request.getRequestDispatcher("output.jsp");
+	    rd.forward(request, response);
+	}
+
+🔹 output.jsp
+	<html>
+	<body>
+	    <h2><%= request.getAttribute("greeting") %></h2>
+	</body>
+	</html>
+
+If user submitted "Alice", it will show: Hello Alice
+
+
+---- include() Example – Include Header/Footer
+🔹 Servlet
+	RequestDispatcher rd = request.getRequestDispatcher("header.html");
+	rd.include(request, response);
+	
+	out.println("<p>Main content here</p>");
+	
+	rd = request.getRequestDispatcher("footer.html");
+	rd.include(request, response);
+
+---- Important Notes
+	After calling forward(), you cannot write to the response in the original servlet. It's handed off.
+	Both methods must be called before response.getWriter().close() or before any output is committed.
+

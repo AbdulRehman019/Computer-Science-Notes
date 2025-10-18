@@ -1,0 +1,104 @@
+1. Best Time to Buy and Sell Stock 
+	Buy on the day stock price is lowest, sell it at the day the stock price is highest. 
+
+2. Best Time to Buy and Sell Stock II
+	Only two things can happen. 
+	Price can be higher than previous day. It means i made profit. 
+	Price can be lower than previous day. It means i loose money. 
+
+	But if you think, everytime we have two possiblity: 
+	If i bought previously, i can choose to sell today or not to sell today.
+	If i sell previously, i can buy today or i choose not to buy today. 
+	Hence, recursion. 
+
+		public int f(int i, int j, int n, int[] prices, int[][] dp) {
+	        	if(i == n) return 0;
+	
+		        if(dp[i][j] != -1) return dp[i][j];
+		
+		        if(j == 0) {
+		            int take = -prices[i] + f(i + 1, 1, n, prices, dp);
+		            int ntake = f(i + 1, 0, n, prices, dp);
+		
+		            return dp[i][j] = Math.max(take, ntake);
+		        }
+		        else {
+		            int take = prices[i] + f(i + 1, 0, n, prices, dp);
+		            int ntake = f(i + 1, 1, n, prices, dp);
+		
+		            return dp[i][j] = Math.max(take, ntake);
+		        }
+		    }
+
+3. Best Time to Buy and Sell Stock III
+	Here we had restriction on how many times, we can perform the (buy and sell) together. 
+	We can perform at most 2 transactions. 
+	Hence, i introduced a third variable keeping the count of transactions. 
+
+		public int f(int i, int j, int count, int n, int[] prices, int[][][] dp) {
+		        if(i == n || count == 0) return 0;
+		
+		        if(dp[i][j][count] != -1) return dp[i][j][count];
+		
+		        if(j == 0) {
+		            int buy = -prices[i] + f(i + 1, 1, count, n, prices, dp);
+		            int nbuy = f(i + 1, 0, count, n, prices, dp);
+		
+		            return dp[i][j][count] = Math.max(buy, nbuy);
+		        }
+		        else {
+		            int sell = prices[i] + f(i + 1, 0, count - 1, n, prices, dp);
+		            int nsell = f(i + 1, 1, count, n, prices, dp);
+		
+		            return dp[i][j][count] = Math.max(sell, nsell);
+		        }
+		    }
+
+		 public int maxProfit(int[] prices) {
+		        int n = prices.length;
+		        int[][][] dp = new int[n][2][3];
+		        for(int i = 0; i < n; i++) {
+		            for(int j = 0; j < 2; j++) {
+		                Arrays.fill(dp[i][j], -1);
+		            }
+		        }
+		
+		        return f(0, 0, 2, n, prices, dp);
+		   }
+
+4. Best Time to Buy and Sell Stock IV
+	Here we had restriction on how many times, we can perform the (buy and sell) together. 
+	We can perform at most k transactions instead of 2. 
+	
+	Same solution will work. 
+
+5. Best Time to Buy and Sell Stock V
+	This is a good one. 
+	In every other problem we thought in terms of if we bought previously or if we sold previously. 
+
+	But here we have two types of transaction: 
+		1. Normal: Buy on i, Sell on j where i < j
+		2. Abnormal: Sell on i, Buy on j where i < j
+
+	Here we thought in terms of transaction, whether it is a normal, abnormal or no transaction. 
+
+	f(i, t): Maximum profit which can be obtained from i to n if type "t" transaction is going on. 
+
+	Three conditions can arise: 
+	1. t == 0(Normal transaction) 
+		We can do only two things, either sell or do nothing. 
+		If we sell, currently we are on no transaction which means f(i + 1, 2). 
+		If we do nothing, we can sell or do nothing next which means normal transaction continues. Hence, f(i + 1, 0)
+
+	2. t == 1(Abnormal transaction) 
+		We can do only two things, either buy or do nothing. 
+		If we buy, abnormal transaction and currently we are at no transaction means f(i + 1, 2)
+		If we do nothing, we can buy or do nothing next which means abnormal transaction continues. Hence, f(i + 1, 1)
+
+	3. t == 2(No transaction)
+		Here, we can either start with normal transaction, abnormal transaction or go ahead with no transaction. 
+		If we buy, normal transaction starts and we move to f(i + 1, 0)
+		If we sell, abnormal transaction starts and we move to f(i + 1, 1)
+		If we do nothing, we move to f(i + 1, 2)
+
+	In each type of transaction, we took the maximum and return. 

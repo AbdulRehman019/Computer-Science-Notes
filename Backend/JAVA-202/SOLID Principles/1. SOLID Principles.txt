@@ -1,0 +1,63 @@
+SOLID Principles
+	The SOLID principles are 5 core object-oriented design principles that help you write cleaner, maintainable, and scalable code.
+
+SOLID Principles in OOP
+1. S → Single Responsibility Principle (SRP)
+	One class = one responsibility
+	A class should have only one reason to change.
+
+	✅ Example:
+		Invoice class → only handles invoice data.
+		InvoicePrinter class → only handles printing.
+		Don’t put both in one class. 
+
+	Suppose we have an ecommerce application. 
+	It has three functionalities: OrderService, CartService, PaymentService. 
+	Instead of creating a single class with all the functions, you should create three different classes each having their related function.
+
+	Things to keep in mind: 
+		1. Don't oversimplify your code(Creating so many classes). 
+		2. Don't be extreme by creating classes with just functions. 
+		3. Program changes over time. SRP can be fulfilled now not forever.  
+
+2. O → Open/Closed Principle (OCP)
+	Classes should be open for extension, closed for modification.
+	Means you should be able to add new functionality without changing existing code.
+
+	✅ Example:
+		Instead of modifying Shape class for Rectangle, Circle, etc.,
+		Use polymorphism → each shape implements draw().
+		Adding new shapes doesn’t require editing old code.
+
+3. L → Liskov Substitution Principle (LSP)
+	Subclasses should be substitutable for their base classes.
+	If B is a subclass of A, then B objects should work everywhere A objects are expected without breaking behavior.
+
+	❌ Example of violation:
+	Square inherits from Rectangle.
+	But changing width/height in a square breaks rectangle assumptions.
+
+4. I → Interface Segregation Principle (ISP)
+	Don’t force classes to implement methods they don’t use.
+	Better to have many small interfaces than one big “fat” interface.
+
+	✅ Example:
+		Instead of IMachine with print(), scan(), fax(),
+		Use smaller interfaces: IPrinter, IScanner, IFax.
+		A basic printer doesn’t need to implement fax.
+
+5. D → Dependency Inversion Principle (DIP)
+	Depend on abstractions, not concrete classes.
+	High-level modules should not depend on low-level modules; both should depend on interfaces/abstractions.
+
+	✅ Example:
+		Instead of LightSwitch directly controlling Bulb,
+		Make it depend on Switchable interface.
+		Now it works for Bulb, Fan, etc.
+
+🔹 In Short
+	S → One class, one responsibility.
+	O → Extend, don’t modify.
+	L → Subclasses must be usable as parents.
+	I → No unnecessary methods in interfaces.
+	D → Depend on abstractions, not concrete classes. 

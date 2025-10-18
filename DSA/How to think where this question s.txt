@@ -1,0 +1,99 @@
+**************************************** How to think where this question should go *************************************
+Suppose you found a brute force solution to a problem, and its taking linear time (O(n)) and giving TLE. And now to reduce TC you need to make it log(n) or constant.
+As soon as you thought of log(n), two cases arises binary search and priority queue.
+
+
+
+***************************************************** When number of moves are limited **************************************************
+When number of moves are limited, then you can move with brute force.
+Problem: Minimum Difference Between Largest and Smallest Value in Three Moves
+
+
+
+************************************************** Subarray, Substring ***************************************************
+Some possiblities: Sliding window, If problem includes 
+
+
+
+
+**************************************** Merge Sort ************************************
+Jb bhi tumhe lge ki agar ye array sorted hota to mai easily solve kr leta, lekin tum uss array ko sort nhi kr skte kyunki tumhe order maintain krna hai
+aise cases me try using merge sort.
+
+If you find inversions, i < j && nums[i] > nums[j]
+Think of merge sort.
+
+Problems: Count Inversions, Reverse Pairs
+
+
+
+**************************************** Binary Search *********************************
+Agar array sorted hai to binary search. Pr tum left jaoge ya right uski condition change hoti rahegi according to question(Bs yahi condition pata lagani hai).
+For example lower_bound me alag hogi, upper_bound me alag hogi.
+
+Ek aur technique, kai bar while solving tum ek ans variable loge aur koi particular condition met hogi to kahoge maybe this is the possible answer aur use store kar
+loge aur fir agle loop me wo condition dobara met hoti hai iska mtlb it is a better answer aur ab tum ise store kr loge aur age badhoge.
+
+
+
+
+
+**************************************** Rotated Binary Search ***********************************
+Condition: Ek side humesha sorted hogi, uske basis pr hum check karenge kis side pr move krna hai.
+
+**************************************** Group unique set of elements ****************************************
+Whenever you see a problem with only a small number of unique values and you are thinking of O(n) solution, think:
+		Can I group instead of sort?
+		Can I use counting or pointers to maintain regions?
+
+Sort 0s, 1s, 2s
+
+***************************************** Map and Set kb aane chahiye dimaag me ******************************************
+Jb tumhe lage kaash ek baar me pata chal jaata ye hai ya nhi array me ya iss index se pehle aaya hai ya nhi, to map aur set aane chahiye dimaag me
+Aur agar tum chahte ki unique bhi ho to set.
+Agar koi value associate krni hai element ke saath to map 
+
+***************************************** Stack ***************************************************** 
+Parenthesis
+Valid Parenthesis: You can take count and add for every '(' and subtract for every ')'. 
+
+Stack problems has these variations: 
+1. Nge, Pge, Pse, Nse
+2. Combination of first and how much each element is contributing.
+
+
+
+***************************************** DP ***********************************************
+Don't go till the end and make your logic. It will solve your problem using recursion but you won't be able to memoize it.
+Do it while going. 
+
+Instead of depending your logic on list or stack use count(int) so you can easily memoize.
+
+
+
+
+********************************************* Greedy ****************************************************** 
+Intervals, Meetings
+You need to sort most of the time, but by start time or end time? You need to think that
+Do you need to combine start and end and then sort or sorting them independently would help(Job Sequencing Problem).
+
+Sometimes both sorting might seem to be working:
+Like in(#452) sorting either by 0th index or by 1st will work.
+And in(#630) both would be required at once to solve a problem. 
+
+Sometimes you may need to take wrong choices while moving forward, in that case you will need to remove it when you realize in future.
+You need to use Heap/PriorityQueue in such cases. 
+
+
+****************************************************** Left Rotate Array by k places **************************************************
+If you see a problem that involves shifting, rotating, or rearranging an array in-place → think about reversing parts of it.
+Reversal is a powerful trick to reorder arrays efficiently in-place.
+It’s especially useful when you can’t use extra space.
+
+
+**************************************** Matrix Problem *********************************************
+Most of the matrix problems can be solved by just mapping rows and cols.
+See what the matrix was initially, what the matrix is now? Try to look where the older element is now, what was it's position earlier, what it's position now
+Try to find the relation between new postion and old position. Once found question solve.
+
+Just like array, in matrix you can rotate, reverse or swap in matrix to achieve your desired result.

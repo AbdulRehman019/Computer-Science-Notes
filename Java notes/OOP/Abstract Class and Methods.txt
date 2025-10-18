@@ -1,0 +1,54 @@
+
+************************************************************************************ Abstract Class and Methods *******************************************************************************************
+
+1. Abstract Methods are those methods which are created in parent class but need to be define in child class.
+   Abstract methods are necessary to be defined in child class.
+
+2. Any class containing "Abstract method" must be name as "Abstract Class".
+
+3. Example:
+	public abstract class Parent {
+    		abstract void career(String name);
+	}
+
+4. You cannot create objects of abstract class directly if you want to create it then you need to override all the abstract methods while creating the object of abstract class.
+	Example:
+		Parent mom = new Parent(int age) {
+            
+            		void career() {
+                
+            		}
+            
+            		void partner() {
+
+            		}
+        	}
+
+  Although you cannot create object of abstract class but you can use it as a reference variable.
+	Example:	Parent mom = new Daughter();
+
+5. If you try to make object of parent class and try to call its methods it will be unable to do so because methods body are not created yet (Ofcourse man, because they are abstract
+   how their body can be created without calling them from child class).
+
+6. Why static methods cannot be overriden?
+	 We cannot override static methods because method overriding is based on dynamic binding at runtime and the static methods are bonded using static binding at compile time.
+
+7. Abstract classes can have static methods as well as normal methods.
+   Since static methods are called using Class name rather than making objects.
+   Normal method can be called using subclass's object.
+
+8. Note:
+	Abstract constructors can't be created.
+	Abstract static methods can't be created.
+
+9. What is the difference between abstract class and interface and where do we use abstract class and interfaces?
+	Use an abstract class when:
+		You have common code that should be shared by multiple subclasses.
+		You want to define default behavior, but also allow overriding.
+		You want to define state (fields) shared among subclasses.
+
+	 When to Use Interface
+		Use an interface when:
+			You want to define a contract or capability (e.g., Flyable, Drivable).
+			You want to achieve multiple inheritance (since Java doesn’t allow multiple class inheritance).
+			The classes don’t share a common state, just behavior.

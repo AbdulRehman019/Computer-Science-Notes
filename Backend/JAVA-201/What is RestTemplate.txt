@@ -1,0 +1,97 @@
+✅ What is RestTemplate?
+	RestTemplate is a synchronous HTTP client provided by Spring Framework.
+	It helps to consume RESTful web services by sending HTTP requests and receiving HTTP responses.
+	It simplifies interaction with HTTP APIs by handling HTTP connection, marshalling/unmarshalling, and exception handling for you.
+
+✅ When to use RestTemplate?
+	Good for simple use cases where you just want to call an API and get the response.
+	Ideal when you don’t need non-blocking or reactive behavior.
+	Common in traditional Spring Boot applications.
+
+✅ Common HTTP Methods Supported
+	HTTP Method	RestTemplate Method
+	GET		getForObject(), getForEntity()
+	POST		postForObject(), postForEntity(), postForLocation()
+	PUT		put()
+	DELETE		delete()
+	PATCH		patchForObject()
+	Custom		exchange() (for full control)
+
+✅ Basic Example of Using RestTemplate
+	1️⃣ GET Request
+		RestTemplate restTemplate = new RestTemplate();
+		String url = "https://api.example.com/users/1";
+
+		// Deserialize the response body to User class
+		User user = restTemplate.getForObject(url, User.class);
+
+	2️⃣ POST Request
+		RestTemplate restTemplate = new RestTemplate();
+		String url = "https://api.example.com/users";
+		
+		User newUser = new User("John", "john@example.com");
+		
+		// Send a POST request and receive created object
+		User createdUser = restTemplate.postForObject(url, newUser, User.class);
+
+	3️⃣ Using exchange() for full control
+		RestTemplate restTemplate = new RestTemplate();
+		String url = "https://api.example.com/users/1";
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", "Bearer <token>");
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+		
+		ResponseEntity<User> response = restTemplate.exchange(
+		    url,
+		    HttpMethod.GET,
+		    entity,
+		    User.class
+		);
+		
+		User user = response.getBody();
+
+✅ HttpEntity
+	Wraps the HTTP request body and headers.
+	Example:
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<User> entity = new HttpEntity<>(newUser, headers);
+
+		Used for POST, PUT, or exchange calls where you need to send headers or body.
+
+✅ getForObject() vs getForEntity()
+	Method				Description
+	getForObject(url, Class<T>)	Returns only the body of the response (the object directly)
+	getForEntity(url, Class<T>)	Returns full ResponseEntity<T>, giving access to HTTP status, headers, and body
+
+✅ Handling Errors
+	By default, RestTemplate throws exceptions like:
+		HttpClientErrorException (4xx)
+		HttpServerErrorException (5xx)
+
+	You can customize behavior by setting a custom ResponseErrorHandler.
+
+✅ Why Not Always Use RestTemplate?
+	It is blocking and synchronous.
+	In modern applications, prefer using WebClient (from Spring WebFlux) for non-blocking/reactive HTTP calls.
+	Use RestTemplate for simpler apps or microservices when async behavior isn’t needed.
+
+✅ Summary
+	Pros								Cons
+	Easy to use							Blocking by default
+	Supports most HTTP methods					Not ideal for highly scalable systems
+	Simple integration with Spring Boot				Deprecated in the long term in favor of WebClient
+	Automatically handles JSON serialization/deserialization	Limited to synchronous programming
+
+✅ Example Use Case
+	📋 Suppose you want to call Tiingo API to get stock prices:
+
+	String url = "https://api.tiingo.com/tiingo/daily/AAPL/prices?startDate=2022-01-01&endDate=2022-02-01&token=YOUR_TOKEN";
+	RestTemplate restTemplate = new RestTemplate();
+	TiingoCandle[] prices = restTemplate.getForObject(url, TiingoCandle[].class);
+	
+	for (TiingoCandle candle : prices) {
+	    System.out.println("Close Price: " + candle.getClose());
+	}

@@ -1,0 +1,43 @@
+
+************************************************************************************ Access Modifier *******************************************************************************************
+
+1. Private data members cannot be accessed directly. To access them you need to use getters.
+
+2. If you have not initialized data members public or private then you can access it inside the same package but to access it in some other package you need to import it 
+   as well as use getters.
+
+
+Rules to access data members with different access modifiers
+
+				    Class		Package		Subclass	Subclass	World
+									(Same pkg)	(Diff. pkg)	(Diff. pkg and not subclass)
+
+		
+		public			+		+		+		+		+
+
+		protected		+		+		+		+
+
+		no modifier		+		+		+
+
+		private			+
+
+Note:	
+	You can access protected data member inside another package only through subclass, not even by the class.
+	Meaning:
+		Subclass obj = new Subclass();		// It can access protected members of parent class in different package.
+		Parent obj = new Parent();		// It cannot access protected members in different package.
+
+	Protected: Inside the same package and in different package only if class of that package is extending the current class.
+
+
+
+************************************************************************************ In Built packages *******************************************************************************************
+
+Some of the in-built packages are:
+	Java.
+		1. lang
+		2. io
+		3. util
+		4. applet
+		5. awt
+		6. net

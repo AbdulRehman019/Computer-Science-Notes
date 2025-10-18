@@ -1,0 +1,113 @@
+How to publish your code as library?
+
+Using it locally (without a remote repository)
+	If someone wants to use your library without a remote repository, the JAR file itself is enough.
+	Step 1: Copy the JAR
+		When you build your library using Gradle (./gradlew build) or Maven (mvn package), a .jar file is created:
+			Gradle → build/libs/your-library.jar
+			Maven → target/your-library.jar
+
+	Copy this JAR into the project of the server that wants to use it. For example, place it in a libs/ folder inside their project.
+
+Step 2: Add it to dependencies
+	Gradle
+	dependencies {
+	    implementation files('libs/your-library.jar')
+	}
+	
+	implementation → tells Gradle that this is a dependency your project needs to compile and run.
+	files('libs/your-library.jar') → points to the JAR you copied. Gradle will include this JAR in the classpath.
+
+Maven
+	Maven needs the JAR to be installed in the local repository first, because Maven uses a central repository system to manage dependencies.
+	Command to install JAR locally:
+		mvn install:install-file \
+		    -Dfile=your-library.jar \
+		    -DgroupId=com.yourname \
+		    -DartifactId=your-library \
+		    -Dversion=1.0.0 \
+		    -Dpackaging=jar
+
+
+	Explanation of flags:
+		-Dfile → path to your library JAR.
+		-DgroupId → uniquely identifies your organization or project.
+		-DartifactId → uniquely identifies your library.
+		-Dversion → version of your library.
+		-Dpackaging → type of artifact (here it’s a JAR).
+		After installation, you can add it in pom.xml like this:
+			<dependency>
+			    <groupId>com.yourname</groupId>
+			    <artifactId>your-library</artifactId>
+			    <version>1.0.0</version>
+			</dependency>
+
+
+	Maven will now use your local JAR when building the project. 
+
+Using it remotely (via a Maven/Gradle repository)
+	Sometimes, copying files manually is not convenient. Especially if many servers or developers need your library. In that case, you can publish it to a Maven repository, which can 	be public (like Maven Central) or private (your company’s repository).
+
+	Step 1: Add publishing configuration in build.gradle
+	publishing {
+	    publications {
+	        mavenJava(MavenPublication) {
+	            from components.java
+	            groupId = 'com.yourname'
+	            artifactId = 'your-library'
+	            version = '1.0.0'
+	        }
+	    }
+	    repositories {
+	        maven {
+	            url = uri("https://your.repo.url/maven2") // remote repository URL
+	            credentials {
+	                username = 'user'
+	                password = 'password'
+	            }
+	        }
+	    }
+	}
+
+	Explanation:
+		publications → defines what you are publishing (in this case, your JAR).
+		from components.java → automatically includes your compiled Java classes and resources in the JAR.
+		groupId, artifactId, version → uniquely identifies your library in the repository.
+		repositories → defines where to publish the JAR. You can use a remote URL and provide credentials if it’s private.
+
+	Step 2: Publish the library
+		Run:
+			./gradlew publish
+
+	Gradle builds your JAR and uploads it to the repository you configured.
+	Once uploaded, anyone with access to this repository can use your library as a dependency.
+
+Step 3: Server uses it as a dependency
+	Once your library is in the repository, the server can include it without manually copying the JAR.
+
+	Gradle
+	dependencies {
+	    implementation 'com.yourname:your-library:1.0.0'
+	}
+	
+	Gradle automatically downloads the library from the repository and adds it to the project.
+
+	Maven
+	<dependency>
+	    <groupId>com.yourname</groupId>
+	    <artifactId>your-library</artifactId>
+	    <version>1.0.0</version>
+	</dependency>	
+	
+	Maven automatically fetches the library from the configured repository during build.
+
+✅ Summary of Local vs Remote
+	Aspect				Local Use				Remote Use
+	How library is shared		Copy JAR manually			Publish to repository
+	Dependency config		Gradle files(), Maven install-file	Gradle/Maven dependency coordinates (groupId:artifactId:version)
+	Updates				Manual replacement			Automatic when repository updates
+	Convenience			Low (manual steps)			High (team-wide sharing)
+
+
+
+// Multiple build.gradle files

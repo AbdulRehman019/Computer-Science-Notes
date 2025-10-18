@@ -1,0 +1,19 @@
+JUnit Testing
+
+What is JUnit Testing?
+Annotations: @Test, @DisplayName, @BeforeEach, @AfterEach, @BeforeAll, @AfterAll. @RepeatedTest, @Disabled
+Junit Assertions: assertEquals, assertTrue, assertFalse, assertNull, assertNotNull, assertThrows(used with exceptions)
+
+@Test
+@DisplayName("Test Subtraction Overflow of Two Doubles")
+void testSubtractionOverflowForDoubles(){
+ 	//Assert
+        Assertions.assertThrows(ArithmeticException.class,new Executable(){
+            @Override
+            public void execute() throws Throwable{
+                standardCalculator.subtract(-Double.MAX_VALUE,Double.MAX_VALUE);
+            }
+        });
+}
+
+Notes from QCalc Module 2

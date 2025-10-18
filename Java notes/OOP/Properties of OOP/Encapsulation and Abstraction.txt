@@ -1,0 +1,53 @@
+
+************************************************************************************ Encapsulation *******************************************************************************************
+
+1. Wrapping up the implementation of the data members and methods in a class.
+
+   Basically Encapsulation is the process of hiding. 
+
+   Encapsulation is mainly focused on internal working, the implementation, making secure the information.
+
+   Encapsulation is the process of containing information.
+
+   Encapsulation means that the internal state of an object is hidden and can only be accessed or modified through the object's methods.
+   This helps to protect the object's data and prevent it from being modified in unexpected ways.
+
+   Goal: Reduce Complexity + Increase Data Security
+
+   How to encapsulate properly?
+	Code Responsibly
+
+	Restrict access
+	Validate the input
+	Know the limits
+	Double check all operations performed
+	Initialize the data
+	Choose the data types wisely ( Will be discussed in next exercise! )
+	For example, Java contains multiple data types for storing integer values. 
+	Be sure to choose integer types that are large enough to hold all the valid values that will be stored on each type of computer that will be used.
+	
+
+************************************************************************************ Abstraction *******************************************************************************************
+
+1. Hiding the unnecessary details and showing valuable information.
+
+   For example: 
+	In car: How the car starts, how the engine works all these features although useful are hidden because they are not useful(unnecessary) to the user.
+		The user only know how the car starts using key not the mechanism behind it.
+	This is called abstraction.
+
+	ArrayList is the example of abstraction. It is also known as abstract data type. Because although we use its features such as add method but we don't really care how it is working 
+	internally.
+
+   Abstraction is the process of gaining information.
+
+   Goal: Eliminate redundant code
+
+
+
+*********************************************************************************************************************************************************************************************
+
+  Data Hiding:
+	Data Hiding is focused on data security along with hiding complexity.
+  Encapsulation:
+	Encapsulation is focused on hiding complexity.

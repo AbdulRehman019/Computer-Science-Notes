@@ -1,0 +1,71 @@
+Java 8 Features: 
+1. Lambda Expressions 
+2. Method References 
+3. Optional 
+4. Functional Interface 
+5. Default Methods 
+6. Nashorn, Javascript Engine 
+7. Stream API 
+8. Date API 
+
+
+
+
+1. Java 8 Interface Changes 
+   Before Java 8: 
+	Methods: Only public, abstract methods were allowed. 
+	Implementataion: No method implementations could be provided. 
+	Evolution: Adding methods require implementers to update their classes. 
+
+   Java 8 and Later: 
+	Static Methods: Interfaces can include static methods. 
+	Defatult Methods: Interfaces can have methods with default implementation. 
+	Backward Compatibility: New methods can be added without breaking existing functionality. 
+
+   Static Methods in Interface: 
+	Definiton: Static Methods in an interface belong to the interface itself, not to any instance. 
+	Usage: interfaceName.staticMethod(). 
+	Access: They cannot be overriden as they are not inherited by implementing clasess. 
+	Purpose: Used for utility or helper methods that are relevant to the interface but don't require access to instance-specific data. 
+	Restrictions: Cannot access instance methods or instance variables of the implementing classes. 
+
+   Default Methods in Interface: 
+	Purpose: Allow adding new methods to interfaces without breaking existing implementations. 
+	Inheritance: Can be inherited by implementing classes. 
+	Overriding: Implementing classes can override default methods if needed. 
+
+2. Functional Interfaces 
+	A Functional Interface is an interface that contains exactly one abstract method.
+
+	It can have:
+		One abstract method (mandatory)
+		Any number of default or static methods (optional)
+
+	Because it has only one abstract method, it can be represented using a lambda expression or a method reference.
+
+	Example of a functional interface: 
+		@FunctionalInterface
+		interface Greeting {
+		    void sayHello(String name);
+		}
+
+	@FunctionalInterface is optional, but recommended.
+	It ensures the compiler throws an error if you accidentally add another abstract method. 
+
+	Why functional interfaces?
+		Before Java 8, if you wanted to pass some behavior (a function) as an argument, you’d need anonymous classes.
+		Functional interfaces + lambdas make that clean and concise. 
+
+	Example before Java 8 
+		Greeting greeting = new Greeting() {
+		    @Override
+		    public void sayHello(String name) {
+		        System.out.println("Hello, " + name);
+		    }
+		};
+
+		greeting.sayHello("Abdul");
+
+	Same code with Lambda Expression (Java 8+) 
+		Greeting greeting = (name) -> System.out.println("Hello, " + name);
+		greeting.sayHello("Abdul");

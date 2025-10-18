@@ -1,0 +1,79 @@
+1️⃣. What is Factory Pattern?
+	A Creational Design Pattern.
+	It provides an interface to create objects in a superclass, but allows subclasses to alter the type of objects that will be created.
+	Purpose: To encapsulate object creation logic and promote loose coupling.
+
+2️⃣. Why Use Factory Pattern?
+	Avoids direct use of new keyword in client code.
+	Useful when the exact type of the object is determined at runtime.
+	Promotes code scalability and flexibility.
+	Helps adhere to the Open/Closed Principle.
+
+3️⃣. Types of Factory Pattern
+	Type		Description
+	Simple Factory	A single factory class with a method to create various types of objects based on parameters.
+	Factory Method	Subclasses decide which class to instantiate.
+	Abstract Factory	Provides an interface to create families of related objects without specifying concrete classes.
+
+4️⃣. Example of Simple Factory Pattern
+	Interface
+	interface Shape {
+	    void draw();
+	}
+
+	Concrete Implementations
+	class Circle implements Shape {
+	    public void draw() {
+	        System.out.println("Drawing Circle");
+	    }
+	}
+	
+	class Rectangle implements Shape {
+	    public void draw() {
+	        System.out.println("Drawing Rectangle");
+	    }
+	}
+
+	Factory Class
+	class ShapeFactory {
+	    public Shape getShape(String shapeType) {
+	        if (shapeType == null) return null;
+	
+	        if (shapeType.equalsIgnoreCase("CIRCLE")) {
+	            return new Circle();
+	        } else if (shapeType.equalsIgnoreCase("RECTANGLE")) {
+	            return new Rectangle();
+	        }
+
+	        return null;
+	    }
+	}
+
+	Client Code
+	public class FactoryPatternDemo {
+	    public static void main(String[] args) {
+	        ShapeFactory factory = new ShapeFactory();
+	
+	        Shape shape1 = factory.getShape("CIRCLE");
+	        shape1.draw();  // Output: Drawing Circle
+	
+	        Shape shape2 = factory.getShape("RECTANGLE");
+	        shape2.draw();  // Output: Drawing Rectangle
+	    }
+	}
+
+5️⃣. Key Concepts
+	Encapsulation of object creation logic.
+	Client doesn’t need to know concrete class names.
+	Helps in managing large codebases with many object types.
+
+6️⃣. When to Use Factory Pattern?
+	When object creation is complex or depends on dynamic inputs.
+	To avoid code duplication when creating many objects.
+	When you need a central place to manage object creation.
+
+7️⃣. Summary
+	Factory Pattern simplifies object creation.
+	Provides abstraction between client code and concrete implementations.
+	Improves maintainability and flexibility.
+	Common in frameworks and libraries (like Spring’s Bean Factory).

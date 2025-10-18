@@ -1,0 +1,74 @@
+************************************************* Session Management ********************************************
+1. What is Session Management?
+	Web applications are stateless by default — this means that every time a client (browser) sends a request, the server treats it as a new and independent request.
+	✅ Session management allows the server to keep track of a user’s information across multiple requests.
+
+2. Why Is It Needed?
+	Imagine you're:
+		Logging into a website
+		Adding items to a shopping cart
+		Navigating from one page to another
+
+	You wouldn't want to log in again or lose your cart every time you switch pages, right?
+	
+	That’s where session management comes in!
+
+3. Key Techniques for Session Management
+
+		Technique					Description
+		Cookies	Stored on client’s browser. 		Can be used to store session ID or data.
+		Hidden fields					Pass data between pages using forms (less secure).
+		URL rewriting					Add session ID to the URL (like ?jsessionid=...)
+		HttpSession					Most commonly used in Java Servlets. Server stores session data.
+
+4. Session Management using HttpSession (Most Common in Java Servlets)
+	🔹 How to Create/Get a Session:
+		HttpSession session = request.getSession();
+
+	🔹 Store Data in Session:
+		session.setAttribute("username", "john_doe");
+
+	🔹 Retrieve Data from Session:
+		String user = (String) session.getAttribute("username");
+
+	🔹 Invalidate Session (like on logout)
+		session.invalidate();
+
+5. The session objects in both AddServlet and SquareServlet are the same, as long as:
+	Both requests are coming from the same browser (client).
+	The session hasn't expired or been invalidated.
+	The browser supports cookies (or URL rewriting is enabled if cookies are off).
+
+	Your browser makes a new request to SquareServlet. It also sends the session ID (JSESSIONID) as a cookie (or in URL if URL rewriting is used).
+	Then in SquareServlet, when you again call:
+		HttpSession session = req.getSession();
+	It finds the session with that JSESSIONID, and returns the same session.
+
+✅ Full Example
+🔸 1. LoginServlet.java
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    String username = request.getParameter("username");
+	    String password = request.getParameter("password");
+	
+	    if ("admin".equals(username) && "123".equals(password)) {
+	        HttpSession session = request.getSession();
+	        session.setAttribute("user", username);  // Store username
+	
+	        response.sendRedirect("dashboard.jsp");
+	    } else {
+	        response.sendRedirect("loginError.jsp");
+	    }
+	}
+
+🔸 2. dashboard.jsp
+	<%@ page session="true" %>
+	<%
+	    String user = (String) session.getAttribute("user");
+	    if (user != null) {
+	%>
+	    <h2>Welcome, <%= user %></h2>
+	<%
+	    } else {
+	        response.sendRedirect("login.html");
+	    }
+	%>

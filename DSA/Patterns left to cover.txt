@@ -1,0 +1,30 @@
+Patterns left to cover: 
+Trie (Prefix Tree)
+	Word Search II
+	Implement Trie
+	Replace Words
+
+Segment Tree / Fenwick Tree (Binary Indexed Tree)
+	Range sum queries with updates
+	Range minimum queries
+
+Heap / Priority Queue
+	Kth largest/smallest element
+	Merge K sorted lists
+	Top K frequent elements
+	Sliding window maximum
+
+Advanced Graphs
+	Floyd–Warshall (all-pairs shortest path)
+	Bellman-Ford (you covered basics, but practice negative cycle detection)
+	Tarjan’s Algorithm (bridges & articulation points)
+
+Math Based Patterns
+	Sieve of Eratosthenes (prime generation)
+	Modular arithmetic (fast power, modular inverse)
+	GCD / LCM tricks
+
+Advanced DP
+	DP on Trees (tree DP problems)
+	Digit DP (count numbers with constraints)
+	DP + Binary Search (LIS with patience sorting)

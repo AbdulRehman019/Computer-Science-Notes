@@ -1,0 +1,19 @@
+Sliding Window 
+1. Maximum Sum Subarray of Size K (LeetCode 643 – Maximum Average Subarray I)
+	→ Classic fixed-size window, compute sum efficiently.
+
+2. Minimum Size Subarray Sum (LeetCode 209)
+	→ Variable-size window, shrink from left when sum ≥ target.
+
+3. Longest Substring Without Repeating Characters (LeetCode 3)
+	→ HashSet/Map with sliding window.
+
+4. Binary Subarray With Sum (LeetCode 930)
+	It is difficult to calculate sum with exact goal. 
+	Instead you can calculate: (Sum <= goal) - (Sum <= goal - 1) 
+
+5. Max  Consecutive Ones III
+	At most k zero flips → sliding window with a counter or use k as a counter. 
+
+
+		

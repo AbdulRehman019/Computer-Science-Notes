@@ -1,0 +1,138 @@
+Entities, Services, and Repositories
+🔹 1. Entities
+
+Entities are domain objects that represent real-world concepts in your application.
+
+They usually map to database tables (in ORM frameworks like Hibernate/JPA).
+
+They carry data and sometimes simple behavior (validations, domain rules), but they don’t solve complete business use cases on their own.
+
+Example: User Entity
+
+@Entity
+class User {
+    @Id
+    private Long id;
+    private String name;
+    private String email;
+
+    // getters, setters, constructors
+}
+
+
+👉 User represents a real-world user.
+But just having a User entity does not handle a use case like "register a new user" or "send a welcome email."
+
+🔹 2. Repositories
+
+Repositories are the data access layer (DAO).
+
+Their job is to fetch, save, update, delete entities from the database.
+
+They don’t contain business logic — they just provide data access.
+
+They act like gatekeepers between the service layer and the database.
+
+Example: UserRepository
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
+}
+
+
+👉 Repositories enable Services by giving them the data they need.
+But repositories don’t know what to do with that data — that’s the Service’s job.
+
+🔹 3. Services
+
+Services are the business logic layer.
+
+They are the driving force that orchestrates Entities + Repositories to solve use cases.
+
+They define application behavior and act as mediators between the repository layer and controllers (APIs/UI).
+
+Example: UserService
+
+@Service
+public class UserService {
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    // Business use case: Register a new users
+    public User registerUser(String name, String email) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("Email already in use");
+        }
+
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+
+        return userRepository.save(user);
+    }
+}
+
+
+👉 UserService collaborates with the UserRepository (to store data) and the User entity (to represent real users).
+
+🔹 Putting It All Together
+Example Use Case: User Registration Flow
+
+Controller (UI/API Layer) → Receives request from the user.
+
+@RestController
+class UserController {
+    private final UserService userService;
+
+    @PostMapping("/register")
+    public User register(@RequestParam String name, @RequestParam String email) {
+        return userService.registerUser(name, email);
+    }
+}
+
+
+Service Layer → Applies business logic.
+
+Check if email exists.
+
+Create user entity.
+
+Save to repository.
+
+Repository Layer → Persists user in the database.
+
+Entity → Represents the newly registered user.
+
+🎯 Key Roles
+
+Entities = The data model (nouns).
+
+Repositories = The data enablers (CRUD operations).
+
+Services = The business orchestrators (verbs → actions/use cases).
+
+⚡ Analogy
+
+Think of an online bookstore:
+
+Entity → Book (title, author, price).
+
+Repository → A librarian who can fetch books from shelves and store them back.
+
+Service → A cashier who processes orders: checks stock, calculates total, updates inventory.
+
+Entities alone can’t sell books.
+Repositories alone can’t handle customers.
+Services bring everything together to solve real-world use cases.
+
+✅ In short:
+
+Entities = Real-world objects represented in code.
+
+Repositories = Data access providers.
+
+Services = Driving force (business logic) that orchestrates entities + repositories to fulfill user use cases.

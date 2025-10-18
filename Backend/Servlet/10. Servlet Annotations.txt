@@ -1,0 +1,30 @@
+1. What is a Servlet Annotation?
+	Servlet annotations are part of the javax.servlet.annotation package (introduced in Servlet 3.0, Java EE 6). Instead of writing configurations in the web.xml file, you can now 	directly annotate your servlet class to:
+		Define the URL pattern
+		Set init parameters
+		Describe the servlet
+
+2. Features of @WebServlet
+
+	Feature				Example							Purpose
+	urlPatterns			@WebServlet("/add") or @WebServlet({"/add", "/sum"})	Set the URL(s) that will call this servlet
+	name				@WebServlet(name="AddServlet", urlPatterns="/add")	(Optional) Give a name to the servlet
+	initParams			Add servlet-specific parameters				Replace <init-param> from web.xml
+	loadOnStartup			@WebServlet(loadOnStartup=1)				(Optional) Tells container to load servlet early
+
+3. Example with initParams
+	import javax.servlet.annotation.WebInitParam;
+	import javax.servlet.annotation.WebServlet;
+
+	@WebServlet(
+	    urlPatterns = "/add",
+	    initParams = {
+	        @WebInitParam(name = "developer", value = "Aman")
+	    }
+	)
+	public class AddServlet extends HttpServlet {
+	    public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+	        String dev = getServletConfig().getInitParameter("developer");
+        	res.getWriter().println("Developer: " + dev);
+	    }
+	}

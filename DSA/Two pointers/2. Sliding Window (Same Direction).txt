@@ -1,0 +1,71 @@
+Sliding Window (Same Direction)
+	This pattern is a game-changer when it clicks — so let’s master it.
+
+	🔍 Sliding Window: Core Idea
+		You maintain a window (usually a subarray or substring), using two pointers:
+			right pointer: expands the window to include more elements
+			left pointer: shrinks the window when a constraint is violated
+
+		This pattern shines when the problem says:
+			Type1: “Find the longest/shortest subarray/subsequence that satisfies a condition” --> Use Sliding window
+			Type2: “Count subarrays with something…” Or "No. of subarrays with some conditions" --> Difficult one but solved using the given template only.
+			Type3: “Minimize/maximize something in a window” Or "Shortest/Minimum window with some conditions"
+
+	🧠 Template
+		int left = 0;
+		for (int right = 0; right < n; right++) {
+		    // Expand the window by including nums[right]
+		
+		    while (window violates condition) {
+		        // Shrink the window from the left
+		        left++;
+		    }
+		
+		    // Update result based on current window size or contents
+		}
+
+	Logic: 
+		Usually in these type of problem we will have three things common: left = 0, right = 0. maxLen = 0. 
+		Fourth variable will vary: sum, count.
+		We will go: 
+			while(right < n), 
+			perform some operation, 
+			check whether we are violating the condition or not,
+			if yes, we will shrink and move back to right condition and update our answer
+			if no, we will go ahead and update our answer 
+			Like in above template
+
+	Problems Solved: 
+		1. Longest Substring Without Repeating Characters
+		2. Minimum size subarray sum
+		3. Maximum consecutive Ones III
+		4. Longest Repeating Character Replacement
+		5. Fruit into Baskets
+
+*************************************************** Minimum Size Subarray Sum ************************************************
+**************** Solution1: 
+1. Tracking Condition: Sum; sum >= target
+
+2. Updating Result: Min size
+
+3. Window: right - left + 1
+
+4. Tracking: I am tracking sum, if sum is greater than equal to target, it means it can be the possible answer. Since, it is greater, we start shrinking the size 
+	     and subtract nums[left] we are trying to minimize the length until size is greater than equal to target.
+
+5. When do we shrink?
+	When we are in the correct range, we are trying to minimize. 
+	sum >= target	-->	left++
+
+6. Edge Case Thought: 
+	When if array is 1, 0, 0, 0 and target = 0, in that case left will keep moving ahead and ans will become negative that's why we only if left <= right.
+
+****************** Solution2:
+1. You can think that answer will lie between 1 and n, so what if i check that okay if one as a minimum size is okay or not, if not we nove to two, then three and so on.
+   And if we get the answer we won't go ahead because we want the smallest.
+
+2. But instead of traversing one by one, use binary search. Minimum possible: 1, Maximum possible: n - 1.
+
+*************************************************** Maximum Consecutive Ones III ************************************************
+
+*************************************************** Longest Repeating Character Replacement ************************************************

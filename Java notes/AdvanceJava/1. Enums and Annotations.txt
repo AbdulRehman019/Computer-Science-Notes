@@ -1,0 +1,86 @@
+1. Enums
+	In Java, an Enum (short for enumeration) is a special data type used to define a collection of constants. Enums are typically used when you have a fixed set of related values that 	represent a specific category or type, such as days of the week, directions, or colors.
+
+Key Features of Enums:
+	Fixed Set of Constants: Enums define constants that do not change. For example, the days of the week (MONDAY, TUESDAY, ...) or directions (NORTH, EAST, ...).
+	Type-Safe: Enums provide type safety, so you cannot assign invalid values.
+	Methods and Fields: Enums can have their own fields and methods, making them more powerful than plain constants.
+	Implicit Features: Enums inherit from java.lang.Enum and come with built-in methods like values() and ordinal().
+
+enum Day {
+    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+}
+
+2. Although Enum is a special data type, but in java everything is treated as class. Hence, Enum is also treated as class and it's constants are treated as objects.
+	Day today = Day.MONDAY;
+
+	To get all the values of enums at once you can use "values()" method.
+	Day[] days = Day.values();
+
+3. Since, constants of Enums are treated as objects we can pass values to it.
+
+// Enums are treated as class
+enum Laptop {
+    // These constants are treated like objects, hence we can pass parameters
+    Macbook(2000), XPS(1500), Surface(1800);
+
+    private int price;
+
+    private Laptop(int price) {
+        this.price = price;
+    }
+    // Since Enums are treated as class we can have getters and setters
+    public int getPrice() {return price;}
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+}
+
+public class Solution {
+    public static void main(String[] args) {
+
+//        Laptop lap = Laptop.Macbook;
+//        System.out.println(lap + " " + lap.getPrice());
+
+        for(Laptop lap : Laptop.values()) {
+            System.out.println(lap + " " + lap.getPrice());
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4. Annotations
+	Annotations in Java are metadata tags added to classes, methods, variables, parameters, or packages to provide additional information to the compiler,
+	JVM, or tools during runtime. They do not directly affect the program's logic but can influence how the program is processed.
+
+5. Why Use Annotations?
+	Provide Metadata: Give information about the program without affecting its functionality.
+	Compiler Instructions: Help the compiler enforce certain rules or suppress warnings.
+	Runtime Processing: Frameworks and libraries use annotations to configure and process code (e.g., in Spring or Hibernate).
+	Code Reduction: Reduce boilerplate code by generating code or behavior dynamically.
+
+6. Types of Annotations
+	1. Compiler Annotations(Override, SuppressWarnings, Deprecated)
+	2. Meta-Annotations(Retention, Target, Inherited, Documented)
+	3. Custom Annotations
+		You can define your own annotation with interface.
+
+
+

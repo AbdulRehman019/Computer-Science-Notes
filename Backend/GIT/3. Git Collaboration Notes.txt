@@ -1,0 +1,67 @@
+Git Collaboration Notes (Private & Open Source)
+
+1. 🔑 SSH Key Basics
+	ssh-keygen creates a unique key pair (public/private) to authenticate GitHub access without entering username/password.
+	The public key is added to your GitHub account.
+	The private key stays safely on your system (~/.ssh/id_rsa).
+	Each device/system has its own SSH key — so:
+		You must add a new SSH key for every new system you use.
+		Collaborators must add their own SSH keys to their GitHub accounts.
+
+
+
+2. Open Source Contribution Flow (when someone else contributes to your repo)
+	Step1: Fork your repo on GitHub.
+	Step2: Clone the fork using SSH:
+		git clone git@github.com:username/forked-repo.git
+
+	Step3: Create a new branch for changes:
+		git switch -c feature/my-change
+
+	Step4: Make changes, commit, push:
+		git add .
+		git commit -m "Added feature"
+		git push origin feature/my-change
+	
+	Step5: Open a Pull Request (PR) to your repo.
+
+❗ They cannot push directly to your repo unless you add them as collaborators.
+
+
+3. Private Team Collaboration (with collaborators)
+	Step1: You create a private repo with main + multiple feature branches.
+	Step2: Add team members as collaborators in repo settings.
+	Step3: Assign one branch per team member (e.g., feature/a → Teammate A).
+		Each teammate:
+			Clones the repo using SSH
+			Switches to their assigned branch
+			Makes changes, commits, and pushes:
+				git switch feature/a
+				git add .
+				git commit -m "Teammate A's changes"
+				git push origin feature/a
+
+	Step4: You (or team lead) review and merge feature branches into main using:
+		git switch main
+		git merge feature/a
+		git push origin main
+	OR open a PR from feature/a to main.
+
+4. Seeing Hidden Folders (e.g., .git)
+	Windows CMD / Git Bash:
+		ls -a
+	
+	Windows Explorer:
+		Go to folder → View → Enable Hidden items
+
+	🌿 Creating Branches
+		Create and switch to a new branch:
+			git switch -c branch-name
+
+	📤 Status After Merge
+		If you merge a branch and see:
+			Your branch is ahead of 'origin/main' by 1 commit.
+			(use "git push" to publish your local commits)
+	
+	→ It means your local branch is updated, but you haven’t pushed to GitHub yet. → Use:
+		git push origin main

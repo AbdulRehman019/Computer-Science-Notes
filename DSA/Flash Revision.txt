@@ -1,0 +1,96 @@
+✅ 1. Flashcards (Quick Recall Style)
+	Use these to quiz yourself fast.
+
+	Q: When should you think of binary search or priority queue?
+	A: When your brute force gives linear time (O(n)) but needs to be optimized to log(n) or constant.
+
+	Q: When do you use Opposite End Pointers?
+	A: When comparing/extremes, sorted input, or when squeezing the array from both ends.
+
+	Q: What’s a sliding window used for?
+	A: When expanding and shrinking a window (subarray/substring) to meet a constraint.
+
+	Q: When do you use prefix sum + map?
+	A: When you're counting subarrays with specific sums or need constant-time subarray sum checks.
+
+	Q: What does Binary Search on Answer mean?
+	A: Search over a range of possible numeric answers (e.g., min-max values), using binary search logic.
+
+	Q: When do you use merge sort in place of sorting?
+	A: When you can't sort due to index dependency but still need sorted-like behavior (e.g., count inversions).
+
+	Q: When should map or set pop into your mind?
+	A: When you wish to check for past presence or associations of elements efficiently.
+
+	Q: What trick helps in rotating or shifting arrays without extra space?
+	A: The reverse technique (reverse parts, then whole array).
+	
+	Q: What if you wish an array was sorted but can’t sort it?
+	A: Use merge sort-based strategy during traversal (e.g., count inversions, reverse pairs).
+
+🪜 2. Pattern-Wise Problem Ladder (Medium-Level)
+	Two Pointers (↔ Opposite)
+	 	 Two Sum II	
+		 Valid Palindrome	
+		 Container With Most Water	
+		 Trapping Rain Water	
+		 Sorted Squares	
+		 Reverse String
+	
+	Sliding Window (→ Same Direction)
+		 Longest Substring Without Repeating Characters
+		 Min Size Subarray Sum
+		 Max Consecutive Ones III
+		 Longest Repeating Character Replacement
+		 Fruit Into Baskets
+		 930. Binary Subarrays With Sum
+
+	Prefix Sum + Map
+		 560. Subarray Sum Equals K	
+		 974. Subarray Sums Divisible by K
+		 Contiguous Array
+		 Equal Subarray Sums
+		 Binary Search on Answer
+		 410. Split Array Largest Sum
+		 875. Koko Eating Bananas
+		 1011. Capacity to Ship Packages
+		 1482. Minimum Days to Make Bouquets
+
+	Merge Sort-Based (Index-Dependent)
+		 Reverse Pairs
+		 Count Inversions
+		 Group/Counting Instead of Sorting
+		 Sort Colors
+		 Group Anagrams
+		 Top K Frequent Elements
+		 Brute Force Validity
+		 Minimum Difference Between Largest and Smallest Value in Three Moves
+
+	132 Pattern
+	 	Small test-case constrained problems
+
+	Matrix Mapping
+		 Rotate Image (90 degrees)
+		 Spiral Matrix
+		 Set Matrix Zeroes
+
+🧩 3. Quick 5-Line Intuition Summaries
+	🔁 Sliding Window
+		Use two pointers to form a window. Expand right to add elements. Shrink left when constraints are broken.
+		Useful for substring or subarray conditions. Keeps window valid at all times.
+
+	↔ Opposite Pointers
+		When comparing outer elements — typically sorted arrays. Move inward based on a condition.
+		Often used for max/min pairing, palindrome, two-sum.
+
+	📊 Prefix Sum + Map
+		Track running totals and their occurrences. Helps to count subarrays that match sum constraints.
+		Think “how much excess do I have now?” → check map for past prefix.
+
+	🔍 Binary Search on Answer
+		Your answer is a number within a range. Binary search this number range.
+		Check feasibility for mid and decide direction.
+
+	🧠 Merge Sort Trick
+		When index order matters but you need sorted behavior — use merge sort.
+		Track and count while merging (e.g., inversion count, reverse pair count).

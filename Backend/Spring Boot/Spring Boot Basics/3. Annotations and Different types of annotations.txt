@@ -1,0 +1,104 @@
+1. What are annotations?
+	Annotations are metadata that provide additional information about the code without affecting its execution. They start with @ and help the compiler, tools, and frameworks process 	the code efficiently.
+
+	Types of Annotations:
+		- Marker Annotations: Do not contain any elements (e.g., @Override).
+		- Single-Value Annotations: Have one element (e.g., @SuppressWarnings("unchecked")).
+		- Full Annotations: Contain multiple elements (e.g., @TestAnnotation(owner="Abdul", value="Java")).
+		- Type Annotations: Applied to types (e.g., @NotNull String name).
+		- Repeating Annotations: Allow multiple instances of the same annotation.
+
+Different Annotations:
+1. @SpringBootApplication
+	@SpringBootApplication is a convenient annotation in Spring Boot that marks the main class of a Spring Boot application. It tells Spring Boot to:
+		Start the auto-configuration
+		Scan for components
+		Launch the application
+
+	Internally, It Combines 3 Annotations:
+		@SpringBootApplication = @Configuration + @EnableAutoConfiguration + @ComponentScan
+
+	1. @Configuration:
+		1. @Configuration
+			Marks the class as a source of bean definitions.
+			It’s like saying: “Hey Spring, you can use this class to define beans.”
+
+			@Configuration
+			public class AppConfig {
+			    @Bean
+			    public MyBean myBean() {
+			        return new MyBean();
+			    }
+			}
+
+
+		2. @EnableAutoConfiguration
+			Tells Spring Boot to automatically configure your application based on the dependencies in your pom.xml or build.gradle.
+			Example:
+				If you have spring-boot-starter-web, it configures Tomcat, DispatcherServlet, etc.
+				If you add Spring Data JPA, it configures a datasource and EntityManager.
+
+		3. @ComponentScan
+			Tells Spring to scan for components (beans) like @Component, @Service, @Repository, and @Controller in the same package or sub-packages.
+			This is how your beans get discovered and registered in the Spring container.
+
+2. @RestController
+	Methods inside a controller class should be public so that they can be accessed and invoked by the spring framework or external HTTP Request.
+
+3. @RequestMapping, @GeMapping, @PostMapping
+	1. @RequestMapping
+		✅ What it is:
+			- A general annotation used to map any HTTP request (GET, POST, PUT, DELETE, etc.) to a method or class.
+			- Can be used on a class or method.
+			- Allows setting path, method, headers, consumes, produces, etc.
+
+		✅ Example:
+			@RestController
+			@RequestMapping("/api")  // Class-level mapping
+			public class MyController {
+
+			    @RequestMapping(value = "/hello", method = RequestMethod.GET)
+			    public String sayHello() {
+			        return "Hello from GET";
+			    }
+
+			    @RequestMapping(value = "/submit", method = RequestMethod.POST)
+			    public String submitData() {
+			        return "Data submitted via POST";
+			    }
+			}
+
+	2. @GetMapping(Shortcut for GET)
+		- A shortcut annotation for:
+			@RequestMapping(method = RequestMethod.GET)
+
+		- Used for retrieving data (like reading from a database).
+
+		✅ Example:
+			@GetMapping("/user")
+			public String getUser() {
+			    return "Returning user details";
+			}
+
+	3. @PostMapping (Shortcut for POST)
+		- A shortcut for:
+			@RequestMapping(method = RequestMethod.POST)
+
+		- Used to send or create data (e.g., form submission, saving to DB).
+
+		✅ Example:
+			@PostMapping("/user")
+			public String createUser() {
+			    return "User created";
+			}
+
+		- In the PostMapping we use one parameter in the method "@RequestBody".
+		  It's like saying "Hey Spring, Please take Data from the request and turn it into a java object that i can use in my code."
+
+4. @Document
+	It will say "Hey spring, this class is actually a collection in DB and whenever i will create object of it, it will be document(row of RDBMS)".
+
+
+
+		
+

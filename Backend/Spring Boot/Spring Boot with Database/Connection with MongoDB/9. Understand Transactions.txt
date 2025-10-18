@@ -1,0 +1,68 @@
+1. @Transactional
+	This annotation is used to wrap a method in a transaction — meaning all the operations inside will either complete successfully together or rollback if one fails.
+
+	💡 Purpose:
+		To ensure data integrity and atomicity.
+
+	✅ Works with:
+		JDBC (relational databases)
+		MongoDB (with some limitations and setup)
+		JPA, Hibernate, etc.
+
+	🧠 Example:
+		@Transactional
+    		public void saveEntry(JournalEntry journalEntry, String userName) {
+		        journalEntry.setDate(LocalDateTime.now());
+		        JournalEntry saved = journalEntryRepository.save(journalEntry);
+	
+		        User user = userService.findByUserName(userName);
+		        user.getJournalEntries().add(saved);
+	
+		        user.setUsername(null);
+
+		        userService.saveUser(user);
+		}
+
+2. @EnableTransactionManagement
+	This is used to enable Spring’s annotation-driven transaction management (i.e., make @Transactional work).
+
+	✅ Where it's used:
+		Usually in your @SpringBootApplication class or any @Configuration class.
+
+	🧠 Example:
+		@SpringBootApplication
+		@EnableTransactionManagement
+		public class JournalApplication {
+
+			public static void main(String[] args) {
+				SpringApplication.run(JournalApplication.class, args);
+			}
+
+			public PlatformTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {
+				return new MongoTransactionManager(dbFactory);
+			}
+		}
+
+3. PlatformTransactionManager
+	This is the Spring abstraction that handles transaction management across various data sources.
+
+	🧠 What it does:
+		Depending on what database you use, Spring will use a specific implementation:
+			DataSourceTransactionManager (for relational DBs)
+			JpaTransactionManager (for JPA)
+			MongoTransactionManager (for MongoDB)
+	🧠 Example:
+		@Bean
+		public PlatformTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {
+		    return new MongoTransactionManager(dbFactory);
+		}
+
+4. MongoTransactionManager
+	This is a MongoDB-specific implementation of PlatformTransactionManager.
+	
+	✅ Required for:
+		Using @Transactional with MongoDB, since Mongo doesn’t have native transaction management like SQL.
+
+	🧠 Important:
+		Only works with replica sets or sharded clusters.
+		Not available in standalone MongoDB setups.

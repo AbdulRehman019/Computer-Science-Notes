@@ -1,0 +1,203 @@
+1. What is dependency injection?
+	✅ Definition:
+		Dependency Injection is a design pattern used to implement Inversion of Control (IoC), where the control of creating and injecting the dependencies (objects) is given to 		the Spring container instead of being manually created in the code.
+
+	🔍 Key Points:
+		"Dependency": An object that another object depends on (e.g., a Car depends on an Engine).
+		"Injection": Supplying the dependent object to the class that needs it.
+		Promotes loose coupling, testability, and maintainability.
+
+	💡 Example:
+		@Component
+		public class Engine {
+		    public void start() {
+		        System.out.println("Engine Started");
+		    }
+		}
+		
+		@Component
+		public class Car {
+		    private final Engine engine;
+		
+		    // Constructor Injection
+		    @Autowired
+		    public Car(Engine engine) {
+		        this.engine = engine;
+		    }
+		
+		    public void drive() {
+		        engine.start();
+		        System.out.println("Car is driving");
+		    }
+		}
+
+	🧠 Use Cases:
+		When classes need to use services/components like repositories, services, or utilities.
+		In large-scale applications where components need to be managed centrally.
+
+	⚠️ Notes:
+		Spring supports three types of Dependency Injection:
+		
+		Constructor Injection (Recommended)
+		Setter Injection
+		Field Injection (not preferred for testing)
+
+		Avoid tight coupling by depending on interfaces, not concrete classes.
+
+2. What is Spring Container?
+	✅ Spring Container
+		🔍 Definition:
+			The Spring Container is the core part of the Spring Framework responsible for: 
+				Creating, Configuring, and Managing the lifecycle of objects (called Beans).
+
+		🛠️ What It Does:
+			Reads configuration (XML, annotations, or Java-based config).
+			Instantiates and wires beans together (Dependency Injection).
+			Manages the entire lifecycle of beans (creation → initialization → destruction).
+
+	📦 Common Implementations:
+		ApplicationContext (most commonly used)
+		BeanFactory (basic and lightweight)
+
+	💡 Example:
+		ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+		Car car = context.getBean(Car.class);
+
+3. What are Spring Beans?
+	🔍 Definition:
+		A Spring Bean is an object that is managed by the Spring Container.
+		Any object declared with @Component, @Service, @Repository, @Controller, or configured via XML or Java config becomes a Spring Bean.
+
+	🧠 Characteristics:
+		Automatically instantiated and injected by the container.
+		Singleton by default (unless scope is changed).
+		Can be injected into other beans.
+
+	💡 Example:
+		@Component
+		public class Engine {
+		    public void start() {
+		        System.out.println("Engine Started");
+		    }
+		}
+
+		This Engine class is a Spring Bean because it's marked with @Component.
+
+4. Type of Scopes in Spring
+	📌 Bean Scopes in Spring: Singleton vs Prototype
+
+	✅ 1. Singleton Scope (Default)
+		🔍 Definition:
+			Only one instance of the bean is created per Spring container.
+			Every request for the bean returns the same object.
+
+		🛠️ Usage:
+			@Scope("singleton")
+			@Component
+			public class MyBean {
+			    // ...
+			}
+	
+		💡 Characteristics:
+			Default scope.
+			Best for stateless beans (same behavior for all users).
+			Saves memory and improves performance.
+
+		📌 Example:
+			MyBean bean1 = context.getBean(MyBean.class);
+			MyBean bean2 = context.getBean(MyBean.class);
+			// bean1 == bean2 → true (same instance)
+
+	✅ 2. Prototype Scope
+		🔍 Definition:
+			A new instance of the bean is created every time it is requested from the container.
+
+		🛠️ Usage:
+			@Scope("prototype")
+			@Component
+			public class MyBean {
+			    // ...
+			}
+
+		💡 Characteristics:
+			Good for stateful beans (unique state for each use).
+			Container creates bean, but doesn't manage its full lifecycle (doesn’t destroy it).
+
+		📌 Example:
+			MyBean bean1 = context.getBean(MyBean.class);
+			MyBean bean2 = context.getBean(MyBean.class);
+			// bean1 == bean2 → false (different instances)
+
+5. Spring Core Annotations
+	✅ @Component
+		🔍 Definition:
+			Marks a Java class as a Spring Bean, so that Spring can detect and manage it automatically during component scanning.
+		
+		🛠️ Usage:
+			@Component
+			public class MyService {
+			    // business logic
+			}
+
+		💡 Notes:
+			Spring will automatically register this class as a bean in the Spring container.
+			It is a generic stereotype for any Spring-managed component.
+
+	✅ @Autowired
+		🔍 Definition:
+			Automatically injects dependencies (i.e., other beans) by type from the Spring container.
+			
+		🛠️ Usage:
+			@Component
+			public class OrderService {
+
+			    @Autowired
+			    private ProductService productService;
+			
+				    // ...
+			}
+
+		💡 Notes:
+			Works on fields, constructors, and setters.
+			If multiple beans of the same type exist, ambiguity can occur (use @Qualifier to resolve it).
+			No need to use new; Spring handles object creation and injection.
+
+	✅ @Qualifier
+		🔍 Definition:
+			Used with @Autowired to specify which bean to inject when multiple beans of the same type are available.
+
+		🛠️ Usage:
+			@Component
+			public class OrderService {
+			
+			    @Autowired
+			    @Qualifier("premiumProductService")
+			    private ProductService productService;
+			
+				    // ...
+			}
+
+		💡 Notes:
+			The value in @Qualifier("...") must match the name of the bean (usually the class name with the first letter in lowercase or explicitly given using 					@Component("name")).
+
+			Helps resolve conflicts when multiple beans of the same type exist.
+
+********************************************************************* Self Explaination ***************************************************************
+Made one alien class, make it @Component(Means its object will be created).
+Made one laptop class, Made it @Component(Means its object will be created too).
+
+Made one instance variable of Laptop inside Alien.
+
+Since, @Component automatically makes object, hence when called a function via instance variable of laptop, it should be called.
+But it won't. In order to call function of laptop class you need to make your laptop instance variable in Alien class as autowired.
+
+What autowired does?
+	Spring scans your code for annotations like @Component, @Service etc. Create those beans and when it sees autowired, it injects the correct bean
+	automatically.
+
+If you have multiple beans of same type(when your are using "prototype" scope instead of Singleton), you use another annotaion @Qualifier to specify which bean.
+
+
+
+
+

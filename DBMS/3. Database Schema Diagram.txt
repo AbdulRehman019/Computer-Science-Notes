@@ -1,0 +1,129 @@
+Database Schema Diagram
+
+1. Gather Requirements 
+2. Identify Entities 
+3. Create Tables 
+4. Add Primary Key and Other Attributes
+5. Represent Cardinalities 
+
+2. Identify Entities 
+	Look for nouns in the requirements 
+	Something you would like to store or persist in the system. 
+	These entities are classes and tables in DB. 
+
+	Some of the entities are: 
+		User
+		Youtube Account 
+		Channels 
+		Videos 
+		Playlist 
+
+3. Create Tables 
+	Naming Convention: Plural Names 
+
+	Users
+	Youtube_Accounts
+	Channels 
+	Videos 
+	Playlistz 
+	Maybe Comments 
+
+4. Add Primary Keys and all other attributes 
+	Users -> user_id, username, email, password_hash 
+	Youtube_Accounts -> account_id
+	Channels -> channel_id, name, description 
+	Videos -> video_id, title, description, video_url, thumbnail_url 
+	Playlists -> playlist_id, name, description 
+
+	You may want to capture details like: 
+		When a record was created 
+		When a record was updated 
+		Who created the record 
+		Who updated the record 
+
+	In order to store these details, you can add some columns like: created_date, updated_date, created_by, updated_by in your tables. 
+	Audit Logging. 
+
+5. Relate your tables 
+	Relating Tables: Essential for database design to effeciently organize and manage data. 
+	Key Benefit: Stores data in a single place and links it to other data. 
+	Purpose: Enables displaying and managing data in desired ways. 
+	Action Required: Identify relationships between tables and understand how they interact. 
+	Types of Relationsips: 
+		One to One 
+		One to Many 
+		Many to Many 
+
+	How do we determine what type of relationships we have with our tables? 
+		We ask, "Does table A have many table Bs, or does table B have many table As?
+		Example: Does a book have many lists, or does a list have many books? 
+
+	Each user can have one account. (One to One)
+	Each Youtube account can have many channels. (One to Many) 
+	Each Channel can have many many video. One video can only be in one channel. (One to Many) 
+	Each playlist can have many videos. One video can be in many playlist. (Many to Many) 
+	Each user can have many playlist. One playlist will belong to one user. (One to Many) 
+	Each user can like many videos. Each video can be liked by many users. (Many to Many) 
+	Each user can comment on many videos. Each video can have comments from many users (Many to Many) 
+	Each user can subscribe to many channels. Each channel can be subscribed by many users. (Many to Many) 
+
+6. Represent Cardinalities 
+	How to represent? 
+
+	Relationship            Example (Entities)        Left (Cardinality) Right (Cardinality) Narrative (Explanation)                                                                                                                	One-to-One (1..1)   	Person ↔ Passport         1                  1                   Each person has **exactly one** passport, and each passport belongs to **exactly one** 												 person. 
+
+	One-to-Many (1..*)  	Department ↔ Employee     1                  *                   One department can have **many employees**, but each employee works in **one department**.                                             
+
+	Many-to-One (*..1)**    Employee ↔ Department     *                  1                   Many employees belong to **one department**, but a department can have **multiple 	
+												 employees**. 
+
+	Many-to-Many (*..*)     Student ↔ Course          *                  *                   A student can enroll in **many courses**, and each course can have **many students**.                                                  
+
+	Zero-to-One (0..1)      Customer ↔ MembershipCard 0..1               1                   A customer **may or may not** have a membership card (optional relationship). Each card, 												 however, belongs to **exactly one** customer. 
+
+	Zero-to-Many (0..*)**   Author ↔ Book             0..*               1                   An author **may have written zero or many books**, and each book is written by **one 													 author**. 
+
+
+	1. Each user can have one account. (One to One) 
+		Each user can have zero or only one YouTube account. 
+		Each youtube account is associated with one(and only one) user. 
+
+		Directly links each user to a unique Youtube account using a foreign key(FK). 
+
+		**** If there is a One to One relationship, you can put PK of first table in other table or PK of other table in first table. **** 
+
+	2. Each Youtube account can have many channels. (One to Many) 
+		Each youtube account can have zero or many channels. 
+		Each channel is associated with one(and only one) youtube account. 
+
+		Links channels to youtube accounts using a Foreign Key(FK) in the Channels table. 
+
+		**** If there is a One to Many Relationship, we put PK to the many side. ****
+
+	3. Each Channel can have many many video. (One to Many) 
+		Link videos to channels using a Foreign Key(FK) in the videos table. 
+
+	4. Each User can like many Videos. (Many to Many) 
+		A junction table video_likes is required to connect users and videos with their likes, including like details. 
+
+		**** If there is a Many to Many relationship, we maintain a third table(like combined classes) and break our many to may relationship to two one to many relationship. **** 
+
+		Youtube_Accounts <--> Videos 
+		Video_Likes 
+
+	5. Each user can comment on many videos. (Many to Many) 
+		A junction table video_comments is required to connect users and videos with their comments, including comment details. 
+
+		Youtube_Accounts <--> Videos 
+		Video_Comments 
+
+	6. Each user can subscribe to many channels. (Many to Many) 
+		A junction table channel_subscriptions is required to manage user subscriptions to channels. 
+
+	7. Each user can create many playlist. (One to Many) 
+		Links Playlists to Youtube accounts using a Foreign Key(FK) in the Playlists table. 
+
+	8. Each playlist contain many videos. (Many to Many) 
+		A junction table playlist_videos is required to link videos and playlists. 
+
+	

@@ -1,0 +1,16 @@
+1. Sometimes, O(n^2) can be better than O(1). We need to find the break point after which our O(1) will be better.
+   For example: If we have equation n + 500 and for O(1) time taken is 15000 ms
+   		Then for n >= 14500 O(n^2) will work bad.
+
+2. Order of terms
+	c < log(log(n)) < log(n) < n^1/3 < n^1/2 < n < n^2 < n^3 < 2^n < n^n
+
+3. Three types of asymptotic notations:
+	1. Big O: Represents exact bound or upper bound.
+		  Max to max time complexity can go till here.
+
+	2. Theta: Represents exact bound(Merge Sort, Heap Sort)
+
+	3. Omega: Represents exact bound or lower bound.
+		  Min time complexity(ATLEAST)
+

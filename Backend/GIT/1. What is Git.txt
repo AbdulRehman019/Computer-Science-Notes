@@ -1,0 +1,51 @@
+1. What is Git?
+	Git is a distributed version control system—it helps you track changes in your code, collaborate with others, and manage different versions of your project.
+	Created by Linus Torvalds (creator of Linux).
+	Unlike centralized systems, Git gives every developer a full copy of the repository.
+
+Step by Step Guide to use Git:
+1. Download and Install git.
+2. Check if git is successfully installed using cmd: 
+	git --version
+
+3. If it is first time you are downloading git in your system configure the global variables mainly username and email.
+	git config --global user.name "Your Name"
+	git config --global user.email "you@example.com"
+
+4. There are two types of repository: Local and Remote
+
+5. Whatever you are doing with your files, git have no idea, so first move to your working directory(directory in which you are storing your files and all) and create local repository.
+   In order to that run the cmd: 
+	git init (Ceates a master branch by default)
+	git init -b main (Creates a main branch)
+
+   So we basically have three things: Working Directory, Local Repository(.git), Remote Repository
+   As soon as you run the cmd: "git init"(A local repository(.git) will be created inside your working directory which will be hidden by default)
+
+6. Working Repository: It is a place where as a programmer you code, edit your files.
+   Local Repository: Once you are done with your code and now you want git to track this, you need to move the files to local repository.
+		     Before saving the file you need to move it to local repository by using cmd:
+				git add fileName
+
+		     To save the file in local repository: git commit -m "message"
+
+		     If you want to directly save the file without moving to staging area, you can use cmd:
+				git commit -a -m "message":
+					Works only for files already being tracked (i.e., files that were previously committed). It won’t include new files not added with git add.
+
+		     If you made some changes to the file in working directory and now you want to know what were the changes made before moving to staging area.
+		     You can use the cmd: 
+				git diff 
+
+		     If you have added that file to staging area and now you want to know the changes made.
+		     You can use the cmd:
+				git diff --staged
+
+		     Suppose you have one credentials file and by mistake you have added it to your local repository and now you want to push it to remote repository.
+		     But you don't want to push your credentials to remote repositoy, right?
+		     One way you can think of doing is by deleting the file, but deleting the file will only delete it from working directory not local repository.
+		     To remove file from your local repository, you can use the cmd: 
+				git rm --cached fileName
+
+7. To see previous commits you can use the cmd:
+	git log

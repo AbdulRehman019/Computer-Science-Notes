@@ -1,0 +1,67 @@
+Sweep line
+
+	Whenever there is a problem stating intervals, and you need to find overlapping intervals. This is the approach.
+
+Understanding the core idea with example: 
+	Suppose there are some intervals like: [10, 20), [50, 60), [10, 40), [5, 15). 
+	Now you need to find the maximum number of overlapping intervals at any given time. 
+
+	For every (start) you will add +1 and for every (end + 1) you will add -1 in a TreeMap.
+	So your map will look like: 
+		(5, +1), (10, +2), (15, -1), (20, -1), (40, -1), (50, +1), (60, -1)
+
+		We didn't did (end + 1) because end time was not included: [10, 20), it means it is [10, 19]. 
+
+		Now, we need to find maximum overlapping intervals at any given time.
+		We start from first pair in map:
+		1st: count += 1, At 5, count = 1 and maxCount = 1
+		2nd: count += 2, At 10, count = 3 and maxCount = 3
+		3rd: count -= 1, At 15, count = 2 and maxCount = 3 
+		4th: count -= 1, At 20, count = 2 and maxCount = 3 
+		5th: count -= 1, At 40, count = 1 and maxCount = 3 
+		6th: count += 1, At 50, count = 2 and maxCount = 3 
+		7th: count -= 1, At 60, count = 1 and maxCount = 3 
+
+		Hence, maximum overlapping interval is 3. 
+
+	Why TreeMap? 
+		Because while traversing you need in sorted order who came first and left first. 
+
+	This is the exact solution for "My Calendar III(#732)" 
+
+Sweep line lets you:
+	Avoid storing full intervals
+	Convert interval problems into prefix sum problems
+	Detect "how many events are active at any time" efficiently
+
+Problems Solved: 
+1. Divide Intervals Into Minimum Number of Groups(#2406)
+	I used sweep line to track number of overlaps.
+	I made two variables: One to store number of overlaps and one to store maximum number of overlaps at a time.
+	We put in a tree map based on above logic. 
+	I traverse the whole map, when i found any positive occurence i increased count(Number of overlaps) and if count > maxOverlap then updated maxOverlap = count.
+
+	Example: [[5,10],[6,8],[1,5],[2,3],[1,10]]
+	Stored in tree map: [1, 2], [2, 1], [4, -1], [5, 1], [6, 0], [9, -1], [11, -2] 
+
+	Now we start traversing the map:
+	At [1, 2], count = 2, Since, they are overlapping we cannot put them in same list. Hence, we need 2 different list. maxOverlap = 2
+	At [2, 1], count = 3, Since, one more is overlapping we cannot put in either of 2. Hence, we need 3 different list. maxOverlap = 3 
+	At [4, -1], count = 2, Only two of them are overlapping and till now we have three list so we can easily put in 2 different list.
+	At [5, 1], count = 3, One event was ended previously. Hence, we have space left. Hence, we can add this event in the space left.
+	At [6, 0], count = 3
+	At [9, -1], count = 2
+	At [11, -2], count = 0
+
+	Hence, maximum list required is 3.
+
+2. Corporate Flight Bookings(#1109)
+	I thought if bookings are ovelapping we are including seats.
+	So, we can go with sweep line.
+	But instead of storing +1 or -1 for every booking we stored pairs of +1 and seats. 
+	First solution. 
+
+	But then i realized there is no need to storing both.
+	If it is positive store +seats which means you have to include these seats.
+	If it is negative store -seates which means you have to exclude these seats.
+	

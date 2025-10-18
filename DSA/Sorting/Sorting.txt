@@ -1,0 +1,66 @@
+************************************************ Sorting *******************************************
+
+1. Selection Sort
+	You select the minimum from the array and put it in the front. Repeat this until the array is sorted. Go to last second Index because when you will be at last second index
+	and you swap with last Index, array will already be sorted.
+
+	Last tk bhi ja skte ho pr jada sochne me maja aata hai.
+
+	Time Complexity: O(n^2)
+
+2. Bubble Sort
+	You traverse the array and compare it with next element, if the current element is smaller than next, swap it.
+	In the first traversal the largest element will go at the end. Repeat this traversal for n times.
+
+	Pehle traversal me sbse bada number last me, agle traversal me second largest number last second me...
+
+	n - 1 traversal bhi kr skte ho kyunki last second traversal me first index tk sort ho jayega iska mtlb smallest number 0th index pr hi hoga.
+
+	Time Complexity: O(n^2)
+
+	Optimization: If there is no swapping at any time, means the array is already sorted.
+
+	n-1 se 0 tk ka code to koi bhi likh lega, 0 se n - 1 ka code likho.
+
+3. Insertion Sort
+	You start from index, start comparing with previous element if the current element is smaller swap it with previous and continue until it reaches at the correct position.
+
+	First traversal: You started at index 1, compared with 0th index, swap it if first index element is smaller than second.
+	Second iteration: You started at index 2, compared with 1st index, swap it if 2nd index element is smaller than 1st and then swap again if 1st index element is smaller than 0th.
+	Repeat it till n times, till last index.
+
+	Time Complexity:
+		Worst: O(n^2) if array is sorted in descending order.
+		Best: O(n) if array is already sorted, because no swap will be required.
+
+4. Merge Sort
+	Follow Recursion, Break the array in two half again and again until only one element is left, return and merge.
+
+		if(i >= j)
+			return;
+
+		int mid = i + (j - i) / 2;
+		solve(arr, i, mid);
+		solve(arr, mid + 1, j);
+
+		merge(arr, i, mid, j);
+
+	Time Complexity: O(n*log(n))
+	Space Complexity: O(n)
+
+5. Quick Sort
+	1. Choose a pivot(It can be the leftmost, rightmost, median or random index).
+	2. Place it at the right index.
+	3. To place at right place, use two pointers to traverse from left to right and from right to left.
+		Traverse the left one until you find a element which is greater than pivot element.
+		Traverse the right pointer until you find a element which is smaller than pivot element.
+		Swap both of them.
+
+		Start traversing again until left and right cross each other. Once they do swap the pivot index with right one.
+
+		Now one element reaches its right position, repeat this for left part(i to pivot - 1) and for right part(pivot + 1, j).
+
+	For the worst case, when the array is sorted, time complexity: O(n^2)
+
+	Time Complexity: O(log(n))
+	Space Complexity: O(1)

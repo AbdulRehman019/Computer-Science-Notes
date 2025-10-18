@@ -1,0 +1,173 @@
+1. In graph, we have two traversal techniques: BFS and DFS.
+
+2. In BFS, we travel level-wise. Whenever I need to find minimum time to reach everywhere from a certain time or nearest.
+   We store the starting points and then traverse all sides.
+   Example: Rotten Oranges, Distance of nearest cell having one.
+
+3. How to recognize a graph problem?
+   1. Look for connections, relationships, or links between entities
+	If the problem talks about:
+	Cities and roads
+	People and friendships
+	Computers and cables
+	Islands and bridges
+	Rooms and doors
+
+	You're almost certainly dealing with a graph (either directed or undirected).
+
+   2. Keywords that usually hint at a graph
+	"Find if there is a path between..."
+	"Minimum number of steps/connections to reach..."
+	"Cycle detection..."
+	"Connected components..."
+	"Is it possible to reach X from Y?"
+	"Can we visit all nodes/locations?"
+	"Hierarchy, precedence, or dependency (like course schedule)".
+
+   3. Constraints that imply graph
+	Input given as: edges, adjacency list, adjacency matrix
+	Mention of nodes or vertices and edges
+	n and m where n = number of nodes, m = number of edges
+
+   4.  When the problem involves traversal or reachability
+	DFS or BFS is involved
+	You have to visit every node once
+	You have to find shortest/longest paths (Dijkstra, Bellman-Ford)
+
+   5. Grid-based problems can also be graphs
+	If you have a 2D grid and:
+		You can move up/down/left/right (or diagonally)
+		You need to visit cells under constraints (e.g., islands, flood fill, number of regions)
+		Then you're often modeling the grid as a graph where each cell is a node and neighbors are edges.
+
+4. Detect a cycle in undirected graph
+	1. Using BFS and DFS
+	   You need to maintain parent node(If it's already visited but not parent then yes there is a cycle)
+
+5. Bipartite Graph
+	If you start filling the nodes with two different colors then adjacent nodes should have different colors.
+	If the next node is already visited and it has different color, yes it is bipartite else it isn't.
+
+6. Detect cycle in directed graph
+	Using DFS: You need to use vis and pathVis and if any node is visited and path Visited then it's a cycle. 
+
+7. Topological Sort (Directed Acyclic Graph – DAG)
+	Definition
+		Topological Sort of a Directed Acyclic Graph (DAG) is a linear ordering of vertices such that for every directed edge u → v,
+		👉 vertex u appears before vertex v in the ordering.
+
+	Only possible in DAGs (not valid if the graph has a cycle).
+
+	🔹 Approaches
+	1. DFS (Stack method)
+		Perform DFS on each unvisited node.
+		After visiting all neighbors, push the node into a stack.
+		Finally, pop all elements from the stack → gives the topological order.
+
+	Steps:
+		Mark node as visited.
+		DFS on all unvisited neighbors.
+		Push node into stack after processing neighbors.
+		Pop stack into result.
+
+	2. BFS (Kahn’s Algorithm)
+		Based on in-degree (number of incoming edges).
+		Nodes with in-degree 0 are ready to be placed first.
+
+	Steps:
+		Compute in-degree for all nodes.
+		Push all nodes with in-degree 0 into a queue.
+		While queue not empty:
+			Pop node → add to result.
+			Reduce in-degree of neighbors.
+			If any neighbor’s in-degree becomes 0, push into queue.
+			If result contains all nodes → valid order.
+			Otherwise, graph has a cycle (not a DAG).
+
+	Since, you are reducing the indegree of neighbor by one and adding in queue if the indegree becomes 0. 
+	If graph contains cycle there will exist a node for which indegree will never become zero.
+	If toposort does not contains all the nodes, there is a cycle. 
+	Hence, by using Kahn's Algorithm you can also find if graph has a cycle. 
+
+8. Detect cycle in directed graph
+	Using BFS: Use Kahn's algorithm. 
+
+9. Shortes Path in DAG 
+	Problem: Given a weighted DAG, find the shortest path from source (node 0) to all other nodes.
+
+	Solution 1: We used BFS, to calculate shortest path in DAG. We add 0 in queue and start removing from queue until the queue is empty. 
+		    Every time we pull out the top element from queue and move to its neighbor. 
+		    If the cost of moving to neighbor is less than its current cost, then we inserted in queue. 
+		    dist[next] > dist[curr] + weight;
+
+		    But in this approach, everytime we are reaching the element and cost to reach is reducing everytime. We will push in queue everytime. 
+		    It is possible everytime we are reaching an element we are inserting it in queue, hence making time complexity: O(VE). 
+
+	Solution 2: We first found toposort either using DFS or Kahn's algorithm. 
+		    We start popping out from stack and move to neighbor and update the distance of neighbor. 
+		    If cost of reaching neighbor from current is less than current cost of neighbor, we update the cost of neighbor. 
+
+	Intution behind this approach: 
+		    We start from the elements which appear before and move to the neighbors. 
+		    If i reached an element, it means every one who appears before current element has already been visited. 
+		    And dist[curr] is already least. No one can change it. 
+		    And we can visit other elements from here. 
+
+		    Suppose stack contains: 6 4 5 3 1 2 
+		    Suppose, we have reached 5, it means 6 and 4 are already visited. There is no one who can visit 5. 
+		    From 5, i visit its neighbor. 
+
+	Pattern
+		Topological sort + relaxation.
+		Since graph is acyclic, shortest path can be found by processing nodes in topological order.
+		Each edge (u → v, w) is relaxed only once in correct order.
+
+	Steps
+		Perform a topological sort of all vertices.
+		Initialize distance array dist[] with ∞, except dist[src] = 0.
+		Process nodes in topological order:
+		For each edge (u → v, w):
+			dist[v] = min(dist[v], dist[u] + w).
+
+		Nodes not reachable from source → mark as -1.
+
+	Time Complexity: O(N + M) → Topological sort + edge relaxation.
+	Space Complexity: O(N + M) → Graph adjacency + stack + dist[].
+
+	Intuition
+		We use topological order because in a DAG, all dependencies of a node appear before it, ensuring correct relaxation.
+
+10. Shortest Path in Undirected Graph with unit distance 
+	We will use plain BFS, maintain a distance array and everyone with maximum value. And the source distance as 0. 
+	We will maintain a queue and add the source in queue. 
+	Everytime we pull out the element from queue and move to neighbors. 
+	If the dist[next] > dist[curr] + 1, then will push into queue and update dist[next] = dist[curr] + 1. 
+
+11. Word Ladder (Shortest Transformation Sequence)
+	Problem: You are given a beginWord, an endWord, and a dictionary (wordList). You can transform one word to another if they differ by exactly one letter. Find the shortest 	transformation sequence length from beginWord to endWord.
+
+	Pattern:
+		This is a shortest path problem in an implicit unweighted graph.
+		Each word is a node.
+		An edge exists between two words if they differ by exactly one letter.
+		Since all edges have equal weight (1), we use BFS.
+
+	Why not build the whole graph?
+		Explicitly comparing all pairs is O(N^2 * L) (too slow).
+		Instead, generate neighbors on the fly:
+		For each word, change each character to 'a'–'z' → 26 possibilities per position.
+		Check if the new word exists in the dictionary (HashSet lookup O(1)).
+
+	Steps:
+		Put beginWord in a queue.
+		For each word dequeued, generate all possible neighbors.
+		If neighbor is in the dictionary → push into queue with distance + 1, and remove from dictionary to avoid revisits.
+		If neighbor equals endWord → return the distance.
+		If queue exhausts → no transformation exists, return 0.
+
+	Time Complexity:
+		Each word generates at most L * 26 neighbors.
+		Each valid word is processed once.
+
+	Total: O(N * L * 26).
+	Space Complexity: O(N * L) for queue and dictionary. 

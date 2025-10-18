@@ -1,0 +1,251 @@
+Builder Pattern
+🔑 Definition
+	The Builder Pattern is a creational design pattern that:
+	Separates the construction of a complex object from its representation.
+	Lets you create different representations of the same type of object using the same construction process. 
+	It is used when a class has a lot of variables and some of them are optional. 
+	We need to use large number of constructors and we don't want that because it will be messy. 
+
+❓ Problem it solves
+	When an object has too many attributes/optional fields, constructors can become messy.
+	This leads to the Telescoping Constructor Problem:
+		new Student("John", 21, "CS", "1234567890", "NYC", "john@example.com", ... );
+
+	❌ Hard to read, maintain, or extend.
+	Using setters isn’t ideal either, since they may leave the object in an inconsistent state if not all fields are set.
+
+✅ Solution: Builder Pattern
+	The Builder Pattern solves this by:
+		Building the object step by step.
+		Allowing optional parameters in a clean way.
+		Keeping the object immutable once built.
+
+🔨 Structure (GoF Style)
+	Builder (interface/abstract class) → specifies steps to create the product.
+	ConcreteBuilder → implements steps to build the product.
+	Product → the final object being built.
+	Director (optional) → controls the building process using a builder.
+
+📌 Example in Java
+	Let’s design a Student object with multiple optional attributes.
+
+	Without Builder (Telescoping Constructors):
+	class Student {
+	    private String id;
+	    private String name;
+	    private String email;
+	    private String address;
+	
+	    public Student(String id, String name) {
+	        this.id = id;
+	        this.name = name;
+	    }
+
+	    public Student(String id, String name, String email) {
+	        this(id, name);
+	        this.email = email;
+	    }
+	
+	    public Student(String id, String name, String email, String address) {
+	        this(id, name, email);
+	        this.address = address;
+	    }
+	}
+
+
+	❌ Messy, lots of constructors → difficult to maintain.
+
+With Builder Pattern:
+	class Student {
+	    private final String id;
+	    private final String name;
+	    private final String email;
+	    private final String address;
+	
+	    // private constructor
+	    private Student(Builder builder) {
+	        this.id = builder.id;
+	        this.name = builder.name;
+	        this.email = builder.email;
+	        this.address = builder.address;
+	    }
+	
+	    // Static nested Builder class
+	    public static class Builder {
+	        private final String id;
+	        private final String name;
+	        private String email;
+	        private String address;
+	
+	        public Builder(String id, String name) {
+	            this.id = id;
+	            this.name = name;
+	        }
+	
+	        public Builder email(String email) {
+	            this.email = email;
+	            return this; // for chaining
+	        }
+	
+	        public Builder address(String address) {
+	            this.address = address;
+	            return this;
+	        }
+	
+	        public Student build() {
+	            return new Student(this);
+	        }
+	    }
+	
+	    @Override
+	    public String toString() {
+	        return "Student{id=" + id + ", name=" + name + ", email=" + email + ", address=" + address + "}";
+	    }
+	}
+
+Usage:
+	public class Main {
+	    public static void main(String[] args) {
+	        Student student1 = new Student.Builder("1", "John")
+	                                .email("john@example.com")
+	                                .address("New York")
+	                                .build();
+	
+	        Student student2 = new Student.Builder("2", "Alice").build();
+	
+	        System.out.println(student1);
+	        System.out.println(student2);
+	    }
+	}
+
+
+	✅ Clean, flexible, and readable.
+
+🎯 Advantages of Builder Pattern
+	Solves Telescoping Constructor problem.
+	Readable code with method chaining (fluent interface).
+	Supports immutability (object fields can be final).
+	Flexible: easy to add new optional parameters.
+	Allows different representations of the same object.
+
+⚠️ Disadvantages
+	Adds extra classes (the Builder).
+	Might be overkill for simple objects with only 2–3 fields.
+
+🔥 Real-World Examples
+	StringBuilder / StringBuffer in Java.
+	Lombok’s @Builder annotation (auto-generates builder pattern).
+	Used in complex objects like documents, GUI forms, or configuration objects.
+
+✅ In short:
+	The Builder Pattern is ideal when you have complex objects with many optional parameters. It provides a flexible, readable way to construct objects step by step, ensuring 	immutability and reducing constructor overload mess. 
+
+
+
+
+
+
+Telescoping Constructor Problem
+🔑 Definition
+
+The Telescoping Constructor Problem happens when a class has many parameters (especially optional ones), and we try to handle them by creating multiple overloaded constructors.
+
+This leads to:
+
+Too many constructors.
+
+Hard-to-read code.
+
+Difficulty in maintaining/adding new parameters.
+
+📌 Example
+
+Let’s say we have a Student class with:
+
+id (required)
+
+name (required)
+
+email (optional)
+
+address (optional)
+
+phone (optional)
+
+❌ Telescoping Constructors:
+class Student {
+    private String id;
+    private String name;
+    private String email;
+    private String address;
+    private String phone;
+
+    public Student(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Student(String id, String name, String email) {
+        this(id, name);
+        this.email = email;
+    }
+
+    public Student(String id, String name, String email, String address) {
+        this(id, name, email);
+        this.address = address;
+    }
+
+    public Student(String id, String name, String email, String address, String phone) {
+        this(id, name, email, address);
+        this.phone = phone;
+    }
+}
+
+Usage:
+Student s1 = new Student("1", "John");
+Student s2 = new Student("2", "Alice", "alice@mail.com");
+Student s3 = new Student("3", "Bob", "bob@mail.com", "NY");
+
+⚠️ Problems with this approach
+
+Explosion of constructors – every new optional parameter means another constructor.
+
+Hard to read – when many arguments are used, it’s unclear what each value means.
+
+new Student("4", "David", "david@mail.com", "LA", "9876543210");
+
+
+(Is "LA" the address or phone?)
+
+Maintenance nightmare – adding/removing fields breaks multiple constructors.
+
+Object can be in inconsistent state if not all required parameters are validated.
+
+✅ Solutions
+
+JavaBeans (Setters)
+
+Student s = new Student();
+s.setId("1");
+s.setName("John");
+s.setEmail("john@mail.com");
+
+
+Easier to read, but ❌ object is mutable & can be incomplete if setters are missed.
+
+Builder Pattern (Best solution 🚀)
+
+Student s = new Student.Builder("1", "John")
+                  .email("john@mail.com")
+                  .address("NY")
+                  .build();
+
+
+Clean, flexible, readable.
+
+No explosion of constructors.
+
+Supports immutability.
+
+✅ In short:
+The Telescoping Constructor Problem occurs when too many overloaded constructors are used to handle optional parameters. It makes the code hard to read, maintain, and extend. The Builder Pattern is the cleanest solution to this problem.

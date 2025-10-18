@@ -1,0 +1,52 @@
+ CSS FlexBox
+	It is used to layout the contents in 1D. When applied, all previous rules of display are discarded. For example: inline, block etc.
+	are discarded.
+	Everything comes inside a container and flex property is applied to everything inside that flex.
+
+	<div class="container">
+	   <p></p>
+	   <li class='red'>Red</>
+	   <li class='blue'>blue</>
+	   <li class='green'>green</>
+	</div>
+
+	<style>
+	   .container {
+		display: flex;
+		gap: 1rem;
+		flex-direction: row;
+	    }
+
+	    .container -> * {
+		flex-basis: 100px;
+	     }
+
+	     .red { order: 10}
+	</style>
+
+	Everything inside a container will come on one line and gap of 1rem will be applied between p and li elements.
+
+	display: flex		Takes the whole block.
+	display: inline-flex	Takes only the required space.
+	flex-direction: row	Everythings get aligned in one row and main axis is from left to right(->)
+	flex-direction: column	Everythings get aligned in one column and main axis is from top to bottom
+	flex-basis: 100px	Size of every element inside a container changes to 100px. It is done on the main axis.
+				If it is row, then left to right and if column, then top to bottom.
+				flex-basis is not applied on container whereas on children.
+	flex: 1			It is applied on children.
+
+	// Flex Layotut
+	1. order: 0		It is applied on child. Child with highest value will move to the end.
+				red li will move to the end.
+
+	2. flex_wrap: nowrap	If li elements are unable to come in one line. They will just disappear and not move to next line.
+	   flex_wrap: wrap	Elements will move to next line.
+
+	3. justify_content	Vlues: flex_start, flex_end, center, space-between. It works on main axis.
+
+	4. align-items		It works on cross-axis. Same values as justify-content. Applied on container.
+
+	https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+
+	// Flex sizing
+	   content-width < width < flex-basis < min-width, max-width

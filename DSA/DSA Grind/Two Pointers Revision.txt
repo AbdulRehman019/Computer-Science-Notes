@@ -1,0 +1,60 @@
+Two Pointers Revision
+1. Valid Palindrome 
+	Sub-Pattern: Opposite End
+	Core Idea: Move from both ends until you don't find a character or letter. 
+		   Check if s.charAt(left) == s.charAt(right), if not return false, otherwise continue. 
+
+2. Merge Sorted Array
+	Amazing intution!!
+	I was trying to solve in-place and i was traversing from left to right in both arrays and maintaining the third variable to put in first array. 
+	Initially, k = m. 
+	But i thought what if i start from i = m - 1 and j = n - 1 and instead of putting smallest value first i put largest value first starting from k = m + n - 1. 
+
+3. Remove Duplicates from Sorted Array
+	Amazing Intution!!
+	I kept two index, one last and another i(to iterate). 
+	If nums[i] == nums[i - 1], i continue, otherwise i put nums[i] at last index and increase last. 
+	Number of unique elements will be equal to position of last. 
+
+4. Squares of a Sorted Array 
+	If you have two sorted arrays and you want to make the result as sort too. 
+	Think once to solve it in decreasing order from last index. 
+
+5. Move Zeroes 
+	We move to the first place where zero exist. 
+	Use two pointer i and j. j on 1st 0th index and i on j + 1 index. 
+	Start moving i, if nums[i] == 0 continue else swap. 
+	If next element is 0(j = i + 1 is 0) then also your j remains at 0 after swapping. 
+	If many elements were 0 between j and i and you swap i and j and increment j, then also j remains at 0. 
+
+6. 3Sum 
+	Use hashset. 
+
+	Sort. Use three pointers. 
+
+7. Sort Colors 
+	Use three pointers. Maintain Intervals. 
+
+8. Container With Most Water
+	We have two possibilities: 
+		1. Move away from greater height
+		2. Move away from smaller height
+
+	If we move away from greater height, then if: 
+		1. Next element is smaller: area will reduce
+		2. Next element is equal: area will reduce
+		3. Next element is greater: Still area will reduce because smaller height will decide area.  
+		
+	If we move away from smaller height, then if: 
+		1. Next element is smaller: area will reduce
+		2. Next element is equal: area will reduce
+		3. Next element is greater: Area will increase if the difference is more than 1. 
+
+	Hence, it is better to move away from smaller height. 
+
+9. Trapping Rain Water 
+
+10. Minimum Number of Operations to Make Array Continuous 
+	Duplicated don't help. 
+	We removed the duplicates and calculated the window with maximum length (arr[right] - arr[left] < n - 1). 
+	Subtracted from the size of original array because we need to change duplicates too. Hence, n - maxLen.  

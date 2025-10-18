@@ -1,0 +1,20 @@
+
+// Few Questions
+
+1. Why outer class cannot be static?
+
+2. This is not possible. Why?
+    class MyStack {
+
+    int[] data;
+    private  int Default_Size;
+
+    public MyStack() {
+        this(Default_Size);		// Compilation Error. Because Default_Size is the instance of class, so when you create object of class Default_Size is not yet created and you are
+					// passing it. So make it static, so it is available while passing it to the other constructor.
+    }
+
+    public MyStack(int size) {
+        this.data = new int[size];
+    }
+    }

@@ -1,0 +1,122 @@
+Subset sum equals k
+
+Similar to other dp problems but here i thought of edge cases: 
+For an instance, i was solving this problem: Subset Sum Equal To K
+First i thought if i returned when k == 0, then i have 0 ahead(If i had to count instead of true false)
+Then i thought lets go for when i == n, then check if k == 0, in this case both of the case will be considered, when i didn't took 0 and when i took 0
+Then i saw and realized, we have to return true false, so as soon as it hits k == 0, i will return 0.
+
+Take/Ntake works:
+Recursive Solution:
+	I have two option at everytime, we either take that number or leave it. If we are taking we are subtracting it from target.
+	If not, moving ahead.
+
+	Solution:
+		public static boolean f(int i, int n, int k, int[] arr) {
+		        if(k == 0) return true;
+		        if(i == n) return false;
+		
+		        boolean take = false;
+		        if(k - arr[i] >= 0) 
+		            take = f(i + 1, n, k - arr[i], arr);
+		
+		        if(take) return true;
+		        boolean ntake = f(i + 1, n, k, arr);
+		
+		        if(ntake) return true;
+		
+		        return false;
+	 	}
+
+		    public static boolean subsetSumToK(int n, int k, int arr[]){
+		        int[][] dp = new int[n][k + 1];
+		
+		        return f(0, n, k, arr);
+		    }
+
+Memoization:
+	Introduced a 2d DP array of size [n][k + 1].
+	Solution:
+		public static boolean f(int i, int n, int k, int[] arr, int[][] dp) {
+		        if(k == 0) return true;
+		        if(i == n) return false;
+		
+		        if(dp[i][k] != -1) return dp[i][k] == 0 ? false : true;
+		
+		        boolean take = false;
+		        if(k - arr[i] >= 0) 
+		            take = f(i + 1, n, k - arr[i], arr, dp);
+		
+		        if(take) return true;
+		        boolean ntake = f(i + 1, n, k, arr, dp);
+		
+		        if(ntake) return true;
+		
+		        dp[i][k] = 0;
+		
+		        return false;
+		    }
+		
+		    public static boolean subsetSumToK(int n, int k, int arr[]){
+		        int[][] dp = new int[n][k + 1];
+		        for(int i = 0; i < n; i++) Arrays.fill(dp[i], -1);
+		
+		        return f(0, n, k, arr, dp);
+		    }
+
+Tabulation:
+	We always start thinking backwards. We solved using memoization thinking 0 to n.
+	Now we will move from n - 1 to 0. Handle the base case first, explicitly.
+	There were two things monitoring dp array, i(index) at k(sum). 
+	Hence, we will use two loops. 
+	Outer from n - 1 to 0(n is handled outside).
+	Inner from k to 0.
+	You can copy paste the rest part from memoized solution and convert accordingly.
+	Or think, at everytime i am taking the number, i need what happened at previous index(i + 1) and (k - arr[i]) sum.
+	If we didn't take the number, i need what happened at index(i + 1) and k sum.
+
+	Solution:
+		public static boolean subsetSumToK(int n, int k, int arr[]){
+		        boolean[][] dp = new boolean[n + 1][k + 1];
+		        for(int i = 0; i <= n; i++) dp[i][0] = true;
+		
+		        for(int i = n - 1; i >= 0; i--) {
+		            for(int j = k; j >= 0; j--) {
+		                boolean take = false;
+		                if(j - arr[i] >= 0) 
+		                    take = dp[i + 1][j - arr[i]];
+		
+		                boolean ntake = dp[i + 1][j];
+		
+		                dp[i][j] = take || ntake;
+		            }
+		        }
+		
+		        return dp[0][k];
+		    }
+
+Space Optimization:
+	No explaination needed, you only needed previous row, hence storing only previous row.
+
+	Solution:
+		public static boolean subsetSumToK(int n, int k, int arr[]){
+		        boolean[] prev = new boolean[k + 1];
+		        prev[0] = true;
+		
+		        for(int i = n - 1; i >= 0; i--) {
+		            boolean[] curr = new boolean[k + 1];
+		            curr[0] = true;
+		            for(int j = k; j >= 0; j--) {
+		                boolean take = false;
+		                if(j - arr[i] >= 0) 
+		                    take = prev[j - arr[i]];
+		
+		                boolean ntake = prev[j];
+		
+		                curr[j] = take || ntake;
+		            }
+		            prev = curr;
+		        }
+		
+		        return prev[k];
+		    }

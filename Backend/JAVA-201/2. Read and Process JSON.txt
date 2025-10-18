@@ -1,0 +1,69 @@
+Notes: Ways to Read and Process JSON in Java (Using Jackson)
+Reading File in Java
+	Use InputStream (e.g., FileInputStream) to read a file without converting it to a String.
+	Example:
+		InputStream inputStream = new FileInputStream("data.json");
+
+	What is InputStream in Java?
+		InputStream is an abstract class in Java (in the java.io package).
+		It represents a stream of bytes used to read data from a source (like a file, network, or memory).
+
+		All input streams (file, byte arrays, etc.) extend InputStream.
+
+	Why Use InputStream?
+		Efficient reading of data:
+		Instead of loading the whole file into memory as a String, InputStream allows reading the file byte by byte or in chunks.
+		Memory efficient:
+			Useful for large files because it reads as needed rather than all at once.
+
+	Compatible with APIs:
+		Many libraries (like Jackson) accept InputStream directly, enabling direct parsing without extra steps.
+
+Approaches to Process JSON
+	1. JsonTree Approach (JsonNode)
+		Parse the file into a tree structure.
+		Example:
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode rootNode = mapper.readTree(new File("data.json"));
+			String name = rootNode.get("name").asText();
+
+
+		Use Case: Dynamic/unstructured JSON.
+
+	2. Iterate JSON Array
+		Read JSON array and iterate through elements.
+		Example:
+			JsonNode arrayNode = mapper.readTree(new File("data.json"));
+			for (JsonNode node : arrayNode) {
+			    System.out.println(node.get("name").asText());
+			}
+
+		Use Case: Simple array of objects without a predefined class.
+
+	3. Deserialize into Java POJO
+		Map JSON to predefined Java class.
+		Example POJO:
+			public class User {
+			    private String name;
+			    private String email;
+			    // Getters and Setters
+			}
+			
+
+		Example usage:
+			User user = mapper.readValue(new File("data.json"), User.class);
+
+
+		Use Case: Well-structured known JSON.
+
+	4. Deserialize Directly from InputStream
+		Best for large files → avoids extra memory usage.
+		Example:
+			InputStream inputStream = new FileInputStream("data.json");
+			User user = mapper.readValue(inputStream, User.class);
+
+			For array:
+				List<User> users = mapper.readValue(inputStream, new TypeReference<List<User>>() {});
+
+
+		More efficient and cleaner.

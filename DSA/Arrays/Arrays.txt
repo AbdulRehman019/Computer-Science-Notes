@@ -1,0 +1,113 @@
+Arrays
+
+1. Subarray sum (Hashing)
+2. Sort 0,1,2 (DNF)
+3. Majority Element (Moore's Voting algorithm)
+
+**************************************** How to think where this question should go *************************************
+Suppose you found a brute force solution to a problem, and its taking linear time (O(n)) and giving TLE. And now to reduce TC you need to make it log(n) or constant.
+As soon as you thought of log(n), two cases arises binary search and priority queue.
+
+
+
+
+**************************************** Merge Sort ************************************
+Jb bhi tumhe lge ki agar ye array sorted hota to mai easily solve kr leta, lekin tum uss array ko sort nhi kr skte kyunki tumhe order maintain krna hai
+aise cases me try using merge sort.
+
+
+
+**************************************** Binary Search *********************************
+Agar array sorted hai to binary search. Pr tum left jaoge ya right uski condition change hoti rahegi according to question(Bs yahi condition pata lagani hai).
+For example lower_bound me alag hogi, upper_bound me alag hogi.
+
+Ek aur technique, kai bar while solving tum ek ans variable loge aur koi particular condition met hogi to kahoge maybe this is the possible answer aur use store kar
+loge aur fir agle loop me wo condition dobara met hoti hai iska mtlb it is a better answer aur ab tum ise store kr loge aur age badhoge.
+
+
+
+
+
+**************************************** Rotated Binary Search ***********************************
+Condition: Ek side humesha sorted hogi, uske basis pr hum check karenge kis side pr move krna hai.
+
+
+
+
+**************************************** Binary Search on Answers ********************************
+You will always have a range of possible answers.
+For example in square root of n, if n is 28. Your possible answer can be 1,2,3,4,5.
+This question in other words. Maximum integer which on squaring <= n.
+1*1 <= 28, 2*2 <= 28, ... 5*5 <= 28. (Possible answers, since we need max, the answer is 5)
+6*6 <= 28, ... (Not possible answers).
+
+In Binary Search on Answers we will always have possible and not possible answers and we have to choose a max or min from that possible range.
+
+In questions ke liye, sbse Pehle tum brute force sochoge ki 1 se start krta hu(or according to question) aur n tak traverse krke check kr leta hu.
+Sbse pehli possible value min de degi ya fir upar wale example me aakhri value jo answer degi wo tumhara answer hoga.
+
+Ab yha mai low = 1(ya according to question lunga) and high = max or sum of array lunga aur Binary search lga dunga.
+
+
+Suppose kisi question ke liye 1-20 le beech me answer lie karega. 1-4(Not possible wali range hai), (5-20) possible wali range hai.
+low = 1 hojayega aur high = 20 ho jayega.
+mid = 10 aayega, tum kahoge okay this is can be the possible answer but aur better answer left me exist kr skta hai.
+
+
+
+******************************************* Binary Search on Min(Max) or Max(Min) ***************************************
+
+LEETCODE 410: SPLIT ARRAY LARGEST SUM
+
+Ye question BS ke 3rd type ka hai. Binary Search on answer jis me maximum sum ko minimize krna hai.
+
+Jaise hi hume dikha ki maximum sum ko minimize krna hai hume pata chal gaya BS on answer lagega.
+
+Pr humne sochna Brute Force se start kiya. Humne socha maximum sum(jo humara answer hoga wo kaha se kaha tak lie krega).
+Hume pata chala 1 se lekar total sum tak lie kr skta hai jb k == 1 hoga aur hume poora subarray lena padega.
+
+Ab hum brute force apnayenge aur 1 se start karenge aur total sum tak jayenge. Aur har value ke liye check karenge ki is maximum sum ke liye kitne subarrays banaye ja skte hai.
+
+Iss example ke liye 7,2,5,10,8.
+Suppose humne 1 se start kara aur hum 9 par pahuche. Ab 9 ke liye check karenge ki kitne subarrays possible hai.
+1st subarray: 7, 2
+2nd subarray: 5
+3rd subarray: 10(Not possible kyunki ye to khud hi maximum possible sum se bada hai)
+
+
+Aise hi hum 18 par pahuchenge
+1st subarray: 7,2,5
+2nd subarray: 10,8
+
+Yha pr hume pata chala ki 18 max sum ke liye hum 2 subarrays bana skte hai, jo ki k ke baraabar hai, hum true return karenge aur ye humara answer hoga.
+
+Yha tk to humari Brute Force thi, Ab Binary Search.
+low = 1, high = sum, ans = -1
+For mid: 
+	1. Agar count <= k aa raha hai iska matlab subarray ka sum itna hai ki humare paas 'k' subarrays easily ban skte hai aur ye humara possible answer ho skta hai
+	   aur hume minimum chahiye is liye left move karenge(high = mid - 1)
+
+		Why count <= k not count == k?
+		Agar ye example hota 2,3,1,1,1,1,1. Tb max sum 3 ke liye aur k = 5 ke liye
+		1st subarray: 2
+		2nd subarray: 3
+		3rd subarray: 1 1 1
+		4th subarray: 1 1
+
+		Bhale hi ye 4 subarray me aa gaya pr hum chahte to
+		1st subarray: 2
+		2nd subarray: 3
+		3rd subarray: 1 1 1
+		4th subarray: 1
+		5th subarray: 1
+
+	2. Agar count > k aa rha hai iska matlab mid(subarray ka sum) itna kam hai ki uss particular subarray ke liye bohut kam elements include ho pa rahe
+	   hai jiski wajah se subarray ka size 'k' se exceed ho ja rha hai. Isliye subarray ka sum badhana hai, hence, hum right me move kr jayenge(low = mid + 1)
+
+
+****************************************************** Left Rotate Array by k places **************************************************
+If you see a problem that involves shifting, rotating, or rearranging an array in-place → think about reversing parts of it.
+Reversal is a powerful trick to reorder arrays efficiently in-place.
+It’s especially useful when you can’t use extra space.
+
+

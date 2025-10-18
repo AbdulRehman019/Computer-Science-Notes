@@ -1,0 +1,32 @@
+🔹 1. Stack/Histogram flavored DP
+	Largest Rectangle in Histogram (LeetCode 84) → Looks like stack only, but the area calculation has DP nature.
+	Maximal Rectangle (LeetCode 85) → 2D histogram + DP row accumulation.
+	Count Submatrices With All Ones (LeetCode 1504) → Pure disguised DP.
+
+🔹 2. Greedy-looking but actually DP
+	Longest Increasing Subsequence (LIS) (LeetCode 300) → Often confused with greedy + binary search, but classic DP.
+	Russian Doll Envelopes (LeetCode 354) → Sorting + LIS (DP inside).
+	Best Time to Buy and Sell Stock IV (LeetCode 188) → Many think greedy, but only works with DP states.
+
+🔹 3. Matrix-based disguised DP
+	Minimum Path Sum (LeetCode 64) → Many first try recursion + greedy.
+	Unique Paths II (LeetCode 63) → Looks like backtracking at first.
+	Cherry Pickup II (LeetCode 1463) → Feels like graph, but 3D DP.
+
+🔹 4. String-based disguised DP
+	Longest Palindromic Substring (LeetCode 5) → Many solve by expand-around-center, but it’s also classic DP.
+	Edit Distance (LeetCode 72) → First thought = brute-force recursion.
+	Regular Expression Matching (LeetCode 10) → Feels like just regex simulation, but DP transition hidden.
+
+🔹 5. Graph/DFS-looking disguised DP
+	Longest Increasing Path in a Matrix (LeetCode 329) → DFS + memoization (hidden DP).
+	Word Break (LeetCode 139) → Seems like brute force DFS, but actually DP on prefix splits.
+	Interleaving String (LeetCode 97) → Seems like recursion, but DP on two pointers.
+
+👉 My suggestion for you:
+
+Solve these in order.
+
+After finishing each, pause and ask: “Where was the DP hidden?”
+
+Try to rewrite each solution in bottom-up tabulation form after solving with recursion/memoization.

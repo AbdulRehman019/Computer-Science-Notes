@@ -1,0 +1,63 @@
+1. Insertion Anomaly
+	Meaning: You can’t insert certain data into the table without the presence of other data.
+	Cause: Data items are stored together (denormalized), so inserting one piece of information may require inserting unnecessary or unknown data.
+
+	Example:
+	Student_ID	Student_Name	Course_ID	Course_Name
+	101		Rahul		C1		DBMS
+	102		Asha		C2		Java
+
+	If a new course C3 (Python) is introduced but no student has enrolled yet, you can’t insert it without assigning a dummy student.
+	✅ Normalization (separating into Student and Course tables) avoids this.
+
+2. Update Anomaly
+	Meaning: When data is duplicated, updating it in one place but not another causes inconsistency.
+	Example:
+	Student_ID	Student_Name	Course_ID	Course_Name	Instructor
+	101		Rahul		C1		DBMS		Mr. Verma
+	102		Asha		C1		DBMS		Mr. Verma
+
+	If Mr. Verma is replaced by Mr. Sharma, you must update multiple rows.
+	If one is missed, inconsistent data appears.
+
+3. Deletion Anomaly
+	Meaning: Deleting one piece of data unintentionally removes other important data.
+
+	Example:
+	Student_ID	Student_Name	Course_ID	Course_Name
+	101		Rahul		C1		DBMS
+	102		Asha		C2		Java
+
+	If Rahul drops the course DBMS, deleting his record also deletes the information that DBMS course exists.
+
+4. Redundancy (Data Duplication)
+	Meaning: The same data is stored multiple times unnecessarily.
+
+	Example:
+		Instructor name Mr. Verma appears multiple times for DBMS course.
+		This wastes storage and increases maintenance effort.
+
+5. Data Inconsistency
+	Meaning: When the same data appears differently in different places.
+
+	Example:
+	Course_ID	Course_Name	Instructor
+	C1		DBMS		Mr. Verma
+	C1		DBMS		Mr. Sharma
+
+	Now, it’s unclear who the actual instructor for DBMS is — data integrity is lost.
+
+6. Poor Scalability and Query Performance
+	Meaning: As the database grows, queries become slower due to repeated data and large unoptimized tables.
+
+	Example:
+	A single denormalized table with thousands of redundant rows leads to heavy scanning and slower joins.
+
+✅ Summary Table
+	Type of Anomaly				Description					Example Issue
+	Insertion Anomaly			Unable to insert data without other data	Can’t add new course without a student
+	Update Anomaly				Update needed in multiple places		Instructor changed but not updated everywhere
+	Deletion Anomaly			Deleting data causes unintended data loss	Deleting student deletes course info
+	Redundancy				Same data repeated				Multiple rows for same course
+	Inconsistency				Conflicting copies of data			Instructor name differs in rows
+	Performance Issues			Redundant data slows queries			Large table with duplicates

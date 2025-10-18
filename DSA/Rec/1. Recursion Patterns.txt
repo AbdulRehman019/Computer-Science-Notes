@@ -1,0 +1,94 @@
+Recursion
+
+Subsequence Patterns
+ 	i) Printing all the subsequence:
+ 		public void f(int i, List<Integer> list, int[] nums) {
+ 			if(i == n) {
+ 				print(list);
+ 				return;
+ 			}
+
+ 			// Take the element
+ 			list.add(nums[i]);
+
+ 			f(i + 1, list, nums);
+
+ 			// Don't take the elemen.
+ 			list.remove(list.size() - 1);
+
+ 			f(i + 1, list, nums);
+ 		}
+
+
+ 	   Or Print all the subsequence with sum k:
+ 		public void f(int i, int sum, int k, List<Integer> list, int[] nums) {
+ 			if(i == n) {
+ 				if(sum == k) print(list);
+ 				return;
+ 			}
+
+ 			list.add(nums[i]);
+ 			sum += nums[i];
+
+ 			f(i + 1, list, nums);
+
+ 			list.remove(list.size() - 1);
+ 			sum -= nums[i];
+
+ 			f(i + 1, list, nums);
+ 		}
+
+ 	ii) Print any one subsequence with sum k:
+ 		public boolean f(int i, int sum, int k, List<Integer> list, int[] nums) {
+ 			if(i == n) {
+ 				if(sum == k) {
+ 					print(list);
+ 					return true;
+ 				}
+
+ 				return false;
+ 			}
+
+ 			list.add(nums[i]);
+ 			sum += nums[i];
+
+ 			if(f(i + 1, sum, k, list, nums)) return true;
+
+ 			list.remove(list.size() - 1);
+ 			sum -= nums[i];
+
+ 			if(f(i + 1, list, nums) return true;
+
+ 			return false;
+ 		}
+
+ 	iii) Count the number of subsequence with sum k:
+ 		public boolean f(int i, int sum, int k, int[] nums) {
+ 			if(i == n) {
+ 				if(sum == k) {
+ 					return 1;
+ 				}
+
+ 				return 0;
+ 			}
+
+ 			sum += nums[i];
+
+ 			int take = f(i + 1, sum, k, nums);
+
+ 			sum -= nums[i];
+
+ 			int ntake = f(i + 1, sum, k, nums);
+
+ 			return take + ntake;
+ 		}
+
+ 	iv) Count the number of subsequence with sum k(Array contains duplicates)
+ 		Combination Sum 2
+ 		Subset 2
+		Permutation
+
+		For all the above problems, you have to think of what are the things which can pe placed at 0th index, then at 1st index, and so on... 
+		Refer to the solutions.
+
+ 

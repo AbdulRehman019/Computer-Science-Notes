@@ -1,0 +1,69 @@
+Bellman Ford Algorithm
+
+1. Dijkstra works good to calculate the shortest distance in a graph with positive weights. 
+   But what if the weights can be negative?
+   In that case, we can apply Bellman Ford Algorithm. 
+
+2. You iterate for (v - 1) times and everytime you iterate over all the edges and relax the edges. 
+   It means everytime you will check if dist[nextNode] > dist[curr] + nextDist, we will update dist[nextNode]. 
+   In (v - 1) times, your dist array will contain shortest distance. 
+
+   List<List<int[]>> adj = new ArrayList<>();
+        for(int i = 0; i < v; i++) {
+            adj.add(new ArrayList<>());
+        }
+        
+        for(int[] edge : edges) {
+            adj.get(edge[0]).add(new int[]{edge[1], edge[2]});
+        }
+        
+        int[] dist = new int[v];
+        Arrays.fill(dist, (int)1e8);
+        dist[src] = 0;
+        
+        for(int i = 1; i < v; i++) {
+            for(int curr = 0; curr < v; curr++) {
+                if(dist[curr] == (int)1e8) continue;
+                for(int[] next : adj.get(curr)) {
+                    int nextNode = next[0];
+                    int nextDist = next[1];
+                    
+                    
+                    if(dist[nextNode] > dist[curr] + nextDist) {
+                        dist[nextNode] = dist[curr] + nextDist;
+                    }
+                }
+            }
+        }
+
+3. Why n - 1 times? 
+	In a graph with n nodes, the longest simple path possible (without a cycle) is of length (n - 1) edges.
+	After (n - 1) iterations:
+		All shortest distances will have been correctly computed if no negative cycles exist.
+
+	Example: If v = 5 which means there are nodes from 0 to 4. 
+		 Like this: 0 -> 1 -> 2 -> 3 -> 4
+		 Suppose the edge weights are in this order: (3,4,1), (2,3,1), (1,2,1), (0,1,1)
+
+		 Now, if we start iterating, it will be: 
+		 dist[3] + 1 < dist[4]; 
+		 dist[2] + 1 < dist[3];
+		 dist[1] + 1 < dist[2];
+		 dist[0] + 1 < dist[1]; 
+
+	In the first iteration, only dist[1] will be updated. 
+	In second iteration, dist[2] will be updated. 
+	In third iteration, dist[3] will be updated. 
+	In fourth iteration, dist[4] will be update. 
+
+	Hence, max to max it will take 4 iterations(v - 1). 
+
+	If the orders are different, it may take less number of iterations to calculate shortest distance. 
+	But maximum it will take (v - 1) iterations. 
+
+4. How to detect negative cycles? 
+	We know if there is no negative cycle, in (v - 1) iterations we will calculate shortest distance. 
+	Hence, if we iterate one more time shortest distance to any node won't change. 
+	If shortest distance to any node is changing at (vth) iteration. We will say negative cycles exist. 
+
+

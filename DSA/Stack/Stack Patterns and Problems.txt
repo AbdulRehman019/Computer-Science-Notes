@@ -1,0 +1,212 @@
+Stack 
+
+1. If it's a good array problem, it may use stack or heap. When it will be heap you will need to sort.
+2. If you are writing brute force and inner loop depends on outer loop, may be it is a stack problem. 
+	for(int i = 0; i < n; i++) {
+		for(int j = 0; j < i; j++) {
+			// Rest of the code 
+		}
+	}
+
+3. Whenever your answer depends on previous or next element and in order, it is a stack problem.
+
+4. We will solve 7 + 6 problems. First 7 problems will teach you the core of stack problems.
+   Next 6 problems, each will teach you something. 
+
+   These 7 problems are: 
+	1. Next Greater to left
+	2. Next Greater to right
+	3. Next Smaller to left
+	4. Next Smaller to right
+	5. Stock span problem
+	6. Maximum area of histogram
+	7. Max area of rectangle in binary matrix.
+	8. Rain water trapping
+	9. Implementing a min stack
+	10. Implement stack using Heap
+	11. The celebrity problem
+	12. Longest valid parenthesis
+	13. Iterative Tower Of Hanoi
+
+********************************************************************** Stack Patterns ************************************************
+Pattern 1: Next Greater/Smaller Element
+Pattern 2: Valid Parentheses / Bracket Matching
+Pattern 3: Remove Elements Based on Condition
+Pattern 4: Histogram / Maximum Area Problems
+Pattern 5: Contribution Technique[How much a single element is contributing + Pattern 1]
+
+
+
+*********************************************** Below are the examples of Pattern1 and Pattern5 ************************************************
+
+1. Next Greater Element
+	Brute: I will loop on the first array. 
+	       Find that element in second array and then use a loop to go ahead and find the greater element. 
+
+		TC: O(n^3)
+		SC: O(1)
+
+	Better: Iterate on nums1.
+		And of every number find the next greater element.
+		Don't find the next greater element using two loops, instead use stack.
+		
+		Start from the end, use a while loop until the stack is not empty and stack.peek() <= current number.
+		If your stack become empty the next greater is not present. Hence, -1. 
+		If stack.peek() > current element then the next greater element is stack.peek(). 
+
+		And if this current element is same as the element in nums[i], we will add stack.peel() in answer.
+
+	Optimal: Instead of going every time and finding the next greater element. Go once and find the next greater element.
+		 Store it in hashmap like this: (nums2[i], stack.peek() or -1)
+
+		 Now, iterate on nums[1] and find the next greater element in map.
+
+	 public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        	int n = nums1.length;
+	        int m = nums2.length;
+		
+	        Stack<Integer> stack = new Stack<>();
+	        Map<Integer, Integer> map = new HashMap<>();
+	        for(int i = m - 1; i >= 0; i--) {
+	            while(!stack.isEmpty() && stack.peek() <= nums2[i]) {
+	                stack.pop();
+	            }
+
+	            if(stack.isEmpty()) map.put(nums2[i], -1);
+	            else map.put(nums2[i], stack.peek());
+	
+	            stack.push(nums2[i]);
+	        }
+	
+	        int[] ans = new int[n];
+	        for(int i = 0; i < n; i++) {
+	            ans[i] = map.get(nums1[i]);
+	        }
+	
+	        return ans;
+	    }
+
+2. Online Stock Span(#901)
+	Based on previous greater element. 
+	If we find the previous greater element idx, then we can easily find number of elements smaller than current element by currIdx - prevIdx.
+
+
+*************************************************** Combination of nge, pge, pse, nse and how much each index is contributing ****************************************
+3. Largest Rectangle in Histogram(#84)
+	For particular index, if i can find till where it will go on left and on right. 
+	Then i can calculate the width and hence area. And for each i can store the maxArea.
+
+	To calculate till where it will go on left, you need to find the "Previous Smaller Element".
+	To calculate till where it will go on right, you need to find the "Next Smaller Element". 
+	Then width = (i - pse[i]) + (nse[i] - i) - 1. 
+	-1, because that index will overlap twice. 
+
+4. Maximal Rectangle(#85)
+	Used the concept of Largest Rectangle in Histogram. 
+
+5. Min Stack(#155)
+	Brute: I thought of maintaining two stacks, one to store stack values and another to store minValues.
+	       I can use list too instead of minValues. 
+	       If any value comes and it is smaller than or equal to the previous minValue then i will store the value in stack and minValue in minStack. 
+	       If it is greater than previous minValue then i will only store value in stack. 
+	       Why smaller than equal to: What if duplicate small are there and when you encounter one and you pop it, you will loose minValue.
+	       Hence, store duplicate minValues.
+
+	       Now, when popping, i will see if this value matches with my minValue for now and if it does i will pop out from both stack and minStack. 
+
+	Optimal: Instead of maintaining two stacks, store the value and minValue in pair.
+		 Follow the same logic as above but in pairs. 
+
+6. Trapping Rain Water(#42)
+	Similar to Next Greater Element and Previous Greater Element.
+	But we need to find maximum in right and maximum in left.
+	Because, how much water it will hold will depend on it.
+
+	We maintained two arrays maxLeft and maxRight.
+	Stored the leftMax and rightMax at each index. 
+	How much water it will hold at that index will be calculated by Math.min(maxLeft[i], maxRight[i]) - height[i]. 
+
+	Another approach: 
+	Take two pointers left and right at 0 and n - 1 respectively.
+	Instead of precomputing leftMax and rightMax, calculate on the go.
+
+	Maintain two variables leftMax and rightMax. 
+	Every time check which is smaller height[left] or height[right], whichever is smaller will be contributing in answer. 
+	
+	Suppose, height[left] < height[right], it means left will control the answer.
+	Now check if current height is greater than maxLeft, if it is water cannot be hold. 
+	Hence, nothing will be added in answer but maxLeft will be updated. 
+
+	If current height is smaller, the amount of water hold will be maxLeft - height[i]. 
+	Then move left++.
+
+	We can do similarly if height[right] < height[left]. 
+
+7. Sum of Subarray Minimums(#907) 
+	Whenever we need to find minimum, maximum or sum in all the subarrays but we don't need to generate all the subarrays.
+	We can think in terms of nge, pge, pse, nse.
+
+	In this problem we need to sum the minimum of all the subarrays. 
+	Instead of thinking this, think how much every number will contribute to the answer.
+	For a particular number it will be minimum for how many subarrays?
+
+	On the left, it will be miniumum until someone smaller than that number comes[pse].
+	On the right, it will be minimum until someone smaller than that number comes[nse]. 
+
+	How many subarrays it will generate?
+		The index from which to which our subarray will range is pse[i] + 1 to nse[i] - 1.
+		Think in terms of two loops and how many number of subarrays it will generate? 
+		n * m
+
+	Total number of subarrays generated with nums[i] as smallest number: (i - pse[i]) * (nse[i] - i)
+	Hence, the value contributed by this number: (i - pse[i]) * (nse[i] - i). 
+
+	Edge case while calculating nse or pse?
+		Duplicate values.
+		Example: [1,1] or [71,55,82,55]
+
+		If we calculate pse and nse traditionally, these two subarrays will be included twice. 
+		[71,55,82,55] and [55,82,55] 
+
+		Because 1st index 55 will say i have no one smaller in left as well as right, hence my range goes from 0 to 3.
+		Similarly, 3rd index 55 will say i also have no one smaller in left as well as right, hence my range 0 to 3. 
+
+		We want these subarrays only once, so for either pse or nse calculate smaller than equal to instead of smaller than.
+
+		If we calculate pse for smaller than equal to. For 3rd index, its range will lie from 2nd to 3rd. 
+		Hence, excluding the two subarrays.
+
+		But for nse we will calculate for smaller than. Hence for 1st index range will lie from 0 to 3.
+		Hence, including the two subarrays. 
+
+8. Sum of Subarray Ranges(#2104)
+	Write down all the subarray and calculate for every subarray and sum it. 
+	Sum of Subarray Ranges = Sum of subarray maximum - Sum of subarray minimum.
+
+9. Asteroid Collision(#735)
+	Need to think. 
+	If both are in +ve direction --> Never collide.
+	If both are in -ve direction --> Never collide. 
+	If previous is -ve and current is +ve --> Never collide. 
+	
+	If previous is +ve and current is -ve --> Collide. 
+
+	Edge case to think, what if we were getting negative values and then positive values --> It won't collide. 
+	But again we get negative values --> Collision starts until positive values are there. 
+
+	If stack is empty or above three conditions, push in stack.
+	If 4th condition arises, peek from stack: 
+		Three condition arises: current is smaller -> We can simply break from while loop. 
+					both are equal --> both will break, hence stack.pop() and break from while loop. 
+					Prev is smaller, until previous is smaller it will break. 
+						Now, if prev is greater, current will break and break from while. 
+						If prev == curr, both will break. 
+						If prev < 0 and curr < 0, come out of the loop. 
+
+						If flag = true, it means add the current one in stack, because it means either stack is empty or the above condition has arise. 
+						prev < 0 && curr < 0. 
+
+		
+	
+
+

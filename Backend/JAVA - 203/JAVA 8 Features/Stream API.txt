@@ -1,0 +1,196 @@
+Stream API: 
+What is Stream API?
+	The Stream API in Java is used to process collections of data (like lists, sets, arrays, etc.) in a declarative and functional way.
+	Instead of writing loops and if-conditions manually, Streams let you chain operations like filter, map, sorted, and collect — which are executed internally by Java. 
+
+	Example (Before vs After Streams)
+	Before Streams (Old Way): 
+		List<String> names = Arrays.asList("John", "Jane", "Tom", "Sam");
+		List<String> result = new ArrayList<>();
+
+		for (String name : names) {
+		    if (name.startsWith("J")) {
+		        result.add(name.toUpperCase());
+		    }
+		}
+		System.out.println(result); 
+
+	With Streams (Modern Way): 
+		List<String> result = names.stream()
+		    .filter(name -> name.startsWith("J"))
+		    .map(String::toUpperCase)
+		    .collect(Collectors.toList());
+
+		System.out.println(result); 
+
+	Cleaner
+	Shorter
+	Easier to maintain
+	Automatically parallelizable if needed 
+
+How Streams Work (Pipeline Concept)
+	Streams use a pipeline pattern: 
+		Source → Intermediate Operations → Terminal Operation
+	
+	Example: 
+		List<Integer> nums = Arrays.asList(1, 2, 3, 4, 5, 6);
+
+		long count = nums.stream()
+		    .filter(n -> n % 2 == 0)     // Intermediate
+		    .map(n -> n * n)             // Intermediate
+		    .count();                    // Terminal
+
+		System.out.println(count); // Output: 3
+
+Types of Stream Operations
+🔸 A. Intermediate Operations
+	These transform a stream into another stream.
+	They are lazy — they don’t execute until a terminal operation is called.
+
+	Operation		Description			Example
+	filter()		Filters elements		.filter(x -> x > 10)
+	map()			Transforms each element		.map(String::toUpperCase)
+	sorted()		Sorts elements			.sorted()
+	distinct()		Removes duplicates		.distinct()
+	limit(n)		Limits result			.limit(5)
+	skip(n)			Skips first n			.skip(2)
+
+🔸 B. Terminal Operations
+	These produce a result (like a list, count, or a single value).
+
+	Operation	Description			Example
+	collect()	Collects into list, set, map	.collect(Collectors.toList())
+	forEach()	Performs an action		.forEach(System.out::println)
+	count()		Counts elements			.count()
+	reduce()	Combines elements		.reduce(0, Integer::sum)
+	findFirst()	Gets first element		.findFirst().get()
+	anyMatch()	Tests a condition		.anyMatch(x -> x > 10)	
+
+Recommended Order for commonly used intermediate ops: 
+	Filter -> Map after Filter -> Distinct after Map -> Sort after Distinct -> Limit/Skip Last 
+
+4️⃣ Example – End-to-End
+	import java.util.*;
+	import java.util.stream.*;
+	
+	public class StreamExample {
+	    public static void main(String[] args) {
+	        List<Integer> numbers = Arrays.asList(5, 10, 15, 20, 25, 30);
+	
+	        List<Integer> result = numbers.stream()
+	            .filter(n -> n % 10 == 0)   // Keep multiples of 10
+	            .map(n -> n / 10)           // Divide by 10
+	            .sorted()                   // Sort ascending
+	            .collect(Collectors.toList());
+	
+	        System.out.println(result);  // Output: [1, 2, 3]
+	    }
+	}
+	
+5️⃣ Parallel Streams
+	If you want to take advantage of multi-core processors, you can use parallel streams:
+
+	numbers.parallelStream()
+	    .filter(n -> n % 2 == 0)
+	    .forEach(System.out::println);
+	
+	
+	This runs operations in parallel threads automatically.
+	(Use carefully — not always faster for small datasets.)
+
+6️⃣ Stream Sources
+	You can create streams from:
+		Collections: list.stream()
+		Arrays: Arrays.stream(array)
+		Static methods: Stream.of(1,2,3)
+		Files: Files.lines(path)
+		Random data: Stream.generate(...)
+
+🧠 7️⃣ Key Notes
+	Streams don’t modify the source (immutable).
+	Streams can be used only once (they’re consumed after a terminal operation).
+	Lazy evaluation: Intermediate steps don’t execute until a terminal operation triggers them.
+
+Optional<T> and Streams
+	Many terminal operations like min(), max(), findFirst() return Optional<T>.
+	Ensures safe handling of empty results.
+
+	Optional<Employee> youngest = employees.stream()
+	    .min(Comparator.comparing(Employee::getAge));
+	
+	youngest.ifPresent(System.out::println); // safe
+
+
+Optional Methods:
+	isPresent(), get(), ifPresent(), orElse(), orElseGet(), orElseThrow()
+
+8️⃣ Comparators in Streams
+	Comparator.comparing() → Compare based on key function
+	Multi-level comparison: .thenComparing()
+	Reverse order: .reversed()
+	
+	Example: Multi-level comparator
+
+	employees.stream()
+	    .sorted(
+	        Comparator.comparing(Employee::getDepartment)
+	                  .thenComparing(Employee::getAge)
+	    )
+	    .forEach(System.out::println);
+	
+
+	First sorts by department
+	Then by age if departments tie
+
+9️⃣ Grouping in Streams (Collectors.groupingBy)
+	Equivalent to SQL GROUP BY
+
+	Example: Group by Department
+		Map<String, List<Employee>> groupByDept = employees.stream()
+		    .collect(Collectors.groupingBy(Employee::getDepartment));
+
+	Count per group:
+		Map<String, Long> countByDept = employees.stream()
+		    .collect(Collectors.groupingBy(Employee::getDepartment, Collectors.counting()));
+
+	Max Age per group:
+		Map<String, Optional<Employee>> maxAgeByDept = employees.stream()
+		    .collect(Collectors.groupingBy(Employee::getDepartment,
+		             Collectors.maxBy(Comparator.comparing(Employee::getAge))));
+		
+🔹 Mapping / Transforming While Grouping
+	Map<String, List<String>> namesByDept = employees.stream()
+	    .collect(Collectors.groupingBy(Employee::getDepartment,
+	            Collectors.mapping(Employee::getName, Collectors.toList())));
+	
+Sorting with Multiple Conditions
+	Primary condition → Comparator.comparing(...)
+	Tie-breaker → .thenComparing(...)
+
+	Example: Sort by marks, then roll number:
+		students.stream()
+		        .sorted(Comparator.comparing(Student::getMarks)
+	                .thenComparing(Student::getRollNumber))
+	        	.collect(Collectors.toList());
+
+Other Useful Stream Collectors
+	Collector			Purpose			Example
+	toList()			Collect to List		.collect(Collectors.toList())
+	toSet()			Collect to Set		.collect(Collectors.toSet())
+	toMap()			Collect to Map		.collect(Collectors.toMap(Employee::getId, Employee::getName))
+	joining()			Concatenate strings		.collect(Collectors.joining(", "))
+	summarizingInt()		Summary statistics		.collect(Collectors.summarizingInt(Employee::getMarks))
+	partitioningBy()		Split based on predicate	.collect(Collectors.partitioningBy(e -> e.getAge() > 25))
+	reducing()			Custom reduction		.collect(Collectors.reducing(0, Employee::getMarks, Integer::sum))
+
+Lazy Evaluation
+	Intermediate operations are lazy → executed only when terminal op runs.
+	Streams can’t be reused after terminal operation.
+
+🎯 Summary Table
+	Concept			Description				Example
+	Stream creation		Convert collection to stream		list.stream()
+	Intermediate operation	Transform/filter			.filter(x -> x > 5)
+	Terminal operation	Produce result				.collect(Collectors.toList())
+	Lazy evaluation		Executes only when terminal op called	✅
+	Parallel execution	Use multiple cores			.parallelStream()

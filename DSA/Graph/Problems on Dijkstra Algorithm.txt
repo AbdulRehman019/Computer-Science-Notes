@@ -1,0 +1,54 @@
+Problems on Dijkstra
+1. Shortest Path in Weighted undirected graph
+	Plain Dijkstra
+
+2. Shortest Path in Binary Matrix(#1091)
+	You may think of DP by looking at the problem. 
+	It is similar to unique paths problem. But there, we can go in only two directions. 
+	Here, we can go in 8 directions. 
+	When you think more, you will think of maintaining a visited array so that you don't go back to the ones you already visited. 
+	Otherwise, you will be in a loop, going back and coming forward. 
+	
+	Once, you think of visited array it will hit bfs or dfs where we used to maintain visited array. 
+	Yes, we could solve it using BFS. 
+
+	But if you think more if we go from cell1 to cell2 and then try to go back to cell1 it will definitely cost extra to reach. 
+	So instead of maintaining visited array, we say if dist[nextRow][nextCol] > dist[currRow][currCol] + 1, then only we will go to that cell. 
+	We can achieve the same thing. 
+	It let you think of dijkstra. Since, we have cost to go from one cell to another as linear i.e. 1, we don't need Priority Queue. Queue will work. 
+
+	Hence, we can solve it with modification of dijkstra. 
+
+3. Cheapest Flights Within K Stops 
+	Tricky Problem
+	We have to use cost as well as stops for checking. 
+	If we only use cost for checking, we might end up taking path with more than k stops. 
+	Hence, we will run the condition on stops. 
+	We will reach all the nodes with 1 distance first, then 2 distance, then 3 distance...
+	Since, we are increasing linearly we don't need priority queue instead we will use queue. 
+	
+	We will maintain the dist array and everytime we will check if dist[nextNode] > currDist + nextDist.
+	Suppose, k = 2. 
+	Suppose for 1 stop we move to some node(e.g. 2nd node) and cost taken is 5. 
+	And for 2 stop we are reaching same node(2nd node) with cost 2. Obviously number of stops are <= k. 
+	Although we will update the dist[nextNode] but we will still have 2nd node with distance 5 in queue and it will reach destination node next time. 
+	But 2nd node with 2 stop and cost 2 will not be able to reach destination node because it will exceed k. 
+
+	Hence, we will update our answer on the basis of what we get from queue(destination from queue), not from dist[dest]. 
+
+4. Number of Ways to Arrive at Destination
+	What i thought previously? 
+		I thought i will use dijkstra in order to find the shortest amount of time to reach (n - 1). 
+		I will maintain a count variable which i will update in two cases: 
+			If i reach with more shortest distance, i will update it to 1. 
+			If i reach with same shortest distance, i will make count++. 
+
+		It may seem correct but what if i reach some node in between with 2 or more shortest distance? 
+		From there to next node it will make 2 ways to reach the next node with shortest distance. 
+
+		Example: 0-4. Suppose i can reach node 3 with shortest distance 2 via two paths. 
+			 Suppose there was a node between node 3 and 4, we can reach node 4 via two paths now. Not one. 
+			 Hence, we cannot only make a count for (n - 1)th node. We need to take for all the nodes. 
+			 Hence, we need to maintain the count array. 
+			 Everytime, we reach a shorter path, we update count[nextNode] = count[currNode]. 
+			 If we reach the node again with that same shortest path, we update count[nextNode] += count[currNode]. 

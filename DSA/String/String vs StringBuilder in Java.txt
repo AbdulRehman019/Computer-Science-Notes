@@ -1,0 +1,75 @@
+🔁 String vs StringBuilder in Java (DSA-focused)
+	📌 First: The Core Difference
+	Feature			String				StringBuilder
+	Mutable?		❌ Immutable			✅ Mutable
+	Efficient for edits?	❌ No (creates new string)	✅ Yes (modifies in-place)
+	Thread-safe?		❌ No				❌ No (use StringBuffer if needed)
+	
+	Common use case	When string doesn't change	When string is modified frequently
+
+🔧 Common Methods and Behaviors
+	🔹 String Methods
+	Method				Returns New String?			Description
+	toLowerCase()			✅ Yes					Converts all chars to lowercase
+	toUpperCase()			✅ Yes					Converts all chars to uppercase
+	trim()				✅ Yes					Removes leading/trailing whitespaces
+	substring(beginIndex, endIndex)	✅ Yes					Extracts a substring
+	charAt(index)			❌ No					Returns character at index
+	replace(old, new)		✅ Yes					Replaces occurrences of characters
+	equals(other)			✅ (boolean)				Compares content
+	equalsIgnoreCase(other)		✅ (boolean)				Ignores case in comparison
+	contains(str)			✅ (boolean)				Checks substring
+	startsWith(str) / endsWith(str)	✅ (boolean)				Prefix/suffix check
+	split(regex)			✅ (String[])				Splits into array
+	length()			❌ No					Returns int length
+	indexOf(char)			❌ No					First occurrence of character
+	isEmpty()			❌ No					Returns true if length == 0
+
+🚨 Important Note:
+	All modification-like methods (replace, trim, substring, etc.) in String return new strings — the original is unchanged!
+
+	🔹 StringBuilder Methods
+	Method				Modifies Original?			Description
+	append(str)			✅ Yes					Adds string at the end
+	insert(index, str)		✅ Yes					Inserts at position
+	delete(start, end)		✅ Yes					Deletes substring from start to end-1
+	deleteCharAt(index)		✅ Yes					Deletes single char
+	replace(start, end, str)	✅ Yes					Replaces part with str
+	reverse()			✅ Yes					Reverses in-place
+	setCharAt(index, ch)		✅ Yes					Replaces character at index
+	charAt(index)			❌ No					Returns character
+	toString()			✅ (new String)				Converts to String
+	length()			❌ No					Returns length
+	capacity()			❌ No					Internal buffer size
+
+⏱ Time Complexities (DSA Relevance)
+	Operation		String			StringBuilder
+	Concatenation in loop	❌ O(n²)		✅ O(n)
+	Insert/Delete in middle	❌ Inefficient		✅ Efficient
+	Reverse string		Needs new StringBuilder	✅ In-place (reverse())
+
+✅ When to Use Which (DSA Context)
+	Problem Type					Use
+	Constant small modifications			String is fine
+	Building strings in loop (e.g. zigzag, decode)	StringBuilder
+	Reverse strings efficiently			StringBuilder.reverse()
+	Palindrome checking				Use charAt() with two pointers (no need to build new string)
+	Replace/trim/clean input once			String, chain methods (s.trim().toLowerCase())
+
+🧪 Example Differences
+	String s = "Hello ";
+	String t = s + "World"; // new string created
+	
+	StringBuilder sb = new StringBuilder("Hello ");
+	sb.append("World");     // modifies sb in-place
+
+🧠 Final Tips
+	Don't chain StringBuilder operations with .equals() — convert to string first:
+		sb.toString().equals("hello")
+	
+	Avoid String += something in loops. Use StringBuilder.append() instead.
+	StringBuilder.reverse() does reverse in-place, and returns itself — it doesn't create a new object.
+
+	Most String methods (like trim, replace, etc.) do nothing unless you reassign:
+		s.trim(); // does nothing
+		s = s.trim(); // correct

@@ -1,0 +1,32 @@
+Controller(Handles Request) --> Service(Business Logic) --> Repository(Interacts with DB)
+
+Spring Data MongoDB has provided a interface(MongoRepository).
+Whenever we create our interface to interact with DB, we extend MongoRepository.
+MongoRepository is a interface provided by "Spring Data MongoDB" which contains all the functions to perform CRUD operations.
+MongoRepository<T, D> takes two things: 
+	First: The thing on which you have to operate, in your case its "Journal Entry"(which is a POJO class or a Collection)
+	Second: Your id
+
+Now, you need to map your class to database table(Collection in mongoDB)
+
+Make your POJO class as @Document: It will say "Hey spring, this class is actually a collection in DB and whenever i will create object of it, it will be document(row of RDBMS)".
+
+You created an interface in "Repository" package. Now, you want to use it in service, you injected it's dependency in "Service" package in any class. Although this is an interface, at runtime "Spring" will create its implementaion and inject its dependency in "Service".
+
+
+
+ResponseEntity
+	The ResponseEntity class is part of the Spring framework and is commonly used in Spring Boot applications to customize the HTTP response.
+	It provides methods for setting the response status, headers, and body. 
+	You can use it to return different types of data in your controller methods such as JSON, XML, or even HTML.
+	You can use generics with ResponseEntity to specify the type of data you are returning.
+
+	@GetMapping("/id/{myId}")
+    	public ResponseEntity<JournalEntry> getJournalById(@PathVariable ObjectId myId) {
+	        Optional<JournalEntry> myEntry = journalEntryService.getById(myId);
+	        if(myEntry.isPresent()) {
+	            return new ResponseEntity<>(myEntry.get(), HttpStatus.OK);
+	        }
+	
+	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}

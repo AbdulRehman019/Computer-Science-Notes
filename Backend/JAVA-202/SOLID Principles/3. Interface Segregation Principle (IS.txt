@@ -1,0 +1,107 @@
+Interface Segregation Principle (ISP)
+	Definition
+		“Clients should not be forced to depend on methods they do not use.”
+
+		👉 In simpler words:
+			Interfaces should be small, specific, and focused.
+
+		Avoid creating large, general-purpose interfaces that force classes to implement methods they don’t need.
+
+Why ISP? (The Problem)
+	Suppose we design a generic machine interface:
+
+		interface Machine {
+		    void print(Document d);
+		    void scan(Document d);
+		    void fax(Document d);
+		}
+
+		
+	Now, a basic printer only knows how to print().
+	But it is forced to also implement scan() and fax() methods, even though it doesn’t support them.
+
+		class BasicPrinter implements Machine {
+		    public void print(Document d) { System.out.println("Printing..."); }
+		    public void scan(Document d) { throw new UnsupportedOperationException(); }
+		    public void fax(Document d) { throw new UnsupportedOperationException(); }
+		}
+
+
+	❌ Problem:
+		Clients using BasicPrinter might accidentally call scan() → runtime error.
+		Violates ISP → because the printer is depending on methods it doesn’t need.
+
+Correct Way (Apply ISP)
+	Break down the big interface into smaller, role-specific interfaces:
+
+	interface Printer {
+	    void print(Document d);
+	}
+
+	interface Scanner {
+	    void scan(Document d);
+	}
+
+	interface Fax {
+	    void fax(Document d);
+	}
+
+
+	Now, each class implements only what it needs:
+
+	class BasicPrinter implements Printer {
+	    public void print(Document d) { System.out.println("Printing..."); }
+	}
+
+	class MultiFunctionPrinter implements Printer, Scanner, Fax {
+	    public void print(Document d) { System.out.println("Printing..."); }
+	    public void scan(Document d) { System.out.println("Scanning..."); }
+	    public void fax(Document d) { System.out.println("Faxing..."); }
+	}
+
+
+✅ Now:
+	BasicPrinter implements only Printer.
+	MultiFunctionPrinter implements all three.
+	No class is forced to implement unused methods.
+
+🔹 Real-World Example: Payments
+	❌ Without ISP (fat interface):
+
+	interface PaymentService {
+	    void payWithCreditCard();
+	    void payWithUPI();
+	    void payWithCrypto();
+	}
+	
+	
+	A UPI-only app doesn’t care about credit card or crypto, but is forced to implement them.
+	
+✅ With ISP:
+	interface CreditCardPayment {
+	    void payWithCreditCard();
+	}
+	
+	interface UPIPayment {
+	    void payWithUPI();
+	}
+	
+	interface CryptoPayment {
+	    void payWithCrypto();
+	}
+	
+	
+	Now classes implement only what they support.
+	
+🔹 Benefits of ISP
+	Flexibility → Classes only implement what they need.
+	Maintainability → Changes in one interface don’t affect unrelated classes.
+	Avoids Runtime Errors → No “dummy” methods throwing exceptions.
+
+	Encourages Clean Design → Focused, smaller interfaces.
+
+🔹 Summary
+	ISP = “Many small, specific interfaces > one big fat interface.”
+	Prevents clients from depending on unused methods.
+	Achieved by splitting large interfaces into role-specific contracts.
+	Often applied with composition → a class can implement multiple small interfaces. 

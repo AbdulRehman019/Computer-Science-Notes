@@ -1,0 +1,113 @@
+
+1. What is Jackson in Java?
+	Jackson is a Java library (framework) used for serializing Java objects to JSON and deserializing JSON back into Java objects.
+	It is one of the most popular JSON libraries for Java because it is fast, flexible, and widely used in modern frameworks (like Spring Boot).
+
+2. Why Jackson?
+	In modern applications (REST APIs, microservices, web apps), we often need to send data in JSON format between client and server. Jackson makes it easy to:
+	Convert Java objects → JSON (Serialization).
+	Convert JSON → Java objects (Deserialization).
+	Handle complex Java objects, collections, generics, polymorphism, etc.	
+	Read/write JSON from files, streams, or REST endpoints.
+
+3. Core Components of Jackson
+	Jackson mainly consists of three modules:
+		Jackson Databind (jackson-databind)
+			Provides ObjectMapper class.
+			Handles conversion between Java objects and JSON.
+
+			Example: mapper.writeValueAsString(object).
+		
+		Jackson Core (jackson-core)
+			Provides low-level streaming API.
+			Useful for performance-critical apps (process JSON token by token).
+		
+		Jackson Annotations (jackson-annotations)
+			Provides annotations to control serialization/deserialization behavior.
+			Example: @JsonProperty, @JsonIgnore. 
+
+4. Common Annotations in Jackson
+	@JsonProperty("name") → map JSON field name to Java field. 
+				If didn't mention explicitly, it matches on the basis of variable name and is case sensitive. 
+				If we have used different names for variables in class and key in JSON, we will get unrecognizedException
+	@JsonIgnore → ignore a field during serialization/deserialization.
+	@JsonInclude(JsonInclude.Include.NON_NULL) → skip null fields.
+	@JsonFormat(pattern = "dd-MM-yyyy") → format dates.
+	@JsonCreator and @JsonValue → control custom object creation. 
+
+5. Do we need an empty constructor in a POJO (like Trade) for Jackson?
+	Yes, we usually need it.
+	Jackson (by default) uses reflection + no-arg constructor to create an empty instance of your class before it sets fields using setters (or direct field access).
+
+	If you only have the constructor with arguments and no empty constructor, Jackson will fail with an error like:
+		com.fasterxml.jackson.databind.exc.InvalidDefinitionException: 
+		Cannot construct instance of `Trade` (no Creators, like default constructor, exist)
+
+	So, empty constructor is not useless — Jackson uses it to create objects during deserialization, unless you explicitly guide it with annotations like @JsonCreator on a 	parameterized constructor.
+
+6. What does Jackson do with duplicate keys in JSON?
+	By default: If a JSON has duplicate keys, Jackson takes the last occurrence and overwrites earlier ones. 
+
+	When would you NOT want the default behaviour?
+		If you care about data integrity and want to detect duplicates instead of silently overwriting them.
+		For example:
+			Financial transactions
+			Security-related JSON payloads
+			Config files where duplicate keys should raise an error.
+
+	How to override Jackson’s behaviour for duplicate keys?
+		Jackson lets you plug in a custom JsonFactory with stricter rules.
+
+		ObjectMapper mapper = new ObjectMapper(
+					    JsonFactory.builder()
+					        .enable(JsonReadFeature.STRICT_DUPLICATE_DETECTION)
+					        .build()
+					);
+
+		With this enabled, if duplicate keys are found, Jackson will throw an exception: 
+			com.fasterxml.jackson.core.JsonParseException: Duplicate field 'symbol' 
+
+	Who should deal with duplicate keys — JSON creator or consumer?
+		According to RFC 8259 (JSON specification):
+			Objects SHOULD NOT contain duplicate keys, but if they do, the behavior is undefined.
+
+		This means:
+			The JSON creator should avoid duplicates.
+
+		The consumer (Jackson in this case) has to decide how to handle them (ignore, overwrite, or throw error). 
+
+7. @JsonIgnore (Jackson) — Summary
+	Used to ignore a specific field during JSON serialization and deserialization.
+	Field will not appear in JSON output and will be skipped when reading JSON.
+	Commonly used to hide sensitive data (e.g., passwords, tokens).
+	Placed directly on the field (or getter).
+	If you need to ignore multiple fields → use @JsonIgnoreProperties.
+	If you want to control access (only write / only read) → use @JsonProperty(access = …).
+
+	✅ Rule of thumb:
+		@JsonIgnore → for single field.
+		@JsonIgnoreProperties → for multiple fields.
+		@JsonProperty(access) → when you want more fine-grained control. 
+
+8. Getters & Setters in Jackson — Summary
+	Jackson follows Java Bean convention (getters for read, setters for write).
+	Serialization (Java → JSON): Jackson calls getters to generate JSON fields.
+	Deserialization (JSON → Java): Jackson calls setters to set values from JSON.
+	If no getters/setters:
+		Jackson can use public fields directly.
+
+	For private fields → needs annotations (@JsonProperty) or constructor injection.
+	Annotations for customization:
+		@JsonProperty("name") → rename property.
+		@JsonIgnore → skip property.
+		@JsonInclude → include conditionally (e.g., non-null).
+
+	Best Practices:
+		Always provide getters/setters for private fields.
+		Use annotations for sensitive data or naming mismatches.
+		For immutable classes, use constructor + @JsonCreator.
+
+	Shortcut Rule:
+		Getter = controls what goes out (JSON).
+		Setter = controls what comes in (Java object).
+

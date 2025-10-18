@@ -1,0 +1,82 @@
+***************************************************** Request Dispatcher vs sendRedirect() ****************************************************
+1. What They Do
+	Method					Purpose
+
+	RequestDispatcher.forward()		Forwards a request internally within the server.
+	HttpServletResponse.sendRedirect()	Sends a new HTTP request to a different URL (browser redirect).
+
+2. RequestDispatcher (forward())
+	✅ What it does:
+		Forwards the request within the server, without the client (browser) knowing.
+		Control is passed from one Servlet/JSP to another on the server side.
+		URL in browser stays the same.
+
+	🧠 Use-case:
+		You want to process data in one servlet and then pass it to a JSP for display.
+		You don't want to expose internal structure to users (like JSP names or servlet paths).
+
+	✅ Sending Data Using RequestDispatcher:
+		Since RequestDispatcher.forward() is server-side, you can use the request object to pass data using attributes.
+
+		🔹 Steps:
+			Set attributes using request.setAttribute().
+			Use RequestDispatcher.forward() to forward the request.
+
+3. sendRedirect()
+	✅ What it does:
+		Sends a response back to the browser, telling it to make a new request to a different URL.
+		It's a client-side redirect.
+		URL in browser changes.
+
+	🧠 Use-case:
+		You want to redirect to another website or servlet.
+		You want the client to know they are going to a new page.
+		Useful after a form submission to prevent re-submission on refresh (Post/Redirect/Get pattern).
+
+	✅ Sending Data Using sendRedirect()
+		Since sendRedirect() is client-side, the only way to pass data is through:
+		URL parameters (for GET)
+		Or storing data in session/cookie (if sensitive or large)
+
+		res.sendRedirect("sqr?sum=" + sum);		// URL Rewriting
+
+✅ Key Differences Summary
+
+		Feature				RequestDispatcher.forward()			response.sendRedirect()
+
+		Request Type			Server-side forward				Client-side redirect
+		URL in Browser			❌ Does not change				✅ Changes
+		Visibility to Client		❌ Hidden from client				✅ Visible to client
+		Scope of request attributes	✅ Preserved					❌ Lost (new request)
+		Speed				✅ Faster (single request)			❌ Slower (two requests)
+		Can redirect to external site?	❌ No						✅ Yes
+		When to use			Forwarding inside server (e.g., Servlet to JSP)	Navigation after processing, or to another domain
+
+
+
+
+
+✅ Practical Example:
+🔹 Form (HTML):
+
+	<form action="LoginServlet" method="post">
+	  <input name="username">
+	  <input name="password" type="password">
+	  <input type="submit">
+	</form>
+
+🔹 LoginServlet.java:
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+	    String user = request.getParameter("username");
+	    String pass = request.getParameter("password");
+	
+	    if ("admin".equals(user) && "123".equals(pass)) {
+	        // Forward to success page
+	        RequestDispatcher rd = request.getRequestDispatcher("welcome.jsp");
+	        rd.forward(request, response);
+	    } else {
+	        // Redirect to error page
+	        response.sendRedirect("loginError.jsp");
+	    }
+	}

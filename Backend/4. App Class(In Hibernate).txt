@@ -1,0 +1,62 @@
+*********************************************************** App Class(To create and manage connection with DB) in Hibernate **************************************************
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import com.abd.DemoHibernate.Alien;
+
+public class App {
+    public static void main(String[] args) {
+        // Configuration object to load Hibernate settings
+        Configuration config = new Configuration();
+        config.configure("hibernate.cfg.xml");  // Load configuration file
+        
+        // Build the ServiceRegistry
+        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+            .applySettings(config.getProperties())
+            .build();
+
+        // Build SessionFactory using ServiceRegistry (instead of directly using SessionFactory)
+        SessionFactory factory = config.buildSessionFactory(serviceRegistry);
+
+        // Start session and transaction
+        Session session = factory.getCurrentSession();
+        session.beginTransaction();
+        
+        // Create and save Alien object
+        Alien alien = new Alien();
+        alien.setaId(101);
+        alien.setaName("Zorg");
+        alien.setColor("Green");
+        
+        session.persist(alien);  // Save the object
+        
+        // Commit transaction to save data to the database
+        session.getTransaction().commit();
+        
+        // Close the factory
+        factory.close();
+    }
+}
+
+
+
+1. Various fields and methods
+	Configuration: Loads the Hibernate configuration file (e.g., hibernate.cfg.xml) which contains database connection and other Hibernate settings.
+	ServiceRegistry: It replaces the older method of directly using SessionFactory (deprecated in newer versions). ServiceRegistry is used to configure services like session factory 			 creation.
+	SessionFactory: It's responsible for creating and managing sessions. In Hibernate 6.x, it's created using the ServiceRegistry.
+	Session: Represents a single unit of work with the database. A session is used to perform CRUD operations like save(), persist(), etc.
+	session.persist(): This method is used to save the object in the database. save() has been deprecated in Hibernate 6.x in favor of persist().
+
+	session.getTransaction().commit(): This commits the transaction, which saves the data to the database.
+
+	factory.close(): Always close the session factory to free resources once all work is done.
+
+
+
+2. Deprecated Methods and Alternatives:
+	SessionFactory is being replaced by the ServiceRegistry approach. In older versions, SessionFactory was directly initialized via new 			Configuration().configure().buildSessionFactory().
+
+	save() is deprecated in Hibernate 6.x. Use persist() instead, as it is more aligned with the JPA specification and avoids issues with entity state management.
+

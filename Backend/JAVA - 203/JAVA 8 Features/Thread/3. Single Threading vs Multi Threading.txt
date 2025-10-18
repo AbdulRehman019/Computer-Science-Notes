@@ -1,0 +1,129 @@
+Single Threading vs Multi Threading 
+
+What is a Thread?
+	A thread is the smallest unit of CPU execution within a process.
+	It represents a single sequence of instructions.
+
+	Every process has at least one thread — called the main thread.
+
+	Threads within the same process share the same memory and resources.
+
+1. Single Threading
+	In single-threading, a program (process) executes one thread at a time — only one task can be performed at once.
+	The next task starts only after the current one finishes.
+
+	Characteristics:
+		One thread of control.
+		Simpler to implement and debug.
+		No need for synchronization.
+
+	Slower for programs that could benefit from parallelism.
+
+Example (in Java):
+	public class SingleThreadExample {
+	    public static void main(String[] args) {
+	        task1();
+	        task2();
+	    }
+	
+	    static void task1() {
+	        for (int i = 1; i <= 5; i++) {
+	            System.out.println("Task 1 - Count " + i);
+	        }
+	    }
+	
+	    static void task2() {
+        	for (int i = 1; i <= 5; i++) {
+	            System.out.println("Task 2 - Count " + i);
+	        }
+	    }
+	}
+
+
+Output order:
+	Task 1 - Count 1  
+	Task 1 - Count 2  
+	...
+	Task 1 - Count 5  
+	Task 2 - Count 1  
+	Task 2 - Count 2  
+	...
+	Task 2 - Count 5	
+
+	👉 Task 2 starts only after Task 1 completes.
+
+2. Multi Threading
+	In multithreading, a program can execute multiple threads concurrently within the same process.
+	Each thread runs independently but shares the same memory.
+
+	Characteristics:
+		Multiple threads execute simultaneously.
+		Better CPU utilization.
+		Faster for I/O-heavy or parallelizable tasks.
+		Requires synchronization to avoid data inconsistency.
+		More complex to design and debug.
+
+	Example (in Java):
+		class Task1 extends Thread {
+		    public void run() {
+		        for (int i = 1; i <= 5; i++) {
+		            System.out.println("Task 1 - Count " + i);
+		        }
+		    }
+		}
+
+		class Task2 extends Thread {
+		    public void run() {
+		        for (int i = 1; i <= 5; i++) {
+		            System.out.println("Task 2 - Count " + i);
+		        }
+		    }
+		}
+
+		public class MultiThreadExample {
+		    public static void main(String[] args) {
+		        Task1 t1 = new Task1();
+		        Task2 t2 = new Task2();
+		
+		        t1.start();  // start() creates a new thread and calls run()
+		        t2.start();
+		    }
+		}
+
+
+Possible Output:
+	Task 1 - Count 1
+	Task 2 - Count 1
+	Task 1 - Count 2
+	Task 2 - Count 2
+	Task 1 - Count 3
+	...	
+
+	👉 Both tasks run concurrently — their outputs interleave based on CPU scheduling.
+
+Key Differences
+	Feature			Single Threading			Multithreading
+	Definition		Only one thread executes		Multiple threads execute concurrently
+	Execution		Sequential				Concurrent
+	Performance		Slower for multitask workloads		Faster, efficient CPU use
+	Resource Sharing	No shared memory (only one thread)	Threads share same memory space
+	Complexity		Simple					Complex (requires synchronization)
+	Failure impact		Easier to recover			One thread failure can affect others
+	Use cases		Simple programs, scripts		Games, web servers, GUIs, real-time apps
+
+Analogy
+	Imagine a kitchen 🍳:
+		Single-threading: One chef cooks dishes one by one.
+		Multithreading: Multiple chefs work together — one chops, one fries, one serves — all sharing the same kitchen.
+
+Advantages of Multithreading
+✅ Better performance (especially on multi-core CPUs)
+✅ Efficient resource use (shared memory, faster communication)
+✅ Responsive programs (UI thread + background thread)
+✅ Simpler concurrency inside one process
+
+⚠️ Disadvantages of Multithreading
+❌ Synchronization issues (race conditions)
+❌ Debugging difficulty
+❌ Thread interference and deadlocks if not handled properly
+❌ Context switching overhead

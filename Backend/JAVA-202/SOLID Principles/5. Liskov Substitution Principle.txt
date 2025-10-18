@@ -1,0 +1,106 @@
+Definition
+The Liskov Substitution Principle (LSP) states:
+	👉 Objects of a superclass should be replaceable with objects of its subclasses without breaking the application’s behavior.
+	It was introduced by Barbara Liskov in 1987.
+
+🔍 What does it mean?
+	If class B is a subclass of class A, then we should be able to use an object of B wherever an object of A is expected, without altering the correctness of the program.
+	Subclasses should extend behavior, not break it.
+
+	In other words: Inheritance should model “is-a” properly.
+
+🚫 Violation of LSP (Bad Example)
+	class Bird {
+	    void fly() {
+	        System.out.println("I can fly!");
+	    }
+	}
+
+	class Ostrich extends Bird {
+	    @Override
+	    void fly() {
+	        throw new UnsupportedOperationException("Ostriches can’t fly!");
+	    }
+	}
+
+Here:
+	Ostrich is a Bird (conceptually true), but it breaks expectations because not all birds can fly.
+	If some code expects a Bird and calls fly(), it will break for Ostrich.
+	This violates LSP.
+
+✅ Fixing the Violation (Good Example)
+	Refactor the hierarchy so it models reality better:
+
+	abstract class Bird {
+	    abstract void eat();
+	}
+	
+	interface Flyable {
+	    void fly();
+	}
+	
+	class Sparrow extends Bird implements Flyable {
+	    @Override
+	    void eat() {
+	        System.out.println("Sparrow eats seeds");
+	    }
+
+	    @Override
+	    public void fly() {
+	        System.out.println("Sparrow can fly");
+	    }
+	}
+
+	class Ostrich extends Bird {
+	    @Override
+	    void eat() {
+	        System.out.println("Ostrich eats plants");
+	    }
+	}
+	
+	
+Now:
+	We separated flying behavior into an interface (Flyable).
+	Ostrich doesn’t implement Flyable, so no broken expectations.
+	Any Bird can still be used safely.
+
+⚡ Rules to Follow LSP
+	Don’t override methods in a way that changes expected behavior.
+		Example: overriding fly() to throw exceptions breaks the contract.
+	
+	Preconditions should not be strengthened in a subclass.	
+		If the base class method accepts any integer, subclass shouldn’t restrict it to only positive integers.
+	
+	Postconditions should not be weakened.	
+		If the base class guarantees a result, subclass shouldn’t return less than expected.
+	
+	Invariants should be preserved.	
+		Subclasses should honor all rules/contracts of the parent class.
+	
+🔨 Real-world Example: Payment System
+	class Payment {
+	    void pay(double amount) {
+	        System.out.println("Paid " + amount);
+	    }
+	}
+
+	class FreePayment extends Payment {
+	    @Override
+	    void pay(double amount) {
+	        throw new UnsupportedOperationException("Free payment cannot be processed with amount");
+	    }
+	}
+	
+	
+	❌ This breaks LSP. If someone expects a Payment and calls pay(100), it fails for FreePayment.
+	
+	✅ Fix: Design FreePayment differently, maybe without extending Payment at all.
+
+📌 Key Benefits of LSP
+	Prevents wrong inheritance hierarchies.
+	Ensures subclasses are truly substitutable for their parent.
+	Leads to robust, maintainable, and predictable systems.
+
+✅ In short:
+	The Liskov Substitution Principle ensures that subclasses behave in a way consistent with their parent class, so you can substitute them without breaking functionality. 
+	If you can’t, it’s a sign of bad inheritance design. 

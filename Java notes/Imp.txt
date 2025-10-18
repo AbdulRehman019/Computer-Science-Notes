@@ -1,0 +1,31 @@
+
+1. Any object before printing or concatanating with string calls its "value of" function which in turn will call "toString" function
+   and convert it to String.
+   Hence, it is not necessary to convert it into string by using the function ourself because it will be converted automatically.
+
+2. In case of Array we use Arrays.toString() method otherwise it will call its default "toString" method and will give the hash value 
+   adding random characters like IE@ch....
+
+3. You can assign smaller data types to bigger data types.
+	For example: float a = 775;
+	Here, a smaller int value is assigned to bigger float value.
+
+4. You can not assign bigger data types to smaller data types.
+	For example: int a = 55.55f;
+	Error
+
+5. To assign bigger data types to smaller data types. You need to explicitly typecast it.
+	int a = (int)(55.55f);
+
+6. int a = 257;
+   byte b = (byte)(a);
+   Although we explicitly typecast int to byte. But it cannot take values outside its range. It will store 257 % 256 i.e. 1. Because 256 is range of byte.
+
+7. While calculating expressions, if value goes beyond the limits, automatic type promotion happens.
+   All byte, short, char is converted into int.
+   int is converted to float.
+   float is converted to double.
+   byte a = 40;
+   byte b = 50;
+   byte c = 100;
+   int d = (a * b) / c;		// Although a and b are byte, they will automatically promoted to int.

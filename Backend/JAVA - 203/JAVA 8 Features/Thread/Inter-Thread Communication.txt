@@ -1,0 +1,143 @@
+1. synchronized, wait(), notify(), notifyAll()
+🔹 What is synchronized?
+
+synchronized is a keyword in Java used to make a block or method thread-safe.
+
+It ensures that only one thread at a time can execute the synchronized code on the same object (monitor lock).
+
+🔹 How it works
+
+Every Java object has a monitor lock (intrinsic lock).
+
+When a thread enters a synchronized block/method → it acquires the object’s monitor.
+
+When it exits → it releases the monitor.
+
+🔹 Example:
+class Counter {
+    private int count = 0;
+
+    public synchronized void increment() {
+        count++;
+    }
+
+    public synchronized int getCount() {
+        return count;
+    }
+}
+
+
+➡️ Only one thread can call increment() at a time on the same Counter object.
+
+🔹 Inter-Thread Communication (wait/notify)
+
+When multiple threads share a resource, sometimes they need to coordinate.
+For example — one thread produces data, another consumes it.
+
+Key methods (from Object class):
+
+wait() — releases the lock and makes the thread wait until another thread calls notify() or notifyAll().
+
+notify() — wakes up one waiting thread.
+
+notifyAll() — wakes up all waiting threads.
+
+All must be called inside a synchronized block.
+
+🧩 Example (Producer-Consumer with wait/notify)
+class SharedResource {
+    private boolean available = false;
+
+    synchronized void produce() throws InterruptedException {
+        while (available) wait(); // wait if item already produced
+        System.out.println("Produced item");
+        available = true;
+        notify(); // signal the consumer
+    }
+
+    synchronized void consume() throws InterruptedException {
+        while (!available) wait(); // wait if no item yet
+        System.out.println("Consumed item");
+        available = false;
+        notify(); // signal the producer
+    }
+}
+
+🧱 2. ReentrantLock and Condition
+🔹 What is ReentrantLock?
+
+A class from java.util.concurrent.locks package.
+
+Works like synchronized but gives more control and flexibility.
+
+Reentrant means:
+
+The same thread can acquire the same lock multiple times without deadlock.
+
+🔹 Key Methods:
+
+lock() → Acquire the lock.
+
+unlock() → Release the lock.
+
+tryLock() → Try to acquire the lock (without waiting indefinitely).
+
+newCondition() → Creates a Condition object (used like wait/notify).
+
+🔹 What is Condition?
+
+Like wait() and notify() but more advanced.
+
+Created from a Lock object.
+
+Provides methods:
+
+await() → thread waits (releases lock temporarily)
+
+signal() → wakes one waiting thread
+
+signalAll() → wakes all waiting threads
+
+🧩 Example (Equivalent of Producer-Consumer using ReentrantLock)
+import java.util.concurrent.locks.*;
+
+class SharedResource {
+    private final Lock lock = new ReentrantLock();
+    private final Condition condition = lock.newCondition();
+    private boolean available = false;
+
+    void produce() throws InterruptedException {
+        lock.lock();
+        try {
+            while (available) condition.await();
+            System.out.println("Produced item");
+            available = true;
+            condition.signal();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    void consume() throws InterruptedException {
+        lock.lock();
+        try {
+            while (!available) condition.await();
+            System.out.println("Consumed item");
+            available = false;
+            condition.signal();
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+
+⚖️ 3. synchronized vs ReentrantLock + Condition
+Feature	synchronized	ReentrantLock
+Type	Keyword (built-in)	Class (from java.util.concurrent.locks)
+Fairness	No control over which thread gets the lock	Can set fairness (new ReentrantLock(true))
+Try Lock	Not possible	tryLock() available
+Multiple Conditions	Not possible	Can create multiple Condition objects for fine control
+Interruption	wait() interrupted with InterruptedException	lockInterruptibly() and await() handle interruptions better
+Lock Release	Automatic (when block exits)	Must explicitly call unlock() in finally
+Reentrant	Yes	Yes
+Performance	Simple, less overhead	More flexible, better for complex concurrency

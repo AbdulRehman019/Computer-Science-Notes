@@ -1,0 +1,103 @@
+Dijkstra Algorithm
+1. What Is It?
+	An algorithm used to find the shortest path from a source node to all other nodes in a graph with non-negative edge weights.
+
+	When to Use It?
+		When the graph has non-negative weights.
+		When we want the minimum cost path.
+		When cost between nodes is variable.
+
+	Typical use cases:
+		Minimum effort path in a grid.
+		Network routing (finding shortest latency).
+		Maps and navigation.
+
+	How It Works – Steps
+		Initialize a distance array:
+			dist[source] = 0
+		All others: dist[node] = ∞.
+		Use a priority queue (min-heap) to store nodes by minimum current distance.
+		While the queue is not empty:
+			Pop the node with the smallest distance (current node).
+			For all neighbors of the current node:
+				Calculate new possible distance:
+					newDist = dist[current] + weight(current → neighbor)
+					If newDist < dist[neighbor], update:
+					  dist[neighbor] = newDist and add neighbor to the queue.
+
+		Continue until all nodes are visited or target is reached (optional).
+
+✅ Time Complexity
+	O((V + E) log V)
+	where V = number of vertices, E = number of edges.
+
+✅ Key Point to Remember
+	Dijkstra is a greedy algorithm → Always pick the node with the smallest distance so far.
+	Works only with non-negative edge weights.
+	If edge weights can be negative → Use Bellman-Ford.
+
+✅ Example Use Case
+	Path With Minimum Effort in a Grid
+	Treat each cell as a node.
+	Edge weight = |height difference between two adjacent cells|.
+	Goal → Find path where the maximum edge weight is minimized →
+	Use Dijkstra with effort = max(current effort, edge cost).
+
+	public static int[] f(ArrayList<ArrayList<int[]>> adj, int n) {
+		int[] ans = new int[n];
+		Arrays.fill(ans, Integer.MAX_VALUE);
+		ans[0] = 0;
+		PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> Integer.compare(a[1], b[1]));
+		pq.add(new int[]{0, 0});
+
+		while(!pq.isEmpty()) {
+			int[] top = pq.remove();
+			int curr = top[0];
+			int dist = top[1];
+
+			for(int[] next : adj.get(curr)) {
+				if(ans[next[0]] > ans[curr] + next[1]) {
+					ans[next[0]] = ans[curr] + next[1];
+					pq.add(new int[]{next[0], ans[next[0]]});
+				}
+			}
+		}
+
+		return ans;
+	}
+
+2. When to think of DP + dfs and Dikkstra?
+	When to Prefer Dijkstra Over DP + DFS
+	🔍 Key Insight:
+		👉 Dijkstra’s Algorithm works when the problem can be modeled as finding a minimum cost from a source to a target, where the cost of moving from cell to cell is local (only depends on current 		and neighbor) and doesn’t depend on the global path taken so far.
+	
+	✔️ Typical DP + DFS Problems in Grid
+		The subproblem depends on overlapping subproblems + optimal substructure.
+
+	Example:
+	 - Unique paths problem (number of ways to reach a cell).
+	 - Minimum cost path where cost = sum of all cell costs →
+	  You can express:
+		  dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1])
+
+	✅ These problems usually aggregate (sum up) costs over the path.
+
+	✔️ Why DP + DFS Is NOT Ideal for Dijkstra-Type Problems
+
+	The main issue:
+	 - In DP, for each cell, we expect to compute the optimal solution from the start to the current cell in isolation.
+	 - But in Dijkstra-type problems, the cost (e.g., effort = max of edge differences along the path) doesn’t accumulate additively.
+	 - Instead, it's non-linear (max instead of sum).
+
+	Also, recursive DFS doesn’t easily handle "greedily expanding minimum effort" because it doesn’t prioritize the minimum effort first → lots of redundant calls.
+
+	✅ Example:
+		Path With Minimum Effort Problem
+			Effort = max(|height difference|) along the path → NOT additive →
+			DP + DFS fails to properly capture the global max without recomputation → TLE or incorrect.
+
+		Dijkstra fits perfectly → Always expand the cell with the smallest effort seen so far.
+
+	🎯 Conclusion:
+		👉 Whenever you see a min/max path cost problem that depends only on local neighbor relation (and not total additive costs) → Think Dijkstra.
+		👉 Avoid DP + DFS when the recurrence relation doesn’t follow sum-of-subproblems logic.

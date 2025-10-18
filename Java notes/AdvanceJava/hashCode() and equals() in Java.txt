@@ -1,0 +1,62 @@
+hashCode() and equals() in Java
+1. Purpose
+	hashCode() → Returns an int used by hash-based collections (HashSet, HashMap) to decide the bucket where an object is stored.
+	equals() → Checks if two objects are logically equal.
+
+2. Contract
+	If equals() is true → hashCode() must be same.
+	If hashCode() is different → objects are definitely not equal.
+	If hashCode() is same → equals() decides final equality (to handle collisions).
+
+3. How HashSet Works
+	Compute hashCode() → decides the bucket.
+	If bucket is empty → insert object.
+	If bucket has objects → compare using equals().
+	If equals() is true → duplicate, not added.
+	If equals() is false → added (collision).
+
+Example: Student Class
+	class Student {
+	    private String id;
+	    private String name;
+	
+	    @Override
+	    public boolean equals(Object o) {
+	        if (this == o) return true;
+	        if (!(o instanceof Student)) return false;
+	        Student s = (Student) o;
+	        return id.equals(s.id) && name.equals(s.name);
+	    }
+
+	    @Override
+	    public int hashCode() {
+	        return Objects.hash(id, name);
+	    }
+	}
+
+
+✅ Ensures Student("1","John") and another Student("1","John") are considered the same in HashSet.
+
+🔹 Special Cases
+	Case 1: hashCode() returns id
+		public int hashCode() { return Integer.parseInt(id); }
+
+		Works fine if id is unique.
+		Narrow range if IDs are small.
+
+	Case 2: hashCode() returns id % 3
+		public int hashCode() { return Integer.parseInt(id) % 3; }
+
+		✅ Very simple.
+		❌ Causes collisions (1, 4, 7 → same bucket).
+		❌ Lookup performance degrades → from O(1) to O(n/k).
+
+🔹 What Happens on Collisions
+	Objects with same hashCode() go to the same bucket.
+	Before Java 8 → stored in a linked list.
+	Since Java 8 → if collisions become too many, bucket turns into a red-black tree (faster lookup).
+
+🔹 Best Practice
+	Always override equals() and hashCode() together.
+	Use Objects.hash(field1, field2, …) for hashCode().
+	Ensure uniform distribution to avoid collisions.

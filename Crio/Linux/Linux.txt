@@ -1,0 +1,426 @@
+************************************************* Command Line **************************************************
+1. Text-based user interface
+2. Used to run programs and interact with the computer
+3. All GUI (Graphical User Interface) based actions eventually translate to a command which gets executed
+4. The Terminal gives a direct way to run these commands
+5. Popular CLIs (Command Line Interface):
+	Powershell: Windows
+	Bash: Linux & MacOS
+
+************************************************ Linux *****************************************************
+Linux is an open-source operating system (OS) based on Unix. It is widely used on servers, desktops, mobile devices, and embedded systems.
+
+1.  What is an Operating System?
+	An operating system is the software that manages hardware and software resources of a computer. It acts as a bridge between the user and the hardware.
+
+2. Key Features of Linux:
+	Feature			Description
+	Open Source		Its source code is freely available and can be modified.
+	Multi-user		Multiple users can use the system at the same time.
+	Multitasking		Can run several programs at once.
+	Secure			Strong user permissions and frequent updates make it secure.
+	Portable		Can run on different types of hardware.
+
+3. Linux Components:
+	Kernel – Core of the OS that communicates with hardware.
+	Shell – Interface to interact with the OS (like Terminal).
+	File System – Organizes data into files and directories.
+	System Utilities – Tools to manage processes, users, etc.
+
+4. Popular Linux Distributions (Distros):
+	Ubuntu – Beginner-friendly.
+	Fedora – Cutting-edge software.
+	Debian – Very stable.
+	Arch Linux – For advanced users who want full control.
+	Kali Linux – For penetration testing and cybersecurity.
+
+5. Where is Linux used?
+	Web servers (e.g., 90% of cloud servers run on Linux)
+	Android OS (built on Linux kernel)
+	Supercomputers
+	IoT Devices
+	Software development environments
+
+6. Linux Commands
+	1. pwd
+		You can use the pwd command to print the working directory..
+		The present working directory is /home/crio-user.
+		Each linux user gets their own home directory.
+		All user home directories are in /home.
+		The username here is crio-user and hence the “Home” directory of crio-user is /home/crio-user.
+
+	   Note:
+		In Linux, directories are separated by the forward slash / (see the ? key on your keyboard). 
+		This is different from Windows where the backslash \ is used to separate directories.
+
+	2. ls
+		To list the contents of a directory, you use the ls command (short for list). 
+		When you run the ls command without any arguments (we’ll see what arguments are, shortly), it lists the contents of the present working directory by default.
+		The output of the ls command is formatted differently based on the file type.
+		In the above example,
+			Directories are in blue
+			Files are in white
+			Executables are in green (we will learn more about executable files later)
+
+	3. cd
+		You can change to a different directory using the cd command (short for change directory).
+
+
+	   Note
+		i) The pound sign # is used to write comments. Everything after the first # is ignored. Did you notice the comments in the screenshot above?
+		ii) The destination directory can include a full path (starting with / which indicates the root or starting location in the directory hierarchy) or a relative path (a 			    directory path relative to the current directory that you are in). See the screenshot below for an illustration. This is true of the ls command as well.
+
+7. Common terms
+	By now you might have come across words like arguments,options and parameters.Let’s discuss what are they and how they are different from each other.
+
+	1. Arguments
+		It is an input given as part of terminal commands.
+		There can be one or more arguments/parameters.
+
+	   Syntax:		
+		<command> <argument>  
+		<command> <argument> <argument>  
+
+	   Example:
+		cd workspace/
+		Here cd command takes folder name or path as argument.
+
+	2. Options
+		Options modifies the behavior of a command.
+		We can add multiple options together.
+		Must start with a '-'; otherwise, it is assumed to be an argument.
+
+		Let’s understand what options are using ls command as example:
+			1. ls command is used to list out the files and folders present in a directory.
+
+			2. ls -l is used to list file and directories in long listing format, along with some other information. You don’t need to worry about the other details.
+			   drwxr-sr-x 5 crio-user crio-user 6144 Jun 28 15:48 workspace
+
+			3. ls -a is used to check hidden files and directories. 
+			   If you compare this with the output of the ls command, you will see some extra files appeared. Those were all hidden before.
+
+			4. Let’s try out giving multiple options at a time. As we can see ls -la command lists out the the hidden files as well in the long listing format.
+
+			5. ls -h: The ls -h command in Linux is used to list directory contents in a human-readable format.
+				  Breakdown:
+					ls = list files and directories
+					-h = "human-readable" flag
+				  This is only meaningful when used with -l (long listing format)
+
+	   Note: 
+		1. If you don’t provide any argument to the cd command, it defaults to the user’s home directory.
+			i) There is a symbol to denote a user’s home directory. The tilde (~) sign.
+			ii) cd ~ will take you to your home directory.
+
+		2. The ls command defaults to the present working directory. If we use ls command with a directory name, it lists the contents of the specified directory.
+ 		3. ls ~ will list the contents of your home directory.
+
+8. Linux File System and Navigation – Notes
+	 1. Linux Directory Structure Overview
+		/ (root): The top-level directory in Linux; every other directory is under this.
+		Common subdirectories:
+			/home – Home directories of users
+			/var – Variable data like logs
+			/etc – Configuration files
+			/bin – Essential binaries (executables)
+			/usr – User-installed software
+			/tmp – Temporary files
+
+	2. Absolute vs Relative Path
+		Absolute Path
+			Full path starting from the root (/).
+
+		Example:
+			cd /var
+			ls /home/linux-rocks/Documents
+			Works regardless of your current directory.
+
+		Relative Path
+			Path relative to the current working directory.
+			Uses:
+				. → current directory
+				.. → parent directory
+			Examples:
+				cd ..
+				cd ../episode2
+				cd ../../season/episode
+
+	3. Special Relative Paths
+		Symbol	Meaning
+		.	Current directory
+		..	Parent directory
+		-	Previous working directory
+		~	Home directory of current user
+
+9. VS Code Folder Activity (Terminal Practice)
+	Folder Structure:
+	project/
+	├── linux1/
+	│   ├── file1.txt
+	│   └── file2.txt
+	├── linux2/
+	│   ├── file1.txt
+	│   └── file2.txt
+	
+	Commands to Try:
+		Move to linux1: cd linux1
+		Check contents of linux2 (from linux1): ls ../linux2
+		Check current folder’s contents: ls
+		Move to parent folder: cd ..
+		Move to linux2: cd linux2
+		Check contents of linux2: ls
+		Return to previous working directory: cd -
+
+10. Command Explanations from Quiz
+	✅ cd -
+		Moves to the previous working directory.
+		Useful for quickly toggling between two folders.
+
+	✅ cd ../episode2
+		Goes up one level (from episode1 to season100) and then enters episode2.
+	
+	✅ cd ..; cd episode2
+		Same as above, but written as two separate commands in one line.
+
+	✅ cd ~
+		Moves to the current user’s home directory.	
+		Equivalent to cd /home/<username>
+
+	✅ ls ~
+		Lists contents of the user’s home directory from any location.
+
+	✅ User’s home directory
+		If the username is linux-rocks, the path is: /home/linux-rocks
+
+	✅ Parent directory of all directories
+		The root directory: /
+
+	✅ Command Reference Table
+		Command				Purpose
+		cd				Move to home directory
+		cd ~				Move to home directory
+		cd ..				Move to parent directory
+		cd -				Move to previous directory
+		cd /path/to/dir			Move using absolute path
+		ls				List current directory contents
+		ls /path			List contents of any directory
+		ls ~				List contents of home directory
+		pwd				Print current working directory
+
+
+11. Creating files and directories
+	1. mkdir
+		The command mkdir stands for “make directory”.
+		It creates each directory specifed on the command line in the order given.
+		It reports an error if DIRECTORY already exists.
+
+	2. touch
+		It is used to create a file without any content.
+		The file created using touch command is empty.
+		This command can be used when the user doesn’t have data to store at the time of file creation.
+
+	3. cat
+		Cat(concatenate) command is very frequently used in Linux.
+		It reads data from the file and gives their content as output.
+		It helps us to view  files.
+		-n options prints the content along with line numbers
+
+	4. cp
+		This command is used to copy the contents of one file to another.
+		If the file already contains some content, the content gets overwritten.
+		A new file automatically gets created to store the copied content if it does not existed earlier.
+
+	5. mv
+		mv stands for move.
+		mv is used to move one or more files or directories from one place to another in a file system like UNIX.
+
+	6. rm
+		rm stands for remove here.
+		rm command is used to remove files.
+		-rf tag is used with rm command to remove a non-empty directory
+		Can delete directories if used with -r or -rf.
+		Powerful and dangerous – once deleted, data is gone (unless using a trash setup).
+
+	7. rmdir
+		rmdir stands for remove directory here.
+		rmdir command is used to remove empty folders.
+		A non-empty directory can not be deleted using this.
+
+	8. nano
+		It is a text editor
+		It is used to create and open new file.
+		To save a file press ctrl + o
+		To exit the editor use ctrl +x
+
+
+12. Bash Script
+	mkdir test1
+	echo "created new directory"
+	
+	cd test1/
+	echo "Moved to test1"
+	
+	touch abc.txt
+	echo "abc.txt was created successfully"
+
+	sleep 2s
+	
+	ls
+
+	pwd
+	
+	echo "changing directory"
+
+	cd ..
+	
+	pwd
+
+
+   To run the bash script: 
+	sh test.sh
+	Or 
+	./test.sh
+
+13. Output Redirection (>, >>)
+	Purpose: Redirects command output to a file instead of the terminal.
+
+	➤ > (overwrite):
+		Redirects output and overwrites the file if it exists.
+
+		echo "Hello World" > file.txt
+
+	➤ >> (append):
+		Redirects output and appends to the file if it exists.
+
+		echo "Another line" >> file.txt
+
+14. grep and | (Pipe) Command
+	➤ grep (Global Regular Expression Print):
+		Searches for a specific pattern or keyword in a file or output.
+		grep "created" output.txt
+
+	➤ | (Pipe):
+		Sends the output of one command as input to another command.
+		cat output.txt | grep "created"
+
+15. wc Command (Word Count)
+	Used to count lines, words, characters, and bytes in a file.
+	wc output.txt
+
+	➤ Common Options:
+	Option	Description
+	-l	Count lines (newline characters)
+	-w	Count words
+	-m	Count characters (character-by-character)
+	-c	Count bytes
+	-L	Length of the longest line
+	
+	Example:
+	wc -w output.txt
+
+16. find Command
+	Used to search files or directories in a directory hierarchy.
+
+	➤ Syntax:
+		find [path] [options] [expression]
+
+	➤ Examples:
+	find . -type f -name "*.txt"       # Find all .txt files
+	find /home/user -type d -name dir1 # Find a directory named 'dir1'
+
+	➤ Options:
+	Option	Description
+	-type f	Search for files
+	-type d	Search for directories
+
+17. /proc/cpuinfo file
+	Linux stores CPU related information in the /proc/cpuinfo file.
+	You can view its content using cat command.
+	You’ll be able to see the clock speed listed as the “cpu MHz” attribute.
+	There can be more than one “cpu MHz” entry if the processor is multi-core.
+
+	cat /proc/cpuinfo
+
+	top command:
+		Shows real-time CPU, memory, and process usage.
+		You can monitor how much CPU is being used overall and by which process.
+
+		top | grep mongodb
+
+
+18. /proc/meminfo file
+	This file stores memory related information.
+	You can view the information using cat command.
+
+	free command gives a quick summary of the memory usage.
+
+19. df command
+	This command is used to get the storage details
+
+************************************************** File permissions in linux ************************************************
+📁 Three Types of File Permissions
+	Permission	Symbol	Meaning
+	Read		r	View contents of a file/directory
+	Write		w	Modify contents
+	Execute		x	Run file as a program / access directory
+
+👤 Three Types of Users
+	User Type	Description
+	Owner		Creator of the file
+	Group		Users in the same group as the file
+	Others		Everyone else
+
+🔍 Viewing Permissions: ls -l
+	ls -l filename
+
+	Sample Output:
+		-rwxr-xr-- 1 user group 1234 Jun 28 10:00 myscript.sh
+
+	Breakdown:
+	- → Regular file (d would mean directory)
+	rwx → Owner has read, write, execute
+	r-x → Group has read and execute
+	r-- → Others have read only
+
+✍️ Changing Permissions: chmod
+	chmod stands for change mode.
+
+	Symbolic Format:
+	chmod u+x filename    # Add execute for user
+	chmod g-w filename    # Remove write for group
+	chmod o=r filename    # Set read-only for others
+
+	Numeric Format:
+	Permission	Binary	Numeric
+	r		4	
+	w		2	
+	x		1	
+
+	Example:
+		chmod 755 filename
+
+	Breakdown:
+	7 (4+2+1) → rwx (owner)
+	5 (4+0+1) → r-x (group)
+	5 (4+0+1) → r-x (others)
+
+🧑‍🤝‍🧑 Changing Ownership: chown
+	chown newuser:newgroup filename
+	Changes the owner and group of a file or directory.
+
+📦 Directory Permissions
+	Permission	What it allows (for directories)
+	r		View list of files (ls)
+	w		Create/delete files in the directory
+	x		Access files (cd into dir)
+
+🧪 Examples
+
+Example 1: Make a script executable by everyone
+	chmod a+x script.sh
+
+Example 2: Only owner can read/write, no one else can do anything
+	chmod 600 secret.txt
+
+Example 3: Make directory accessible to everyone
+	chmod 755 mydir/

@@ -1,0 +1,131 @@
+Open/Closed Principle (OCP)
+Definition
+	“Software entities (classes, modules, functions) should be open for extension but closed for modification.”
+	This means:
+		You should be able to add new behavior to a class without changing its existing code.
+
+	Achieved using abstraction, interfaces, and polymorphism.
+
+Why OCP? (Motivation)
+	Imagine you wrote a Shape class with a draw() method:
+
+	class Shape {
+	    String type;
+	}
+
+And in another class:
+	class GraphicEditor {
+	    public void drawShape(Shape s) {
+	        if (s.type.equals("circle")) {
+	            // draw circle
+	        } else if (s.type.equals("rectangle")) {
+	            // draw rectangle
+	        }
+	    }
+	}
+
+
+Problem:
+	Every time you add a new shape (Triangle, Polygon, etc.), you must modify GraphicEditor.
+	This breaks OCP.
+
+Applying OCP (Correct Way)
+		Instead of putting if-else everywhere → use abstraction + polymorphism.
+
+		// Abstraction
+		interface Shape {
+		    void draw();
+		}
+
+	// Extension
+		class Circle implements Shape {
+		    public void draw() {
+		        System.out.println("Drawing a Circle");
+		    }
+		}
+		
+		class Rectangle implements Shape {
+		    public void draw() {
+		        System.out.println("Drawing a Rectangle");
+		    }
+		}
+
+	// Usage
+		class GraphicEditor {
+		    public void drawShape(Shape s) {
+		        s.draw();  // polymorphism
+		    }
+		}
+
+
+✅ Now:
+	To add a new Triangle, you don’t touch GraphicEditor.
+	You only extend by creating a new Triangle class.
+	Existing code is closed for modification, but open for extension.
+
+🔹 Real-World Example: Payment System
+	Without OCP ❌
+		class PaymentProcessor {
+		    public void process(String method) {
+		        if (method.equals("creditCard")) {
+		            // credit card logic
+		        } else if (method.equals("paypal")) {
+		            // PayPal logic
+		        }
+		    }
+		}
+		
+
+	With OCP ✅
+		interface PaymentMethod {
+		    void pay(double amount);
+		}
+		
+		class CreditCardPayment implements PaymentMethod {
+		    public void pay(double amount) {
+		        System.out.println("Paid with credit card: " + amount);
+		    }
+		}
+		
+		class PayPalPayment implements PaymentMethod {
+	    		public void pay(double amount) {
+		        System.out.println("Paid with PayPal: " + amount);
+		    }
+		}
+
+		class PaymentProcessor {
+		    public void process(PaymentMethod method, double amount) {
+		        method.pay(amount);
+		    }
+		}
+
+		All this method will be called by Factory Design Class. 
+		Main class will come to know the String, with which we need to call the methods. 
+		Main method will call Factory Design Pattern and it will call the payment methods. 
+
+		If there is a class which is handling lot of business logic and it is also calling different methods in different class. 
+		Don't use that class for calling different methods, instead make a new class which can be used to call different methods. 
+		In the class with business logic, make one method which will call the methods in new class. 
+
+	
+👉 Now if you want to add UPI or Crypto Payment, just create a new class → no changes to existing PaymentProcessor.
+	🔹 Benefits of OCP
+		Extensibility → Add new features without breaking old code.
+		Maintainability → Fewer bugs when extending.
+		Scalability → Easily add new modules.
+		Encourages Polymorphism & Design Patterns (Strategy, Factory, etc.).
+
+	🔹 When to Apply OCP
+		When requirements frequently change.
+		In frameworks/libraries where users will extend functionality.
+		In enterprise systems where you expect new business rules to come often. 
+
+	Rules to be careful about when applying OCP 
+		Try to avoid inheritance as it introduces tight coupling - if superclass changes, subclasses may need to be modified too. 
+		Use Abstraction(interfaces) to enable you to adapt the functionality of your application without changing the existing code. 
+		Anticipate for possible extensions in the original design. OCP can be fulfilled for now but not forever. 
+
+✅ Summary:
+	OCP = Extend, don’t modify.
+	Use abstraction + polymorphism to achieve it.
+	Avoid if-else or switch logic explosion.

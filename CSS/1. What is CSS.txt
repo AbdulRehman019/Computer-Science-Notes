@@ -1,0 +1,43 @@
+1. What is CSS?
+
+2. Types of CSS?
+	Inline, Internal, External
+
+3. Selectors in CSS
+	Selector { property: value }
+	https://www.w3schools.com/css/css_selectors.asp
+	
+	Type, Class, Id, Attribute, Pseudo Class, Pseudo Element, Combinator
+	Attribute: p[attrinute] {}
+
+4. Selector Specifity
+
+5. Inherit, Initial, Unset
+
+6. !important
+
+7. Overflow
+
+8. What is responsiveness?
+
+	@media screen and (max-width: 600px) {
+		
+	}
+
+9. Font properties
+	1. font-size
+		1px = 1/96 inch		Static
+		1pt = 1/72 inch		Static
+		1em = 100% of parent	Realative to parent(Not recommended)
+		1rem = 100% of root	Relative to parent(Recommended)
+
+	2. font-weight
+		normal, bold
+		ligfter, bolder		Relative to parent
+		number (100-900)	Light to Bold
+
+	3. font-family
+		Can use font.google.com(Need to add link)
+
+	4. text-align
+		center, left, right, start, end

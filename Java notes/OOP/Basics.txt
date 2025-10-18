@@ -1,0 +1,93 @@
+
+1. What is a class?
+   Class is a named group of properties and functions.
+   Classes can be used to create your own data type.
+   
+   For example: If you want to create a data type which stores roll no., name and marks of students then you can create a 
+		class which stores all these three instead of making three different arrays of these.
+		// Create a class
+    		class Student {
+        		int rollno;
+        		String name;
+        		float marks = 90;
+    		}
+		
+		You can create its object like this:
+			Student[] abdul = new Student[5];
+		
+		Now every object of Student class will contain rollno, name and marks.
+
+2. Classes are not the real things they are just the templates or the logical instruct.
+   And if you want to create the real object you need to create instances of it.
+   Instaces are the things which occupies space in memory.
+   Like in above example "Student" is a data type or template which doesnot represent physical quantity
+   whereas "abdul" is an instance of class "Student" and represents physical quantity.
+
+3. Objects have 3 essential properties:
+	1. State of object:
+			The state or attributes are the built in characteristics or properties of an object.
+			For example, a T.V has the size, colour, model etc. 
+
+	2. Identity of object:
+			It means whether one object is different from another.
+			Identity is identified using reference variable and if two reference variable are pointing to the
+			same object in memory, they both are considered same.
+
+	3. Behaviour of the object:
+			The behavior or operations of an object are its predefined functions.
+
+4. Instance Variable:
+   In class-based, object-oriented programming, an instance variable is a variable defined in a class (i.e. a member variable),
+   for which each instantiated(creation of object) object of the class has a separate copy, or instance. 
+   An instance variable has similarities with a class variable, but is non-static.
+
+5. "." opearator basically links reference variable to instance variable.
+
+6. How to create objects of classes?
+   Student student1;		// Declaration
+   student1 = new Student();	// Creation
+
+7. "new" keyword dynamically allocates memory and returns a reference to it.
+   Object will be created in heap memory and reference variable "student1" will be created in stack and "student1"
+   will be pointing to object in heap.
+
+
+8. If the objects are not initialized then their default value is "null".
+
+9. If we try to print instance variable of objects without initializing it then their default values or the values assigned
+   while declaration of object is printed.
+   For example: In the 2nd point if i try to print rollno, name and marks through instance "abdul" without initialising
+		it then the values printed will be (0, null, 90) where "0" and "null" are default values and "90" is the
+		value assigned while declaring instance variable.
+
+10. A constructor is a special method that is automatically called when an object of a class is created.
+    To create a constructor, use the same name as the class, followed by parentheses ().
+    Student (int rollno, String name, int marks) {
+	this.rollno = rollno;
+	this.name = name;
+	this.marks = marks;
+    }
+    "this" will be replaces by reference name.
+    For example if you say:
+			Student abdul = new Student(1, "Abdul", 90);
+		then "this" will be replaced by "abdul".
+
+11. It is a good convention to use "this". 
+    If you say "rollno = rollno" instead of "this.rollno = rollno" then java will be unable to know which "rollno" is 
+    representing to what and hence it will assign the roll no, the default value.
+
+12. How to call one constructor from another?
+    Student () {
+        // This is how you call one constructor from another constructor.
+        // Internally it is something like this:
+        // new Student(0, "Default person", 75.0f)
+	// Here, "this" is replaced with "Student".
+        this (0, "Default person", 75.0f);
+    } 
+
+13. The this keyword refers to the current object in a method or constructor.
+
+	The most common use of the this keyword is to eliminate the confusion between class attributes and parameters with the same name.
+
+Note:
+     We cannot access memory address in java and hence we cannot allocate memory manually, it happens dynamically.

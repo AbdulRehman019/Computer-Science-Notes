@@ -1,0 +1,48 @@
+Bit Manipulation Algorithms
+	Brian Kernighan’s Algorithm (Count set bits)
+	XOR Tricks (Finding missing number, unique number)
+	Subset Generation using Bitmask
+	Fast Exponentiation with Bits
+	Gray Code
+	Bit DP
+
+1. Convert Decimal to Binary
+	Divide the decimal number by 2 until it becomes 1 and add remainder in your answer everytime. 
+	Once, your decimal number reaches 1. Come out of the loop and reverse the answer. 
+
+	Time Complexity: O(log(n))
+	Space Complexity: O(log(n))
+
+2. Convert Binary to Decimal
+	Take power = 1. Start from right and move to left. Multiply power by 2 everytime. If character at that position is 1, add power. 
+
+	Time Complexity: O(length of string)
+	Space Complexity: O(1) 
+
+3. 1's compliment
+	Reverse all the flips of binary representation of decimal numbers. 
+
+4. 2's compliment 
+	Reverse all the flips of binary representation of decimal numbers and add 1. 
+
+5. Operators 
+	AND: (13 & 7) = (1101 & 0111) = (0101) = 5
+	OR: (13 | 7) = (1101 & 0111) = (1111) = 15
+	XOR: (13 ^ 7) = (1101 ^ 0111) = (1010) = 10
+	SHIFT: Right Shift: (a >> b) = (a / (2^b))
+	       Left Shift: (a << b) = (a * (2^b)) 
+	NOT: First flip all the bits 
+	     If it is negative, it stores 2's compliment. 
+	     If it is positive, it stops. 
+
+	     Hence, if the number is positive it stores 2's compliment of the flipped bits. 
+	     If the number is negative it stores the flipped bits i.e. 1's compliment of the number. 
+
+6. How computer stores positive and negative integers? 
+	It use MSB to decide positive and negative numbers. 
+	Positive: It stores positive number by making MSB as 0. 
+	Negative: It stores negative number by making MSB as 1. It stores the 2's compliment of positive number. 
+
+7. Largest and Smallest Number an integer can hold?
+	Largest: Since, we need to exclude MSB. Hence, largest number it can hold is (2^31 - 1). 
+	Smallest: Here, we can use MSB to store negative value. Hence, it can hold (2^31). 

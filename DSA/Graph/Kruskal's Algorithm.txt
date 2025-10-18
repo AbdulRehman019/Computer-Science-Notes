@@ -1,0 +1,10 @@
+Kruskal's Algorithm
+
+We will use Disjoint Set to find Minimum Spanning Tree. 
+
+Steps: 
+1. First we will sort the edges according to the weights. 
+2. Create a disjoint set. 
+3. Traverse on all the edges. 
+4. If the ultimate parent of the nodes are equal, we will continue. 
+5. If the ultimate parents are different, we will taken the edge in MST and add its weight and pass the nodes in disjoint set. 

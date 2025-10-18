@@ -1,0 +1,72 @@
+1. If you are using Intellij, you don't need to install maven globally in your system. Intellij will take care.
+2. .mvn file which will contain the maven configuration
+3. There will two shell scripts: One for mac(mvnw), One for windows(mvnw.cmd)
+
+4. What Are Dependencies in Spring Boot (or in any Java project)?
+	Dependencies are external libraries or modules that your project needs to function properly. They provide pre-written code for things like:
+		Connecting to a database
+		Creating web servers (like Tomcat)
+		Sending JSON responses
+		Testing your application
+		Logging, validation, security, etc.
+
+Step-by-Step: Spring Boot Project in IntelliJ Community
+	Step 1: Install JDK
+		Make sure you have JDK 17 or higher installed. You can check using:
+			java -version
+
+		If it shows an older version, update your JAVA_HOME and system path.
+
+	Step 2: Create Spring Boot Project via Spring Initializr
+		Go to https://start.spring.io
+
+		Select:
+			Project: Maven
+			Language: Java
+			Spring Boot: (Choose stable version, e.g. 3.2.x)
+			Group: e.g. com.example
+			Artifact: e.g. demo
+
+		Add Dependencies like:
+			Spring Web(spring-boot-starter-web)
+			Spring Boot DevTools
+			Spring Data JPA (optional)
+			H2/MySQL Driver (if using DB)
+			Click Generate, and a .zip file will download.
+
+	Step 3: Open Project in IntelliJ
+		Extract the ZIP file.
+		Open IntelliJ IDEA.
+		Go to File → Open and select the extracted project folder.
+		IntelliJ will auto-detect the Maven project and start indexing.
+
+Step 4: Wait for Maven to Resolve Dependencies
+	Let IntelliJ finish "Loading Maven project" (bottom-right).
+	It will download necessary jars and configure the build.
+
+Step 5: Explore the Project Structure
+	src/main/java: your main Java code.
+	src/main/resources: configuration files like application.properties.
+	pom.xml: Maven build file for dependencies.
+
+Step 6: Run the Application
+	Navigate to the main class (e.g., DemoApplication.java) which contains:
+
+	@SpringBootApplication
+	public class DemoApplication {
+	    public static void main(String[] args) {
+	        SpringApplication.run(DemoApplication.class, args);
+	    }
+	}
+	
+	Right-click the file and select Run 'DemoApplication.main()'.
+
+✅ Optional Setup (for better dev experience)
+	Enable auto-reload: Add spring-boot-devtools as a dependency if not already.
+	In order to use devtools, you need to make two changes:
+		1. In settings, search compiler and check "Build Project Automatically".
+		2. In settings, go to advance settings and under compiler check "Allow auto make to start even if developed application is currenly running".
+	
+	Configure application.properties:
+		server.port=8081
+		spring.application.name=myapp

@@ -1,0 +1,57 @@
+1. Master Greedy with Intervals (Core of Problem 1 & 3)
+	Solve the following from LeetCode:
+
+	Problem	Topic
+		435. Non-overlapping Intervals	Sort by end time, classic greedy
+		452. Minimum Number of Arrows to Burst Balloons	Same greedy
+		1346. Jump Game V	Advanced greedy/DFS
+		1288. Remove Covered Intervals	Sorting twist
+		253. Meeting Rooms II	Min-heap required
+
+	Do these and you'll naturally begin to feel when to sort by start or end and how greedy works.
+
+2. Practice Min-Heap Based Event Scheduling
+	Problem	Topic
+		1584. Min Cost to Connect All Points	Prim’s algo (min-heap)
+		621. Task Scheduler	Greedy + heap
+		871. Minimum Refueling Stops	Heap based greedy
+
+3. Binary Search on Intervals (Problem 2)
+	Problem	Topic
+		1235. Maximum Profit in Job Scheduling	DP + binary search
+		982. Triples with Bitwise AND Equal to Zero	Advanced, but binary search based
+		1902. Depth of BST Given Insertion Order	Segment tree + binary search
+
+	You should master:
+		Binary search on custom ranges (use Arrays.binarySearch() or custom methods).
+		Using TreeMap/TreeSet for ordered lookups.
+
+4. Build an Interval Problem Mindmap
+	Create a short mindmap or note:
+
+Interval Problems
+├── Greedy
+│   ├── Sort by end
+│   ├── Choose earliest finishing event
+│   └── Use heap if overlapping
+├── DP
+│   ├── Subsequence-style: pick/not-pick
+│   └── Use binary search to jump next non-overlapping
+└── Gap Finding
+    └── Sort intervals → scan for gaps
+
+Mental Framework for Such Problems
+	Whenever you see:
+		Events, intervals, meetings: Think Greedy or DP.
+		"Attend maximum"/"non-overlapping": Think Greedy + sort by end time.
+		"K events", "maximize value": Think DP (states: index, k left).
+		Large input ranges (1e9): Avoid arrays, use binary search or TreeMap.
+		Questions with "free time" or "gap": Sort → Scan gaps between intervals.
+
+
+Start With These Greedy Patterns:
+
+	Sorting + Decision Making: e.g., Activity Selection
+	Greedy for Max/Min: e.g., Minimum Coins, Gas Station
+	Choosing Earliest/Largest/Smallest First: e.g., Job Sequencing, Jump Game
+	Greedy with Stacks or Priority Queues: e.g., Remove K Digits, Reorganize String

@@ -1,0 +1,312 @@
+HTTP (HyperText Transfer Protocol) – Detailed Notes
+✅ 1. What is HTTP?
+	Stands for HyperText Transfer Protocol.
+	An Application Layer Protocol used for communication between:
+		Client (Browser, App) ↔ Server (Web Server)
+
+	Defines how data (webpages, images, forms, etc.) is requested and transferred over the internet.
+
+✅ 2. How HTTP Works – Step by Step
+	User types a URL (e.g., https://example.com) in a browser.
+	DNS Lookup → Converts domain to IP address.
+	Establishes TCP/IP Connection (Port 80 for HTTP, Port 443 for HTTPS).
+	Browser sends an HTTP Request:
+		GET /index.html HTTP/1.1
+		Host: www.example.com
+
+	Server processes the request and sends an HTTP Response:
+		HTTP/1.1 200 OK
+		Content-Type: text/html
+		
+		<html>...</html>
+
+	Browser renders the webpage.
+
+✅ 3. HTTP Methods (Request Types)
+	Method				Purpose
+	GET				Retrieve data (e.g., webpage, image)
+	POST				Submit data to the server (e.g., form submission)
+	PUT				Update existing data on the server
+	DELETE				Remove data from the server
+	HEAD				Retrieve only headers (no body)
+	OPTIONS				Discover available HTTP methods
+
+✅ 4. HTTP Status Codes (Server Response)
+	Status Code			Meaning
+	200 OK				Success
+	301 Moved Permanently		Resource moved permanently to a new URL
+	400 Bad Request			Invalid or malformed request
+	401 Unauthorized		Authentication needed
+	403 Forbidden			Access denied
+	404 Not Found			Resource not found
+	500 Internal Server Error	Server malfunction
+
+✅ 5. HTTP Headers
+	Key-Value pairs sent in requests and responses.
+
+	➔ Example of Request Headers:
+		Host: www.example.com
+		User-Agent: Mozilla/5.0
+		Accept: text/html
+
+	➔ Example of Response Headers:
+		Content-Type: text/html
+		Content-Length: 1024
+		Server: Apache/2.4.41
+
+✅ 6. HTTP vs HTTPS
+	Feature			HTTP			HTTPS
+	Port			80			443
+	Data Transmission	Plain Text (Unsecure)	Encrypted (Secure)
+	Protocol		HTTP			HTTP + SSL/TLS
+	Padlock Icon in Browser	No			Yes
+
+	➔ Why HTTPS is Important:
+		Encrypts data during transfer.
+		Prevents eavesdropping.
+		Validates server identity.
+
+✅ 7. Stateless Protocol
+	Each HTTP request is independent.
+	Server does not remember previous requests.
+
+	🔧 Solution: Use Cookies, Sessions, JWT Tokens for session management.
+
+✅ 8. HTTP Versions
+	Version		Key Features
+	HTTP/1.0	Opens a new TCP connection per request
+	HTTP/1.1	Persistent connection by default, supports caching
+	HTTP/2		Multiplexing multiple streams over single connection, header compression
+	HTTP/3		Uses QUIC protocol (UDP-based) for faster, reliable connections
+
+✅ 9. Example HTTP Request-Response Cycle
+	➔ Request Example:
+		GET /home.html HTTP/1.1
+		Host: www.example.com
+		User-Agent: Mozilla/5.0
+
+	➔ Response Example:
+		HTTP/1.1 200 OK
+		Content-Type: text/html
+		Content-Length: 2048
+
+	<html>
+	  <head><title>Home</title></head>
+	  <body>Welcome!</body>
+	</html>
+
+✅ 10. Summary
+	HTTP is the backbone of web communication.
+	Defines methods, headers, status codes, and connection behavior.
+	Stateless: No memory of previous interactions.
+	HTTPS is HTTP with security (SSL/TLS).
+	Evolved over time: HTTP/1.1 → HTTP/2 → HTTP/3.
+
+
+
+
+
+
+
+
+
+What is cURL?
+	cURL stands for Client URL.
+	It is a command-line tool and a library (libcurl) used to transfer data to or from a server using various protocols.
+	Most commonly used with HTTP/HTTPS, but also supports other protocols like FTP, SCP, SFTP, and more.
+
+✅ Purpose of cURL
+	Interact with web servers by making HTTP requests directly from the command line.
+	Test APIs, download files, send data, or check server responses without needing a browser.
+	Automate tasks like file uploads, REST API interactions, and web scraping.
+
+✅ How Does cURL Work?
+	You run a command like:
+		curl https://example.com
+
+	cURL sends an HTTP GET request to https://example.com.
+
+	The server responds with data (HTML, JSON, etc.).
+	cURL displays the output directly in the terminal or saves it to a file.
+
+✅ Common cURL Commands & Options
+	Command 				Example			Description
+	curl 					https://example.com	Simple GET request
+	curl -I 				https://example.com	Fetch only HTTP headers (HEAD request)
+	curl -X POST 				https://example.com	Make a POST request
+	curl -d "name=John&age=30" 		https://example.com	Send POST data
+	curl -H "Authorization: Bearer <token>" https://api.example.com	Add custom headers
+	curl -o file.html 			https://example.com	Save output to a file
+	curl -u user:password 			https://example.com	Use Basic Authentication
+	curl -L 				https://short.url	Follow redirects
+
+✅ Example Usages
+	1️⃣ Simple GET request:
+		curl https://www.google.com
+
+	2️⃣ GET request with custom header:
+		curl -H "Accept: application/json" https://api.example.com/data
+
+	3️⃣ POST request with data:
+		curl -X POST -d "username=admin&password=1234" https://example.com/login
+
+	4️⃣ Download a file:
+		curl -o sample.pdf https://example.com/file.pdf
+
+	5️⃣ Using Authentication:
+		curl -u myuser:mypassword https://example.com/protected
+
+✅ Why is cURL Useful?
+	✔️ Simple way to test APIs without writing code.
+	✔️ Good for automation in shell scripts.
+	✔️ Works across platforms (Linux, Windows, macOS).
+	✔️ Supports multiple protocols:	
+		HTTP / HTTPS
+		FTP / SFTP
+		SCP
+		LDAP
+		SMB
+
+✅ cURL vs Postman
+	Feature			cURL				Postman
+	Interface		Command-line			Graphical User Interface
+	Automation		Easily used in scripts		Manual or with Postman Collection Runner
+	Output			Text (console/file)		Structured view (JSON viewer, history, etc.)
+	Learning curve		Requires knowledge of commands	Easier for beginners
+
+✅ Stateless Nature
+	Like HTTP, each cURL request is independent.
+	Session handling (cookies, headers) can be explicitly managed by using options like -b and -c.
+
+✅ Summary
+	cURL is a powerful command-line tool to send requests and retrieve data over the internet.
+	Supports multiple HTTP methods (GET, POST, PUT, DELETE).
+	Can send headers, data, authentication info, handle redirects, and save responses.
+	Ideal for testing APIs, downloading files, and automating web interactions.
+
+
+
+
+
+
+
+
+
+Telnet
+1. What Are We Doing?
+	We’re manually creating an HTTP request over a TCP connection using the telnet tool.
+	This helps us understand how HTTP really works “under the hood” without a browser or Postman. It shows the raw communication between a client and a server.
+
+✅ Step-by-Step Breakdown
+🔧 Step 1 – Establish TCP Connection
+	HTTP works on top of TCP.
+	We open a TCP connection to the web server using telnet:
+
+		telnet data.pr4e.org 80
+		Where:
+			data.pr4e.org is the hostname of the server.
+			80 is the default port for HTTP.
+
+	Once connected, the terminal is now in a “waiting” state, ready to send data (the HTTP request).
+
+📄 Step 2 – Manually Create an HTTP Request
+	We manually type the HTTP request in the telnet session, like this:
+		GET /romeo.txt HTTP/1.1
+		Host: data.pr4e.org
+
+
+Important Notes:
+	The Request Line:
+		GET /romeo.txt HTTP/1.1
+		➔ GET → Method to request a file.
+		➔ /romeo.txt → The file/resource path.
+		➔ HTTP/1.1 → HTTP version.
+
+	The Host Header:
+		Host: data.pr4e.org
+		➔ Tells the server which website (virtual host) you are accessing (important for shared hosting).
+		
+		After typing the request, you need to press Enter twice to indicate the end of the HTTP request.
+
+📡 Step 3 – Server Response
+	Once the request is received, the server responds with:
+	1️⃣ Status Line:
+		HTTP/1.1 200 OK
+		➔ Status code 200 means the request was successful.
+
+	2️⃣ Response Headers:
+		Content-Type: text/plain
+		Content-Length: 1234
+		Last-Modified: Wed, 15 Jul 2020 14:30:00 GMT
+
+		Content-Type: Type of content being returned (text, json, image, etc.).
+		Content-Length: Size of the response body in bytes.
+		Last-Modified: When the resource was last changed.
+
+	3️⃣ Response Body:
+		[Content of romeo.txt]
+
+		➔ The actual text content of the requested file.
+
+✅ Step 4 – TCP vs HTTP Relationship
+	TCP establishes a reliable connection between your computer and the server.
+	HTTP sits on top of TCP, defines the message format (request and response), and controls what data is exchanged.
+
+✅ Why Is This Useful as a Developer?
+	✅ 1. Understand Low-Level HTTP Communication
+		You learn what exactly is being sent over the network.
+		You realize that every request is text-based and follows a strict format.
+
+	✅ 2. Debugging & Troubleshooting
+		Helps debug issues like:
+			Why is the server returning 404 Not Found?
+			Are headers properly set?
+			What’s the exact server response?
+
+✅ 3. API Testing Without Tools
+	Instead of relying on Postman or browsers, you can test simple GET or POST APIs via telnet or nc.
+	Example:
+		telnet api.example.com 80
+
+	Then type:
+		GET /api/users HTTP/1.1
+		Host: api.example.com
+
+✅ 4. Learn About HTTP Headers
+	By seeing headers like Content-Type, Last-Modified, and Content-Length, you understand how data is described in HTTP.
+
+✅ 5. Realize the Stateless Nature of HTTP
+	Each request is independent.
+	There’s no automatic memory of previous actions unless cookies or tokens are used.
+
+✅ 6. Better Understanding of Security
+	You’ll understand why HTTPS is important (no visible encryption in plain HTTP).
+	Can see that data sent in plain text is easy to sniff without HTTPS.
+
+✅ Summary – Why This Is Cool
+	💡 Instead of relying on high-level tools that “abstract” the process, telnet shows the exact protocol in action.
+	🚀 As a developer, this helps you:
+	Build a strong foundation in web protocols.
+	Debug issues with API calls.
+	Understand what your code (using tools like requests in Python) is doing in the background.
+
+
+
+
+HTTP Byte: Debrief Pointers
+
+Milestone 1
+1. Is it possible to send form data using a GET request? Why or why not? 
+	Yes, it’s possible though not recommended. Usually, form data contains fields that are sensitive like passwords and using GET requests for submitting these means your password will 	be out in the open along with the request URL. See here on how to send data using GET.
+
+2. Are there any limitations in using a GET request to send data to the server?
+	Data in a GET request is sent as part of the URL and this has a limit of 2048 characters.
+	
+	What is the URL character limit for get requests?
+	Can HTTP POST be limitless?
+
+
+
+Milestone 2
+When you try to access a resource that requires logging in, like LinkedIn feed, https://www.linkedin.com/feed, you get redirected to the login screen. That should be a 301, right? Can you verify.
+You’ll be able to see, that was a 302 instead of 301. While 301 denotes a permanent redirect, 302 says the requested resource is temporarily unavailable. Here, 302 is used as the requested resource was found, there just is another page to go through (Login page) before it can be accessed. More here

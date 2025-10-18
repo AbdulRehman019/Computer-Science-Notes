@@ -1,0 +1,68 @@
+Java File Handling – Developer Notes
+1. Basic Classes
+	File → Represents file/directory (metadata only, doesn’t read/write).
+	FileReader / FileWriter → For text files (character stream).
+	BufferedReader / BufferedWriter → Faster, wrapped around FileReader/Writer.
+	InputStream / OutputStream → For binary data (images, PDFs, etc.).
+	Files (Java NIO) → Modern utility class for quick file operations.
+
+2. Common Operations
+	Create File
+	File file = new File("data.txt");
+	file.createNewFile();   // true if new file created
+
+	Write to File
+	try (BufferedWriter writer = new BufferedWriter(new FileWriter("data.txt"))) {
+	    writer.write("Hello World");
+	}
+
+	Read from File
+	try (BufferedReader reader = new BufferedReader(new FileReader("data.txt"))) {
+	    String line;
+	    while ((line = reader.readLine()) != null) {
+	        System.out.println(line);
+	    }
+	}
+
+	NIO Utility (Preferred)
+	List<String> lines = Files.readAllLines(Paths.get("data.txt"));
+	Files.write(Paths.get("output.txt"), lines);
+	
+3. Handling Config/Data Files
+	Properties file
+	Properties props = new Properties();
+	props.load(new FileInputStream("config.properties"));
+	String dbUrl = props.getProperty("db.url");
+	
+	JSON (Using Jackson)
+	ObjectMapper mapper = new ObjectMapper();
+	User user = mapper.readValue(new File("user.json"), User.class);
+
+4. Logging (Daily Use)
+	Use Log4j / SLF4J instead of manually writing logs.
+	private static final Logger logger = LoggerFactory.getLogger(Main.class);
+	logger.info("Application started");
+	
+5. File Paths
+	Use Paths.get("file.txt") (NIO) → platform independent.
+	Avoid hardcoding → use resources folder (src/main/resources).
+
+6. Best Practices
+	Always close streams → or use try-with-resources.
+	Use BufferedReader/Writer for performance.
+	Prefer Files API over legacy classes for new code.
+	For JSON/XML → use libraries (Jackson, Gson, JAXB).
+	Don’t reinvent logging, always use frameworks.
+
+7. What You’ll Actually Use Daily
+	✔ Reading configs (Properties, JSON, YAML)
+	✔ Logging (frameworks write to log files)
+	✔ Reading/Writing CSV/Excel for reports or test data
+	✔ Uploading/downloading files (via streams)
+	✔ Working with resource files in src/main/resources
+
+	👉 In real projects, you’ll rarely use raw FileReader/FileWriter. Instead:
+		Use Files API for quick ops.
+
+	Use libraries for structured data (Jackson/Gson for JSON, Apache POI for Excel).
+	Use logging frameworks for logs.

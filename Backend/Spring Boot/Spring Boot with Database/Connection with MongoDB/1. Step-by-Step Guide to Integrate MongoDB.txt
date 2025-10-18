@@ -1,0 +1,79 @@
+✅ Step-by-Step Guide to Integrate MongoDB in Spring Boot
+🔧 1. Add Dependencies
+	If you're using Maven, add the following to your pom.xml:
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
+
+	If you're using Gradle:
+		implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+📁 2. Configure MongoDB Connection
+	Add MongoDB connection properties in your application.properties or application.yml.
+	application.properties:
+		spring.data.mongodb.uri=mongodb://localhost:27017/your_database_name
+	
+	Or define individually:
+		spring.data.mongodb.host=localhost
+		spring.data.mongodb.port=27017
+		spring.data.mongodb.database=your_database_name
+
+	🔐 For secured MongoDB:
+		spring.data.mongodb.username=yourUsername
+		spring.data.mongodb.password=yourPassword
+
+📦 3. Create Model Class
+	import org.springframework.data.annotation.Id;
+	import org.springframework.data.mongodb.core.mapping.Document;
+
+	@Document(collection = "students")
+	public class Student {
+	
+	    @Id
+	    private String id;
+	
+	    private String name;
+	    private int age;
+	
+	    // Constructors, getters, setters
+	}
+	@Document tells Spring this class is mapped to a MongoDB collection.
+	@Id marks the primary key field.
+
+💾 4. Create Repository Interface
+	import org.springframework.data.mongodb.repository.MongoRepository;
+
+	public interface StudentRepository extends MongoRepository<Student, String> {
+	    // You can define custom queries here if needed
+	    List<Student> findByName(String name);
+	}
+
+🧠 5. Use Repository in Service or Controller
+	import org.springframework.beans.factory.annotation.Autowired;
+	import org.springframework.web.bind.annotation.*;
+	
+	import java.util.List;
+	
+	@RestController
+	@RequestMapping("/students")
+	public class StudentController {
+	
+	    @Autowired
+	    private StudentRepository studentRepo;
+	
+	    @PostMapping
+	    public Student addStudent(@RequestBody Student student) {
+	        return studentRepo.save(student);
+	    }
+	
+	    @GetMapping
+	    public List<Student> getAll() {
+	        return studentRepo.findAll();
+	    }
+	}
+
+🚀 6. Run the App
+	Make sure:
+		MongoDB is installed and running (mongod).
+		Your port and DB name match the config.

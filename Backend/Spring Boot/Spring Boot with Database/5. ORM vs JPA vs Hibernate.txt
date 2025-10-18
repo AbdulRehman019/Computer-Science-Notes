@@ -1,0 +1,51 @@
+******************************************************** ORM vs JPA vs Hibernate ******************************************
+✅ Definition:
+	ORM (Object-Relational Mapping):
+		A programming technique that maps Java objects to relational database tables and vice versa.
+
+	JPA (Java Persistence API):
+		A Java specification (i.e., a set of rules) for ORM that defines how to manage relational data using Java objects.
+
+	Hibernate:
+		A popular implementation of JPA. It provides the actual functionality behind the JPA interfaces and adds extra features beyond the specification.
+
+🔍 Key Points:
+	ORM is a concept, not a tool.
+	JPA provides standard interfaces and annotations to perform ORM.
+	Hibernate is a library (tool) that implements the JPA specification (and more).
+	Hibernate existed before JPA, and JPA was later introduced to standardize ORM in Java.
+	You can use Hibernate without JPA, but in modern applications, we often use Hibernate via JPA.
+
+******************************************************* ORM ****************************************************
+1. ORM is a technique used to map Java objects to database tables.
+2. It allows developers to work with databases using object oriented programming concepts, making it easier to interact with relational databases.
+3. Consider a Java class User and a database table users.
+   ORM frameworks like Hibernate can map the fields in the User class to columns in user table, making it easier to insert, update, retrieve and delete records.
+
+******************************************************* JPA ****************************************************
+JPA is a way to achieve ORM, includes interfaces and annotations that you use in your Java classes, requires a persistence provider(ORM tools) for implementation.
+
+******************************************************* Persistence Provider *****************************************
+To use JPA, you need a persistence provider. A persistence Provider is a specific implementation of JPA specification.
+Examples of JPA persistence providers include Hibernate, EclipseLink, and OpenJPA. 
+These providers implement the JPA interfaces and provide the underlying functionality to interact with DB.
+
+******************************************************* Spring Data JPA **********************************************
+Spring Data JPA is built on top of the JPA(Java Persistence API) specification, but it is not a JPA implementation itself.
+Instead, it simplifies working with JPA by providing higher-level abstraction and utilities. 
+However, to use Spring Data JPA effectively, you still need a JPA implementation, such as Hibernate, EclipseLink, or another JPA-compliant provider, to handle the actual DB interactions.
+
+******************************************************* JPA and MongoDB **************************************************
+JPA is primarily designed for working with relational databases, where data is stored in tables with a pre-defined schema.
+MongoDB, on the other hand, is a NoSQL database that uses a different model, typically based on collections of documents, which are schema-less or have flexible schemas.
+This fundamental difference in data models and storage structures is why JPA is not used with MongoDB.
+
+In the case of MongoDB, you don't have a traditional JPA persistence provider.
+MongoDB is a NoSQL database, and "Spring Data MongoDB" serves as the "persistence provider" for MongoDB.
+It provides the necessary abstractions and implementations to work with MongoDB in a spring application.
+
+******************************************************* Ways to interact with DB *****************************************************
+"Query Method DSL" and "Criteria API" are two different ways to interact with a database when using Spring Data JPA for relational DB and Spring Data MongoDB for MongoDB DB.
+Spring Data JPA is a part of the Spring Framework that simplifies data access in Java Applications, while Spring Data MongoDB provides similar functionality for MongoDB.
+
+Query Method DSL is a simple and convenient way to create queries based on method naming conventions, while the Criteria API offers a more dynamic and programmatic approach for building complex and custom queries.

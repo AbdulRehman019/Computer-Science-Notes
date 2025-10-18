@@ -1,0 +1,40 @@
+****************************************** Sort an array with 0s, 1s, 2s ******************************************
+I had to sort it but the catch is it does not involve any random element. It involves only specific element(0,1,2).
+Hence, instead of sorting we can think of grouping by swapping.
+Can i do it in one pass?
+If i have to grouping and in one pass, maybe i can use pointers. Since I had three elements, I needed to use three pointers.
+
+Problem Insight:
+	We're not sorting arbitrary elements — the input contains only 0, 1, and 2.
+	Since the values are limited and known in advance, we don't need a full-fledged sorting algorithm.
+
+Key Idea:
+	We can approach this as a grouping or partitioning problem.
+	Can it be done in one pass and constant space?
+	Yes, by maintaining boundaries between regions using three pointers.
+
+Pointer Roles:
+	low: Boundary for 0s (left group).
+	mid: Current element being evaluated.
+	high: Boundary for 2s (right group).
+
+Invariants to Maintain:
+	Elements from 0 to low-1 are all 0.
+	Elements from low to mid-1 are all 1.
+	Elements from high+1 to n-1 are all 2.
+
+Approach:
+	Initialize low = 0, mid = 0, high = n - 1.
+	While mid <= high:
+		If a[mid] == 0, swap with a[low], increment both low and mid.
+		If a[mid] == 1, mid++.
+		If a[mid] == 2, swap with a[high], decrement high.
+
+Why this works:
+	Every swap actively pushes the value to its correct region.
+	No element is reprocessed unnecessarily → true one-pass O(n).
+
+🧠 Memory Hook:
+	Whenever you see a problem with only a small number of unique values, think:
+		Can I group instead of sort?
+		Can I use counting or pointers to maintain regions?

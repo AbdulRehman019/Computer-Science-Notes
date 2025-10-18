@@ -1,0 +1,50 @@
+1. How the method define in UserRepository is working?
+	Spring Data provides method query derivation, where you define a method in a repository interface (like findByUserName) and Spring automatically implements it for you at runtime — 	you don’t need to write its implementation.
+
+	Method = findBy + FieldName
+
+	Key Points:
+		Repository interface + method name is enough:
+			interface UserRepository extends MongoRepository<User, ObjectId> {
+			    User findByUserName(String userName); // Spring generates this query
+			}
+		Spring looks at the method name findByUserName and dynamically creates a query like:
+			{ "userName": "given value" }
+
+		In your UserService, you just call the method like any other function. The userRepository bean has the actual implementation injected by Spring at runtime.
+
+	Example Trace:
+		You send a GET or PUT request with a username.
+		Spring Boot sees your UserController and routes the request to your controller method.
+		That method calls userService.findByUserName().
+		UserService calls userRepository.findByUserName().
+		Spring Data auto-generates the MongoDB query and fetches the user.
+
+2. Why post with same username give error and put with same username and different password updates?
+	Because save() in UserRepository
+		If the _id exists → it updates the existing document.
+		If not → it inserts a new one.
+
+	And when i do save in post, i am doing userRepository.save(user), i am trying to save a new user
+	where as when i do a put, i am bringing the already saved user, updating it and then saving it again. I am not saving a new user. No, new id is created 	(userRepository.save(current)).
+
+3. Will Duplicate Username Be Saved on POST?
+	No, MongoDB will not allow duplicate usernames because you’ve annotated it with:
+		@Indexed(unique = true)
+		private String username;
+	
+	🔍 Key Points:
+		If you POST a user with a duplicate username, MongoDB will throw a duplicate key exception.
+		Spring will by default throw an internal error unless you handle it using a global exception handler.
+
+4. Will PUT Request with Same Username and Different Password Update the User?
+	✅ Definition:
+		Yes, if the user with that username exists, and the password is different, your current PUT logic will update the password.
+
+	🔍 Key Points:
+		In your updateUser() method:
+			You check if the user exists.
+			If found and the password differs, you update it.
+
+
+

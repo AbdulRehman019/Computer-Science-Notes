@@ -1,0 +1,31 @@
+Problems Similar to Count Submatrices With All Ones
+	Maximal Rectangle (Leetcode #85)
+		Largest rectangle containing only 1’s in a binary matrix.
+		Classic extension of Largest Rectangle in Histogram.
+
+	Largest Rectangle in Histogram (Leetcode #84)
+		Core problem to understand before solving 2D versions.
+	
+	Maximal Square (Leetcode #221)
+		Instead of rectangles, find the largest square of 1’s.
+	
+	Number of Submatrices That Sum to Target (Leetcode #1074)
+		Count submatrices with a sum equal to k. Uses prefix sum + hashmap.
+
+	Submatrix Sum Equals K (variation of above)
+		Same logic but often asked separately.
+
+	Count Square Submatrices with All Ones (Leetcode #1277)
+		Instead of rectangles, count squares made of 1’s.
+
+	Minimum Number of Flips to Convert Binary Matrix to Zero Matrix (Leetcode #1284)
+		Matrix transformation with state encoding.
+
+	Max Sum of Rectangle No Larger Than K (Leetcode #363)
+		Variation of histogram + prefix sum + binary search.
+
+	Largest Submatrix With Rearrangements (Leetcode #1727)
+		Sort columns after building histogram → maximize submatrix area.
+
+	Count Sub-Islands (Leetcode #1905)
+		Flood fill + subgrid check. Different style but still matrix-based counting

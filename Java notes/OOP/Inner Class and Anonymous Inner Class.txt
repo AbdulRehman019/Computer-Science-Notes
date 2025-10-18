@@ -1,0 +1,98 @@
+1. Inner Class
+
+class A {
+    int a;
+
+    public void show() {
+        System.out.println("In show");
+    }
+
+    class B {
+        public void config() {
+            System.out.println("In config");
+        }
+    }
+}
+
+To create the object of inner class you can't say directly:
+	B obj = new B();	// Error
+
+Since, B is inside A and non-static it can only be accessed using object of A. Hence, you need to create object of A first.
+	A obj1 = new A();
+        A.B obj2 = obj1.new B();
+	obj2.config();
+
+When, you will compile the code, two ".class" files will be created. "A.class" and "A$B.class".
+
+2. Can you make inner class static? If yes, how will you create object of Inner class now?
+	Yes
+	Since, it's static now you don't need object of outer class you can directly access using outer class name.
+	
+	A.B obj2 = new A.B();
+
+3. Can outer class be static?
+	No bro, anything static can only be accessed using class name and if outer class is static how are you gonna call it?
+
+
+
+
+
+4. Anonymous Inner Class
+class X {
+    public void show() {
+        System.out.println("In show");
+    }
+}
+
+public class AnonymousInnerClass {
+    public static void main(String[] args) {
+        X obj = new X() {
+          public void show() {
+              System.out.println("In new show");
+          }
+        };
+
+        obj.show();
+    }
+}
+
+In order to create anonymous inner class, you need to create it while creating object of the class.
+Here while you created object of A you gave the implantation of new show, although this can be achieved by overriding show by creating a new class which inherits class "X".
+When you will compile the code "AnonymousInnerClass$1.class" file will be created showing it's the inner class of "AnonymousInnerClass".
+
+5. If "show" method above can be overridden why you need to create Anonymous Inner Class?
+	You can also do it using method overriding but suppose you only have one method to be overridden and you know for sure you need to create only need to override it once
+	then you can opt for the above way of creating new class and overriding method.
+
+6. Abstract class object
+	If you remember we already know that abstract class object cannot be created. But if you want to create, you need to provide it's implementation like we did for 
+	Anonymous Inner Class.
+
+	Here, we are not actually creating object of abstract class but we are creating object of anonymous inner class. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

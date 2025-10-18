@@ -1,0 +1,170 @@
+1. Add Required Dependencies
+	In pom.xml (for Maven):
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+	For password encryption:
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-crypto</artifactId>
+		</dependency>
+
+2. Create a SecurityConfig Class
+		@Configuration
+		@EnableWebSecurity
+		public class SecurityConfig {
+
+		    @Autowired
+		    private UserDetailsServiceImpl userDetailsService;
+		
+		    @Bean
+		    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		        return http
+		            .authorizeHttpRequests(auth -> auth
+		                .requestMatchers("/public/**").permitAll()
+		                .requestMatchers("/admin/**").hasRole("ADMIN")
+		                .requestMatchers("/user/**", "/journal/**").authenticated()
+		                .anyRequest().authenticated())
+			            .httpBasic(Customizer.withDefaults())  // or .formLogin() if using forms
+			            .csrf(AbstractHttpConfigurer::disable)
+			            .build();
+		    }
+
+		    @Autowired
+		    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    		    }
+
+		    @Bean
+		    public PasswordEncoder passwordEncoder() {
+		        return new BCryptPasswordEncoder();
+		    }
+		}
+
+3. Implement UserDetailsService
+	You need a class that loads user info from DB:
+
+	@Service
+	public class UserDetailsServiceImpl implements UserDetailsService {
+	    @Autowired
+	    private UserRepository userRepository;
+	
+	    @Override
+	    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	        User user = userRepository.findByUsername(username);
+        	if (user == null) throw new UsernameNotFoundException("User not found");
+	
+	        return new org.springframework.security.core.userdetails.User(
+	            user.getUsername(),
+	            user.getPassword(),
+	            List.of(new SimpleGrantedAuthority("ROLE_USER"))  // Or fetch from DB
+	        );
+	    }
+	}
+
+4. Encrypt User Passwords
+	Before saving user passwords in DB:
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+		public void registerUser(User user) {
+		    user.setPassword(passwordEncoder.encode(user.getPassword()));
+		    userRepository.save(user);
+		}
+
+5. Use @PreAuthorize or @Secured (Optional)
+	If you want method-level security:
+	Enable it:
+		@EnableMethodSecurity  // For Spring Security 6+ (Spring Boot 3+)
+
+	Use annotations:
+		@PreAuthorize("hasRole('ADMIN')")
+		public void someMethod() {}
+
+*********************************************************** 
+✅ 1. @Configuration
+	Marks the class as a configuration class, meaning Spring will look here for bean definitions. Equivalent to an XML configuration file but in Java.
+		@Configuration
+
+✅ 2. @EnableWebSecurity
+	This tells Spring:
+		“Enable Spring Security’s web security support and integrate it with the Spring configuration.”
+		@EnableWebSecurity
+
+✅ 3. SecurityFilterChain Bean
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
+	
+	Instead of overriding configure(HttpSecurity http) like we did before Spring Security 5.7, now we define a SecurityFilterChain bean.
+	This is the core of HTTP security configuration.
+
+	Inside it:
+		.authorizeHttpRequests(auth -> auth
+		This part defines what URLs are accessible and who can access them.
+
+	    	.requestMatchers("/public/**").permitAll()
+		This allows anyone to access URLs starting with /public/, no authentication needed.
+
+    		.requestMatchers("/admin/**").hasRole("ADMIN")
+		Only users with ROLE_ADMIN can access /admin/**.
+
+		.requestMatchers("/user/**", "/journal/**").authenticated()
+		Requires user to be logged in (any role).
+
+    		.anyRequest().authenticated()
+		Catches all other URLs and ensures the user is authenticated.
+
+✅ 4. .httpBasic(Customizer.withDefaults())
+	Enables HTTP Basic Authentication — the browser shows a pop-up asking for username/password.
+	Optional: Replace with .formLogin() for a login page UI.
+
+✅ 5. .csrf(AbstractHttpConfigurer::disable)
+	Disables CSRF (Cross-Site Request Forgery) protection.
+	Usually disabled for APIs and enabled for form-based web apps.
+
+	.csrf(AbstractHttpConfigurer::disable)
+
+✅ 6. UserDetailsService Implementation
+	You must define how to fetch user data from DB using this interface.
+
+	@Service
+	public class UserDetailsServiceImpl implements UserDetailsService
+	
+	Method:
+		public UserDetails loadUserByUsername(String username)
+		Spring calls this to find the user by username when someone tries to log in.
+
+		Returns a UserDetails object which holds username, password, roles.
+
+✅ 7. AuthenticationManagerBuilder
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+	    auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+	}
+	
+	This tells Spring Security:
+		Use your custom user loading logic (userDetailsService)
+		Use BCrypt to check passwords securely.
+
+		When you need to authenticate a user, call my UserDetailsServiceImpl, and use BCrypt for password checking
+
+✅ 8. PasswordEncoder Bean
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+	    return new BCryptPasswordEncoder();
+	}
+	Spring Security requires you to hash passwords.
+	BCrypt is a strong hashing algorithm.
+	All passwords saved in DB must be encoded using this.
+
+✅ Summary in Plain English:
+	Component				Purpose
+	@Configuration				Tells Spring this class contains bean definitions
+	@EnableWebSecurity			Enables Spring Security
+	SecurityFilterChain Bean		Replaces old configure(HttpSecurity) for HTTP access rules
+	UserDetailsServiceImpl			Custom logic to fetch users from DB
+	AuthenticationManagerBuilder		Tells Spring to use your user service and password encoder
+	PasswordEncoder				Ensures passwords are stored and checked securely
+	.httpBasic() or .formLogin()		Defines how users log in (browser popup vs form)
+	.csrf().disable()			Disables CSRF (good for APIs, not recommended for web forms)

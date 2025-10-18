@@ -1,0 +1,170 @@
+Problems on Greedy:
+
+Assign Cookies(#455)
+ 	Difficulty: Easy
+ 	Approach: A child will accept cookies, if it is bigger than his desired size.
+ 		  I sorted both the arrays, one the children desired size array.
+ 		  Other the available cookie size.
+
+ 		  Since both of them are sorted, if the first cookie is smaller than the desire of first children.
+ 		  No chance ahead children will accept that cookie, because their desire will be bigger. Hence, move the index j.
+ 		  If the cookie is bigger than the desire of children, child will accept it. Hence, move i and increase the count.
+
+ 	Why greedy works?
+ 		Simple, if the both the arrays are sorted, the leftmost child can accept or not accept the left most cookie.
+ 		If he is not accepting it, no chance any other child will accept it because their desire is greater than the current child.
+ 		If you think clearly, it is the best possibility to maximize the number of cookies.
+
+2. Gas Station(#134)	--> Prefix sum with greedy
+ 	Difficulty: Medium
+ 
+ 	Brute Force: We will start from every index and check if it is possible or not.
+
+ 	Better: If gas[i] < cost[i], we can skip that.
+ 		Suppose we start from 1st index and couldn't reach 4th index.
+ 		Then, it is confirm that if we start from 2nd index, its not possible to reach 4th index.
+ 		Because 1st index might have brought some extra power and if it was not possible for that then it won't be possible for any index between 1 and 4.
+ 		Hence, we can directly start from 4th index, that is it possible from 4th index or not.
+
+ 	Optimal:
+ 		class Solution {
+ 		    public int canCompleteCircuit(int[] gas, int[] cost) {
+ 		        int total = 0, tank = 0, start = 0;
+ 		        for(int i = 0; i < gas.length; i++) {
+ 		            int gain = gas[i] - cost[i];
+ 		            total += gain;
+ 		            tank += gain;
+ 		            if(tank < 0) {
+ 		                start = i + 1;
+ 		                tank = 0;
+ 		            }
+ 		        }
+ 		        return total < 0 ? -1 : start;
+ 		    }
+ 		}
+
+ 		It is only possible to make a round trip, if summation of difference of gas[i] - cost[i] >= 0.
+ 		Hence, if total >= 0, we return start otherwise -1.
+
+3. Non-overlapping intervals(#435)	--> Interval Scheduling
+ 	Difficulty: Medium
+
+ 	Brute/Better: Sort the array with 0th index and if 0th index are same then by 1st index.
+ 		     if(intervals[i][0] > intervals[j][1]), it means non-overlapping hence continue.
+ 		     else you need to remove one of the overlapping interval.
+ 		     To choose which interval to remove, the interval for which 1st index is greater because that will take extra space.
+ 		     Hence, possible it will include the next interval.
+
+ 	Optimal: Sort the array with 1st index.
+ 		 Now, continue if(intervals[i][0] > intervals[j][1])
+ 		 else remove one of the intervals, which interval?
+ 		 Current one, because next time i will compare to previous and if i take the current one then its 1st index will be greater.
+ 		 Example: [1,4],[3,5],[2,8]
+ 			And if i am at 1st index then i will remove the 1st index.
+ 			Now if i am at second index and compare to previous then there is a chance that 1st index will include more index till 5
+ 			But 0th index will only include till 4.
+
+4. Jump Game(#55)
+ 	My approach: I thought if all the number in an array is positive it is definitely possible to reach last index.
+ 		     But, if any of the number is 0, we need to check can we cross this barrier.
+ 		     I started moving from end and if it is positive and no zero has came before i continue.
+ 		     But if it is positive and zero has came before then i am maintaining a count, how much far i am from zero.
+ 		     And if my current number is greater than the count, it means i can jump ahead of the zero and i will reset zero to false(indicating no zero has came)
+ 		     and i will make the count again as one.
+ 		     But if the number is lesser than count, it means it is not possible to jump ahead of zero from this index and i will increase the count
+ 		     because i need one more jump to cross zero.
+
+ 	Optimal: I will start moving from 0th index and i will update the maximum index I can reach taking the current jump.
+ 		 If i reach the index and it is greater than maxIndex i can reach, then it means there is no way possible i can reach at that index.
+
+5. Maximum Profit in Job Scheduling(#1235) [It's approach will be used many times]
+ 	Brute Force: At every point we will have option whether to choose it or not choose it.
+ 		     But it will depend on what we chose before. If the current event overlaps with any of the previous event, we cannot take it.
+ 		     In order to check it whether the current one overlaps with previous ones or not, we can take two variables holding the minStart Time and maxEnd Time.
+ 		     And if the current one doesnot lie in this range, we have two options we can either take it or leave it.
+
+ 	Better Approach: If we sort it, then we don't need to maintain minStart and maxEnd we can compare with the previous one taken.
+ 			 But for this too, i need to maintain one variable to know what i took last.
+
+ 			 But the problem in this approach is everytime i need to check whether i can take it or not, whether it satisfies the condition or not?
+ 			 which is currentStart > previousEnd or not which is overwhelming.
+
+ 			 In the above case we need to check the condition and then take or not take it.
+ 			 what if we directly have two options take or not take without checking condition.
+
+ 			 Instead of checking everytime if the condition is correct or not, we will find the next Index which is possible and jump to that index.
+ 			 Hence, eliminating the checking of condition everytime.
+
+6. Job Sequencing Problem
+ 	Thought of sorting the array with decreasing order of profit.
+ 	When i am at a particular index, i can only take it if i have atleast one day remaining till the due date.
+ 	For example: If my current index due date is 6 and i have atleast one day from 1 to 5 in which i didn't did any task then i can perform it.
+ 
+ 	I made a hash array of the number of days i have, which is maximum of all the due dates.
+ 	int[] hash = new int[maxDay + 1];
+ 	And assign every day to -1 which means none of the day activity has been performed.
+
+ 	Now, i start from 0th index and check whether or not there is any day starting from due date to 1st day at which i didn't performed any task.
+ 	If i got any such day, i added the profit and count.
+
+7. Maximum meetings
+ 	The idea is to finish the meeting which will end in less time which means will end soon.
+ 	We can sort by end time and we are sure we can perform 0th index meeting.
+ 	We can only perform ith index meeting if current start time is more than previous end time.
+
+8. Valid Parenthesis String(#678)
+ 	Brute: Recursion + Stack
+ 	       You can use Backtracking and store the characters in stack.
+ 	       Problem with this approach is no way you can memoize it. So better not use it.
+
+ 	Better: Recursion + Count
+ 		You can use count to maintain the characters.
+ 		If ch == '(' then count + 1
+ 		If ch == ')' then count - 1;
+ 		If ch == '*', try all three count - 1, count + 0, count + 1
+
+ 		If at any point count < 0 return false
+Better: Memoize + Tabulation + Space Optimize:
+
+
+
+
+ 	Optimal: Basic appraoch of using count. But if we get '*' then we have three posibility: count - 1, count + 0, count + 1
+ 		 But we cannot maintain it using single count variable.
+ 		 We introduced third vaiable to store the range of possible answers, mini and maxi.
+ 		 If ch == '(', then mini++ and maxi++.
+ 		 If ch == ')', then mini-- and maxi--. If mini < 0, then mini = 0.
+ 		 If ch == '*', then mini can go to mini - 1 or mini + 0 or mini + 1.
+ 		 And maxi will go maxi - 1 or maxi + 0 or maxi + 1.
+
+9. Partition Labels(#763)
+ 	I stored the last occurence of every character.
+ 	If i am at a index then i need to cover it the substring till the last occurence of that index and everytime i got new character i updated the maximum index.
+ 	If i crossed the maximum index, it means i have covered the current substring and its length is i - start.
+ 	Then i changed start to i and again did the same thing.
+
+10. Queue Reconstruction by Height(#406)
+ 	I sorted according to their height in descending order and if people[i][1] =  4, i placed it at 4th index.
+ 	It means 4 people bigger than him will come before him and he can be anywhere after this index.
+ 	Why sorted in descending order?
+ 		Consider this example: [7,0], [5,0]
+
+ 	If i placed [5,0] before and then i know none of the people taller than him are before.
+ 	I will move to [7,0] and place him at 0th index but this will make one person taller than [5,0] before him.
+
+ 	Shorter people don't disturb taller people.
+ 	Hence, place taller people first, hence sort in decreasing order.
+
+11. Course Schedule III(#630)
+ 	In this problem, you might think of two things.
+ 	First, to choose the courses with earlier deadlines to finish first.
+ 	Or you might think to choose those courses which are taking less time to finish.
+
+ 	Here, you need to use combo of both.
+ 	First sort it according to deadlines i.e. according to 1st index.
+ 	Secondly, use priority queue to maintain the courses which are taking more time.
+
+ 	Start iterating over courses, add them in prirority queue and if at any moment the days crosses the current deadline remove the day which is taking more.
+ 	If at any moment the days crosses the current deadline, you have two options:
+ 	Either remove the current one, don't take it or remove the one which is taking more day.
+ 	If we remove the one taking more day we will spend less number of days and we will be having more days for future courses.
