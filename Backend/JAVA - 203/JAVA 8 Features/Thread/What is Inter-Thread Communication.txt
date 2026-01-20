@@ -1,0 +1,267 @@
+What is Inter-Thread Communication?
+	Inter-thread communication means cooperation between threads — allowing threads to communicate with each other and coordinate their actions.
+	It’s used when multiple threads share a resource and you want them to work in a controlled manner rather than competing blindly.
+
+🧩 Why It’s Needed
+	Imagine two threads:
+		Producer → produces data
+		Consumer → consumes data
+
+	If the producer keeps producing without waiting for the consumer → overflow.
+	If the consumer keeps consuming without waiting for data → underflow.
+
+➡️ They need to communicate:
+	“Hey, data is ready!” or “Wait, I’m not done yet!”
+	This is where inter-thread communication comes in.
+
+🔒 Java Mechanism for Inter-Thread Communication
+	Java provides three key methods from the Object class for this purpose:
+
+	Method		Description
+	wait()		Thread releases the lock and waits until another thread calls notify() or notifyAll().
+	notify()	Wakes up one thread waiting on the same object’s monitor.
+	notifyAll()	Wakes up all threads waiting on the same object’s monitor.
+
+⚠️ Important Rules
+	These methods are defined in java.lang.Object, not in Thread.
+	They must be called inside a synchronized block or method.
+	The waiting and notifying threads must be working on the same lock object.
+
+⚙️ How It Works (Conceptually)
+	Step-by-step flow:
+		Thread A (Producer) acquires the lock and finds the condition not right (e.g., buffer is full).
+		It calls wait() → releases the lock → goes to waiting state.
+		Thread B (Consumer) acquires the same lock, performs its work, and calls notify() after changing the condition (e.g., consuming an item).
+		Waiting thread (Producer) wakes up and re-acquires the lock → continues execution.
+		So they take turns — smooth coordination.
+
+📘 Example: Producer–Consumer Problem (Using wait–notify)
+	class SharedResource {
+	    private int data;
+	    private boolean available = false;
+	
+	    // Producer method
+	    synchronized void produce(int value) {
+	        while (available) {
+	            try {
+	                wait();  // wait if data not yet consumed
+	            } catch (InterruptedException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	        data = value;
+	        available = true;
+	        System.out.println("Produced: " + value);
+	        notify(); // notify consumer that data is available
+	    }
+	
+	    // Consumer method
+	    synchronized void consume() {
+	        while (!available) {
+	            try {
+	                wait();  // wait if data not yet produced
+	            } catch (InterruptedException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	        System.out.println("Consumed: " + data);
+	        available = false;
+	        notify(); // notify producer that data is consumed
+	    }
+	}
+	
+	public class InterThreadCommunication {
+	    public static void main(String[] args) {
+	        SharedResource resource = new SharedResource();
+	
+	        // Producer Thread
+	        new Thread(() -> {
+	            for (int i = 1; i <= 5; i++) {
+	                resource.produce(i);
+	            }
+	        }).start();
+	
+	        // Consumer Thread
+	        new Thread(() -> {
+	            for (int i = 1; i <= 5; i++) {
+	                resource.consume();
+	            }
+	        }).start();
+	    }
+	}
+	
+🧾 Output:
+	Produced: 1
+	Consumed: 1
+	Produced: 2
+	Consumed: 2
+	Produced: 3
+	Consumed: 3
+	...
+	
+
+✅ Producer waits if data isn’t consumed yet.
+✅ Consumer waits if data isn’t produced yet.
+✅ Perfect synchronization and communication between threads.
+
+🧱 Internal Working
+	When wait() is called:
+		Thread releases the monitor lock of the object.
+		Moves to the waiting pool for that object.
+		Stays there until another thread calls notify() or notifyAll().
+
+	When notify() is called:
+		One waiting thread is moved from waiting pool → ready queue.
+		When it gets CPU and lock access again, it resumes from where it called wait().
+
+⚖️ Difference Between wait() and sleep()
+	Feature			wait()				sleep()
+	Defined In		Object class			Thread class
+	Lock Release		✅ Releases lock		❌ Does not release lock
+	Wakes Up By		notify() / notifyAll()		After sleep time or interrupt
+	Used For		Inter-thread communication	Pausing thread temporarily
+	Must Be In synchronized	✅ Yes				❌ No
+
+🧩 notify() vs notifyAll()
+	Method			Description
+	notify()		Wakes up one waiting thread (chosen arbitrarily).
+	notifyAll()		Wakes up all waiting threads; only one gets the lock and continues.
+
+	Use notify() for efficiency if only one thread needs to continue,
+	but notifyAll() avoids missed signals in complex cases.
+
+🧠 Modern Alternative: Condition Interface (from java.util.concurrent.locks)
+	For advanced scenarios, Java provides Condition objects (via ReentrantLock) which act like wait() and notify(), but more flexible.
+	import java.util.concurrent.locks.*;
+
+	class Shared {
+	    private final Lock lock = new ReentrantLock();
+	    private final Condition condition = lock.newCondition();
+	    private boolean available = false;
+	}	
+
+
+	Condition provides:
+		await() → like wait()
+		signal() → like notify()
+		signalAll() → like notifyAll()
+
+	It’s preferred for complex multi-condition communication.
+
+
+
+
+
+
+
+
+How does wait() know for whom to wait?
+🔹 Key Concept:
+
+When you call wait() inside a synchronized block/method, the thread releases the lock on that specific object and waits until another thread calls notify() or notifyAll() on the same object.
+
+📘 Example Understanding:
+synchronized void produce(int value) {
+    while (available) {
+        wait(); // waits on 'this' object (SharedResource instance)
+    }
+}
+
+
+The producer and consumer both synchronize on the same object (resource).
+
+When producer calls wait(), it says:
+
+“I’ll pause myself and release the monitor (lock) on this object until someone calls notify() on the same object.”
+
+When consumer calls notify(), it says:
+
+“Wake up one thread waiting on this same monitor.”
+
+So, wait() doesn’t wait for a particular thread —
+it waits for a signal (notify) from any thread that holds the same object lock.
+
+🧭 Q2. Modern Alternative: Condition Interface
+
+The Condition interface (from java.util.concurrent.locks) is a modern, more flexible replacement for the classic wait() / notify() mechanism.
+
+It works together with Lock (especially ReentrantLock) to achieve fine-grained control over thread communication.
+
+🔹 Traditional Way vs Modern Way
+Feature	wait() / notify()	Condition Interface
+Works with	synchronized blocks	Lock (e.g. ReentrantLock)
+How many waiting queues	One per object	Multiple per Lock (custom conditions)
+Clarity	Implicit	Explicit and clear
+Best for	Simple producer-consumer	Complex waiting conditions
+🔧 Example: Producer-Consumer using Condition
+import java.util.concurrent.locks.*;
+
+class SharedResource {
+    private int data;
+    private boolean available = false;
+    private final Lock lock = new ReentrantLock();
+    private final Condition condition = lock.newCondition();
+
+    void produce(int value) {
+        lock.lock();
+        try {
+            while (available) {
+                condition.await(); // equivalent to wait()
+            }
+            data = value;
+            available = true;
+            System.out.println("Produced: " + value);
+            condition.signal(); // equivalent to notify()
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    void consume() {
+        lock.lock();
+        try {
+            while (!available) {
+                condition.await(); // wait for producer
+            }
+            System.out.println("Consumed: " + data);
+            available = false;
+            condition.signal(); // notify producer
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+
+🔍 Explanation:
+
+Lock provides explicit locking (you decide when to lock/unlock).
+
+Condition provides:
+
+await() → like wait()
+
+signal() → like notify()
+
+signalAll() → like notifyAll()
+
+You can even create multiple Conditions for different waiting purposes:
+
+Condition notFull = lock.newCondition();
+Condition notEmpty = lock.newCondition();
+
+
+— useful in complex producer-consumer systems (like bounded buffers).
+
+💡 Why Condition is Better
+
+✅ Explicit control – you lock and unlock manually.
+
+✅ Multiple condition queues – more flexible than wait/notify.
+
+✅ Works outside synchronized blocks – no need for intrinsic monitors.
+
+✅ More readable and maintainable in concurrent systems.

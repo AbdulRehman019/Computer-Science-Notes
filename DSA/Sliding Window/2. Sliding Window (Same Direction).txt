@@ -172,6 +172,11 @@ Why we didn't updated maxFreq while removing characters from left?
 	Difficult to think first time. 
 	But if we decrease the maxFreq, by checking everytime the complexity won't increase much. And that is thinkable. 
 
+	If 5 - 3 > 1 is invalid then 5 - 2 > 1 is definitely invalid. 
+	But if 4 - 3 <= 1 is valid then maybe 4 - 2 <= 1(It is possible, it is valid or not). 
+	But kuch bhi ho jo invalid window hogi wo isse pehle maxLen me aa chuki hogi. 
+	It will never happen that you calculate wrong maxLen. 
+
 ******************************************************* Permutation in String ******************************************************* 
 Solution 1: I thought of storing the frequency of characters in map1. 
 	    Then, I started moving on second string. 

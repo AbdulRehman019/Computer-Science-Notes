@@ -1,0 +1,42 @@
+my-springboot-app/
+│
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/example/myapp/
+│   │   │       ├── controller/
+│   │   │       │   └── UserController.java
+│   │   │       ├── service/
+│   │   │       │   └── UserService.java
+│   │   │       ├── repository/
+│   │   │       │   └── UserRepository.java
+│   │   │       ├── model/        (or entity/)
+│   │   │       │   └── User.java
+│   │   │       └── MySpringbootAppApplication.java   ← main class
+│   │   │
+│   │   └── resources/
+│   │       ├── application.properties (or application.yml)
+│   │       ├── static/       ← static assets (CSS, JS, images)
+│   │       ├── templates/    ← Thymeleaf or other templates
+│   │       └── data.sql / schema.sql  (optional DB scripts)
+│   │
+│   └── test/
+│       └── java/
+│           └── com/example/myapp/
+│               └── UserServiceTest.java
+│
+├── build.gradle  (or pom.xml if using Maven)
+├── gradlew / gradlew.bat
+└── README.md
+
+
+
+
+There are two POJO's we write: 
+1. Controller Level(DTO) 
+	It maps your requests. 
+
+2. Repository Layer(DAO) 
+	It maps your DB tables. 
+
+Why is structured code important? 

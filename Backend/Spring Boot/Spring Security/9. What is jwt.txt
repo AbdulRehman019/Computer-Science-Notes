@@ -1,0 +1,160 @@
+1. What is jwt?
+	JSON Web Token (JWT) is an open internet standard for sharing secure information between two parties. 
+	The token contains a JSON “payload” which is digitally signed ( with a private secret or public/private key ) using a cryptographic algorithm. 
+	The digital signature makes the token safe from tampering as a tampered token becomes invalid.
+
+	A JWT looks something like this
+		eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+		eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.
+		FGK5PCL49k3jfNCq6wZtn6T-uG9Dv4hOYIm55xTux8w
+
+	If you look closely, you will notice two period (.) symbols in the JWT. These period symbols break up the JWT into three segments — Header, Payload and Signature.
+	
+	The general form of a JWT is -> header.payload.signature.
+
+	Header
+		The first part of the token, the header is a JSON object containing two properties, 
+		typ(represents type of the token which is JWT) and alg(the algorithm to be used for signing).
+
+		{
+		"typ": "JWT",
+		"alg": "HS256"
+		}
+		This JSON object is Base64Url encoded to form the first part of the string.
+
+	Payload
+		The second part of the token, the payload contains the data, or “claims”, which you wish to transfer using this JWT. There are some defined claims such as
+
+		sub — Subject of the token
+		iss — Issuer of the token
+		exp — Expiration time of token
+		aud — Audience of the token
+
+		You can also add custom claims which both the ends have agreed on and provide share extra information about the token. In the below example, “role” is a custom claim.
+
+		{   
+		  "sub": "john.doe@gmail.com",   
+		  "iss": "ABC Pvt Ltd",   
+		  "role": "ADMIN"
+		}
+
+	Signature
+		The signature is created by taking the encoded strings of the first two parts and passing it to the signing algorithm along with your secret.
+
+		HMACSHA256(   
+		 base64UrlEncode(header) + "." + base64UrlEncode(payload),   
+		 secret
+		)
+	
+		The output is the JWT like the one you saw earlier 
+
+2. Plan of Action
+	You will be building a REST API that exposes three endpoints —
+		/api/auth/register — Creates and persists an User entity object and responds with a JWT built using this entity.
+		/api/auth/login — Authenticates user credentials and generates a JWT
+		/api/user/info — Protected route which responds with user information for the authenticated user
+
+3. Execution of Plan
+	Entity
+		First let’s create our User entity. Create a new package entity and create a class User . 
+		This class defines the User POJO with the id, email and password fields. 
+		The @Entity annotation marks this class as an Entity and the other annotations are Lombok annotations to reduce boilerplate code ( such as adding getters, setters, 			constructors, etc. ).
+
+	Repository
+		Now that we have the entity let’s create a way to persist it. Create a new package repository and create a new interface UserRepo. 
+		We define a custom method findByEmail(String email) which retrieves an user entity based on their email. ( kinda self explanatory, eh ? \_(*.*)_/ )
+
+	Security
+		Before we do anything related to security, lets first create a class that will handle the creation and verification of the JWTs. 
+		Create a package security and in it, a class JWTUtil. 
+		To perform the JWT related operations, I recommend you use the java-jwt or io.jsonwebtoken (jjwt)(We use this) package. 
+		To include the package in your project add the following dependency to your pom.xml file and then rebuild the project.
+
+	JwtService 
+		The generateToken method creates a token with subject, issuer, time of issue and a custom claim “email” and 
+		the second method verifies the same and extracts the email. Now in order for this to work, you need to provide a secret. 
+		The secret is a string (private to your project/team/company) used to sign your tokens. NEVER SHARE YOUR SECRET. 
+		Open the resources/application.properties file and add the following property. 
+
+		jwt:
+  			secret: my-super-secret-key-my-super-secret-key-12345
+  			expiration: 3600000 # 1 hour in ms
+
+		JwtService
+		│
+		├── generateToken(UserDetails)
+		│
+		├── validateToken(token, userDetails)
+		│
+		├── extractUsername(token)
+		│
+		├── extractAllClaims(token)
+		│
+		└── getSigningKey()
+
+	CustomUserDetailsService 
+		A UserDetailsService is used to provide the custom implementation to fetch the user details of the user trying to 
+		authenticate into the application. This is done in the loadUserByUsername method. If no such user is found a UsernameNotFoundException is thrown. 
+		Create a class CustomUserDetailsService which will implement the UserDetailsService interface.
+
+		CustomUserDetailsService does ONE thing:
+			Load user from DB by username (email) and return UserDetails
+
+		Why we didn’t create CustomUserDetails class
+		Two valid approaches:
+			Option 1️⃣ (what we used)
+				Use Spring’s built-in User class
+				✔️ Simple
+				✔️ Enough for most apps
+
+			Option 2️⃣ (CustomUserDetails class)
+				Used when:
+				You need extra fields (userId, phone, etc.)
+				You want getId() from SecurityContext
+
+			📌 Interview-ready answer:
+				“I start with Spring’s User and introduce CustomUserDetails only if I need extra user attributes.”
+
+		8️⃣ How this class is used (IMPORTANT FLOW)
+		Login request
+		     ↓
+		AuthenticationManager
+		   ↓
+		CustomUserDetailsService.loadUserByUsername()
+		   ↓
+		Password validation
+		   ↓
+		JWT generated
+
+	JwtFilter
+		The JWTFilterwill run for each request by implementing the OncePerRequestFilter interface and check if a Bearer token is present in the Authorization header. 
+		If a token is present, the token will be verified and the authentication data will set for the user for that request by setting the authentication property of the 			SecurityContext using the SecurityContextHolder. This is where your JWT comes into action and makes sure you are authenticated and 
+		can access protected resources that require you to be logged in/authenticated.
+
+		What this filter ACTUALLY does (simple words)
+		“For every request, check if a JWT exists.
+		If yes, validate it and tell Spring Security who the user is.”
+
+		That’s it.
+
+		Step-by-step explanation
+		OncePerRequestFilter: extends OncePerRequestFilter	
+		Read Authorization Header: Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...	
+		Extract JWT: jwt = authHeader.substring(7);
+		Extract Username: username = jwtService.extractUsername(jwt);
+		Check if already authenticated: SecurityContextHolder.getContext().getAuthentication() == null
+		Load User from DB: userDetailsService.loadUserByUsername(username);
+		Validate Token: jwtService.validateToken(jwt, userDetails)
+		Create Authentication Object: UsernamePasswordAuthenticationToken
+		Set Security Context: SecurityContextHolder.getContext().setAuthentication(authToken);
+		Continue filter chain: Always call: filterChain.doFilter(request, response);
+
+	SecurityConfig
+		The “auth” route requests are granted access by all ( This is quite obvious because you need to have access to the login and register routes )
+		The “user” route requests can only be accessed by authenticated users with the role of “USER” which is set in the MyUserDetailsService
+		UserDetailsService is configured with the custom MyUserDetailsService bean
+		Server is configured to reject the request as unauthorized when entry point is reached. 
+		If this point is reached it means that the current request requires authentication and no JWT token was found attached to the Authorization header of the current request.
+		The JWTFilter is added to the filter chain in order to process incoming requests.
+		Creating a bean for the password encoder
+		Exposing the bean of the authentication manager which will be used to run the authentication process in the AuthController

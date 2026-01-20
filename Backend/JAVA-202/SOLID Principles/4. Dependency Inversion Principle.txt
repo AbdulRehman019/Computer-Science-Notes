@@ -89,3 +89,110 @@ Now:
 
 ✅ In short:
 	The Dependency Inversion Principle ensures that your high-level business logic is not tied to low-level details. Instead, both rely on abstractions, making the system flexible, 	testable, and maintainable. 
+
+
+
+
+
+
+
+
+
+
+
+
+Explaination in detail: 
+	What the statement means
+	“Abstractions should not depend on details. Details should depend on abstractions.”
+
+	Let’s define the terms first:
+	Term		Meaning
+	Abstraction	A general idea, interface, or abstract class that represents what should be done — not how
+	Details		Concrete implementations that define how it’s done
+
+So the statement means:
+	Your high-level business logic (abstractions) should not be tightly coupled to low-level implementations (details).
+	Instead, both should communicate through interfaces (abstractions).
+
+⚙️ Real-world example without DIP
+	Let’s say you have a class that sends notifications:
+
+	public class NotificationService {
+	    private EmailService emailService = new EmailService();
+	
+	    public void send(String message) {
+	        emailService.sendEmail(message);
+	    }
+	}
+
+Here:
+	NotificationService = High-level module (business logic)
+	EmailService = Low-level module (detail, specific way of sending)
+
+🔴 Problem:
+	NotificationService depends directly on the concrete class EmailService.
+	If tomorrow you want to send SMS or WhatsApp messages, you’ll have to modify NotificationService.
+
+	That violates OCP (you’re modifying existing code) and DIP (high-level module depends on a low-level one).
+
+✅ Applying DIP (Dependency Inversion Principle)
+	We invert the dependency — make both depend on an abstraction:
+	// Step 1: Create an abstraction
+	public interface MessageService {
+	    void sendMessage(String message);
+	}
+
+	// Step 2: Implement details
+	public class EmailService implements MessageService {
+	    @Override
+	    public void sendMessage(String message) {
+	        System.out.println("Sending Email: " + message);
+	    }
+	}
+	
+	public class SmsService implements MessageService {
+	    @Override
+	    public void sendMessage(String message) {
+	        System.out.println("Sending SMS: " + message);
+	    }
+	}	
+
+	// Step 3: High-level module depends on abstraction, not detail
+	public class NotificationService {
+	    private MessageService messageService;
+	
+	    // Inject the dependency (e.g., via constructor)
+	    public NotificationService(MessageService messageService) {
+	        this.messageService = messageService;
+	    }
+
+	    public void notify(String msg) {
+	        messageService.sendMessage(msg);
+	    }
+	}
+
+
+	Now:	
+	public class Main {
+	    public static void main(String[] args) {
+	        MessageService service = new EmailService(); // or new SmsService()
+	        NotificationService notification = new NotificationService(service);
+	        notification.notify("Hello User!");
+	    }
+	}
+
+
+	✅ High-level (NotificationService) depends on MessageService (abstraction)
+	✅ Low-level (EmailService/SmsService) also depends on MessageService (abstraction)
+	❌ Neither depends directly on each other’s concrete implementation.
+
+	That’s what the statement means. 
+
+Why it’s called Dependency Inversion
+	Normally:
+		High-level (business logic) → depends on → Low-level (details)
+	
+	After applying DIP:
+		Both High-level and Low-level → depend on → Abstraction (interface)
+
+	We’ve inverted the dependency direction.

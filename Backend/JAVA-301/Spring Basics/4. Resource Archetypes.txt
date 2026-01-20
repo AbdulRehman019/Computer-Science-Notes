@@ -1,0 +1,118 @@
+What Is a Resource?
+	A resource in REST is any piece of information that can be named and accessed through a URI.
+	It’s the “thing” your API exposes to clients — the conceptual object that your system manages.
+
+	Think of a resource as a noun (something you can refer to, not an action).
+
+Examples of Resources
+	Type of Information	Resource			URI Example
+	A user account		user				/users/101
+	All users		users (collection)		/users
+	A product		product				/products/12
+	A blog post		post				/posts/45
+	Comments on that 	post comment (sub-resource)	/posts/45/comments
+	The image of a product	image				/products/12/image
+
+	Each of these can be a resource — a conceptual “thing” represented by a URI.
+
+
+
+
+
+
+What Are Resource Archetypes?
+	In REST, everything is modeled as a resource (users, orders, products, etc.).
+	But not all resources behave the same — some represent a single object, some a group of objects, and others actions or data stores.
+
+	So, REST defines four main resource archetypes to bring consistency in API design.
+
+1. Document Resource
+	Represents: A single object (entity) or concept — like one user, one order, one product, etc.
+	It’s similar to a “record” in a database.
+
+	🔹 Example:
+	Operation	HTTP Verb	Endpoint	Meaning
+	Retrieve	GET		/users/101	Get a single user
+	Create		POST		/users		Create a new user (returns a Document)
+	Update		PUT/PATCH	/users/101	Update user details
+	Delete		DELETE		/users/101	Delete a user
+
+📦 Typical Response (GET /users/101):
+	{
+	  "id": 101,
+	  "name": "Abdul Rehman",
+	  "email": "abdul@example.com"
+	}
+
+Key Idea:
+	A document resource represents one thing.
+	The URI identifies exactly one instance.
+
+2. Collection Resource
+	Represents: A list (collection) of document resources.
+
+	🔹 Example:
+	Operation	HTTP Verb	Endpoint	Meaning
+	Retrieve all	GET		/users		Get a list of all users
+	Create new	POST		/users		Add a new user to the collection
+	Delete all	DELETE		/users		(Rare) Delete all users
+
+📦 Typical Response (GET /users):
+	[
+	  { "id": 101, "name": "Abdul" },
+	  { "id": 102, "name": "Rahul" }
+	]
+
+Key Idea:
+	A collection is a container of documents.
+	The server manages the membership (you can’t directly “PUT” to /users/102 unless it already exists).
+
+3. Store Resource
+	Represents: A server-managed repository that clients can place and retrieve resources in — similar to a shopping cart, file storage, or message queue.
+
+	Difference from Collection:
+		In a collection, the server assigns the resource’s ID.
+		In a store, the client provides the ID.
+
+	🔹 Example:
+	Operation	HTTP Verb	Endpoint			Meaning
+	Store data	PUT		/users/abdul-profile-pic	Client uploads a file with chosen ID
+	Retrieve	GET		/users/abdul-profile-pic	Retrieve that same stored file
+	Delete		DELETE		/users/abdul-profile-pic	Delete stored item
+
+📦 Example Use Case:
+	Uploading a profile picture
+	Caching a specific configuration
+	Saving a user’s state by ID
+
+Key Idea:
+	Client decides the resource name.
+	Often used for idempotent uploads or file storage.
+
+4. Controller Resource
+	Represents: A procedure or action — something that doesn’t map neatly to CRUD.
+	For example: starting a process, triggering a calculation, or sending a notification.
+	A notification is not saved in DB. It exists temporarily. 
+
+🔹 Example:
+	Operation		HTTP Verb	Endpoint			Meaning
+	Execute an action	POST		/users/101/reset-password	Reset user’s password
+	Execute a job		POST		/reports/generate		Generate report
+	Execute payment		POST		/orders/45/pay			Pay for order
+
+📦 Typical Response (POST /reports/generate):
+	{
+	  "status": "success",
+	  "reportId": "rpt-2025-01"
+	}
+
+Key Idea:
+	Represents an action, not a data object.
+	Usually POST-only, because actions are not idempotent and not purely CRUD.
+
+🧩 Summary Table
+	Archetype	Represents			Typical URI			Who assigns ID	Common Methods			Example
+	Document	Single resource			/users/101			Server		GET, PUT, PATCH, DELETE		One user
+	Collection	Group of documents		/users				Server		GET, POST			All users
+	Store		Client-managed repository	/files/abc123			Client		PUT, GET, DELETE		File storage
+	Controller	Action / procedure		/users/101/reset-password	N/A		POST				Reset password

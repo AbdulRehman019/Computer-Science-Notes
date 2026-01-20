@@ -1,0 +1,71 @@
+Containers
+	A container is a lightweight, standalone, executable package that includes everything needed to run a piece of software, including the code, a runtime, libraries, environment 	variables, and config files.
+	Containers are isolated from each other and bundle their own software, libraries and configuration files. 
+
+	Imagine you're packing for a trip. You gather all the essentials you need - clothes, books, and snacks. You pack them in a suitcase, and you're ready to go.
+	When you arrive at your destination, you unpack everything you need from your suitcase.
+
+	This is similar to how containers work.
+
+	A container is like a suitcase for your application. It includes everything your application needs to run, such as
+		the code
+		a runtime
+		libraries
+		environment variables
+		config files.
+
+	Each container is isolated and contains its own software, libraries, and configuration files. This ensures that your application runs reliably, no matter where it's deployed. 
+
+
+The Open Container Initiative (OCI)
+	The Open Container Initiative (OCI) is a group of companies that have come together to create standards for containers. 
+	These standards ensure that containers are portable(everything which is required to run the software exists within the container) and interoperable(all companies or organisations 	supporting the standard should be able to use it without any change), meaning they can be used on any system that supports these standards.
+	
+
+The OCI has three main specifications:
+	Runtime Specification: This outlines how to run a container.
+	Image Specification: This defines the physical structure of a container.
+	Distribution Specification: This defines how to distribute container images.
+
+	These specifications help ensure that containers are portable and can run on any system that supports them.
+
+Containers vs Virtual Machines
+	Size:
+	Containers: lightweight version of an application. They only include the application and the things it needs to run thus smaller in size.
+	Virtual Machines: full copy of an operating system making them bigger in size in comparison to containers
+
+	Create and Destroy:
+	Containers: quicker to set up and remove because they're just small copies of an application.
+	Virtual Machines: take longer to set up and remove because they're full copies of an operating system.
+
+	Isolation:
+	Containers: not fully separate from the host machine because they use the host machine's kernel to run.
+	Virtual Machines: fully separate from the host machine because they have their own kernel.
+
+	Need for containers or virtual machines depends on the specific use case.
+	Containers are generally preferred for their speed and efficiency
+	Virtual machines can be a better choice for applications that require strong isolation and full functionality of an operating system.
+
+Docker
+	Docker is an open platform that helps users create, deploy, and run applications in containers.
+	Docker's methodologies for shipping, testing, and deploying code can significantly reduce the delay between writing code and running it in production. 
+	This means you can deliver software faster and more efficiently.
+	
+Why do we need docker ?
+	Docker gives a better efficient way to manage containers.
+
+	No need to think about setting up the environments anymore.
+	A Docker Image is a blueprint which is used to build a Docker Container.  
+	Docker Containers are the actual running instance of Docker Images. Just like how classes are the blueprint of Objects in JAVA.
+
+Docker Containers
+	A self-contained software, running instance of a container.
+	Created from a Docker Image
+	Read-only layer with additional read-write layer on top
+	Actually runs the application
+
+Docker Image
+	A reusable, shareable file used to create containers
+	Created from software code, dependencies, libraries, and a Dockerfile.
+	Read-Only layer
+	Works as a template for creating docker containers.

@@ -1,0 +1,104 @@
+Spring Security Architecture 
+1. Security Filter Chain 
+	It contains all the filters available for authentication or authorization. 
+	Example: Username and Password, OTP etc. 
+
+	The Security Filter Chain is the backbone of Spring Security. 
+	It’s a series of filters that processes incoming HTTP requests and communicates with the Authentication Manager for the validation of requests.
+	These filters work together to ensure that your web application is secure and responsible for tasks like authentication, authorization, session management and more. 
+	The order in which these filters are applied matters, as each one handles each with a specific aspect of security.
+
+	@Bean
+	public SecurityFilterChain securityFilterChain(HTTPSecurity httpsecurity) {
+		httpSecurity.authorizeHttpRequests(authorize -> 
+			authorize.requestMatchers("/signup/").permitAll()
+				 .requestMatchers("/users").authenticated()
+			).httpBasic(Customizer.withDefaults());
+
+		return httpSecurity.build();
+	}
+
+	This code defines a custom Security Filter Chain with specific security rules. 
+	It permits unrestricted access to the “/signup/” URL while requiring authentication for the “/users” URL. 
+	Additionally, it configures HTTP Basic Authentication as the authentication method.
+
+
+
+2. Authentication Manager 
+	Once the filters are decided, it goes to authentication manager. 
+	Authentication Manager pass it to Authentication Provider. 
+	Authentication Provider uses the password encoder, fetches details from DB and verifies if it matches. 
+
+	The Authentication Manager is the central component that verifies user identities.
+	It coordinates the authentication process and delegates the actual authentication to Authentication Providers.
+	Each manager can be associated with a specific set of Authentication Providers, allowing you to handle different types of authentication for different parts of your application. 
+
+3. Authentication Provider 
+	Workers of the Authentication Manager. They are responsible for actually performing the authentication.
+	Spring Security supports various types of Authentication Providers
+		DaoAuthenticationProvider — uses a UserDetailsService to retrieve user details from database and compare credentials.
+		JwtAuthenticationProvider — used for validating JWT tokens of the user.
+		Custom Authentication Providers — handle authentication using specific logic or external systems.
+
+	DaoAuthentication Provider 
+		@Bean
+		public DaoAuthenticationProvider daoAuthenticationProvider() {
+			DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+			daoAuthenticationProvider.setUserDetailService(userDetailService);
+			daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+			return daoAuthenticationProvider;
+		}
+
+	In this snippet, a custom DaoAuthenticationProvider is defined, configured with a UserDetailsService and a PasswordEncoder. 
+
+4. UserDetailsService 
+	The UserDetailsService is an interface which retrieves user details during the authentication process. (Username, password, etc.)
+	It is often used in conjunction with Authentication Providers to obtain user details from the database for authentication.
+	A concrete class must implement UserDetailsService and return the User entity. 
+
+	The UserDetailsServiceImpl class is implemented as a custom UserDetailsService, and it overrides the loadUserByUsername method to retrieve user details from a database via a 	UserRepository. 
+
+5. PasswordEncoder 
+	The Password Encoder is used to hash and verify passwords securely as storing and comparing passwords is crucial for user authentication.
+	BCryptPasswordEncoder — this is widely recommended choice for securely hashing passwords in Spring Security. It handles the generation of random salts for each password.
+	NoOpPasswordEncoder — does not perform any hashing or encoding of passwords and stores passwords in plain text which makes them highly vulnerable.
+	They are other password encoders. 
+
+	@Bean 
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	In the above code, a BCryptPasswordEncoder is defined as the custom PasswordEncoder. 
+
+
+3. SecurityContextHolder 
+	It contains cache, so if there is any request next time it doesnot have to go through entire process. 
+	Spring will perform a lookup here and authenticate the api. 
+
+	The SecurityContextHolder class manages the user’s security context throughout the request-response lifecycle. 
+	It stores information about the currently authenticated user such as roles, and other security-related data.
+	Once the user is successfully authenticated, Spring Security creates an Authentication Object within the security context managed by SecurityContextHolder.
+	The Principal represents the current user’s username, authorities, and other user-specific data. 
+
+	Authentication authentication = 
+		SecurityContextHolder.getContext().getAuthentication();
+	String username = authentication.getName();
+
+	The above code snippet is an example of how to retrieve the current user’s username from the Principal. 
+
+
+
+
+
+request and response lifecycle 
+	The request is intercepted by the Security Filter Chain. The Security Filter Chain consists of a series of filters, each with a specific security-related task.
+	If the user is not yet authenticated (i.e., not logged in), Spring Security’s authentication filters will trigger the Authentication Manager. 
+	The Authentication Manager uses the configured Authentication Providers to verify the user’s credentials.
+	Authentication Providers will use the PasswordEncoder to store and compare passwords.
+	Authentication Providers use the UserDetailsService to fetch user details. The user’s credentials are compared to the stored or provided credentials.
+	UserDetailsService will fetch the data from the database.
+	The status of the authentication process will be sent to the user as a success or unauthorized response.
+	This Authentication object is stored within the security context managed by SecurityContextHolder. The security context now represents the authenticated user.
+
+

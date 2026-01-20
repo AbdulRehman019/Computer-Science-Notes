@@ -1,0 +1,147 @@
+**** When to use remainder instead of sum or number? ***
+	1. Divisibility
+		(“sum divisible by K”, “number divisible by K”, “prefix divisible by X”)
+
+	2. Large numbers
+		(numbers too big for normal integer range, or when number is built digit by digit)
+
+	3. Modulo constraints
+		(K ≤ 10⁵, values huge, DP state includes sum)
+
+	→ You should immediately think of using remainders
+	because the remainder captures all information needed for divisibility. 
+
+
+	------Pattern 1 — Building Numbers Digit by Digit-----
+		Problems:
+		❗ Smallest Integer Divisible by K
+		❗ Binary Prefix Divisible by 5
+		❗ Good problems involving huge numbers
+
+		Clue that remainder is needed:
+		➡ The number you build gets extremely large.
+		➡ You update something like: num = num * 10 + digit
+
+		Remainder approach:
+		rem = (rem * 10 + digit) % K
+		This formula keeps the value small (≤ K-1)
+		but carries all divisibility info.
+
+		Why it works?
+		Because (A*10 + B) % K = ((A % K)*10 + B) % K.
+
+	------Pattern 2 — Path / Sequence where you track SUM but only care about SUM % K------
+		Problems:
+		❗ Paths in Matrix Whose Sum Is Divisible by K
+		❗ Count Subarrays with Sum Divisible by K
+		❗ DP problems with sum constraint (sum up to 10⁴ or large)
+
+		Clue remainder must come to mind:
+		➡ You need to check
+		sum % K == 0,
+		not the actual sum
+
+		➡ Sum can be large
+
+		➡ DP state involving sum would blow up
+
+		Instead of sum, track only remainder:
+		DP state becomes:
+			dp[i][j][r] = number of ways to reach (i,j) with sum % K == r
+
+		Because remainder ∈ [0 … K-1],
+		DP becomes manageable.
+
+
+	------Pattern 3 — Whenever the operation is associative under modulo------
+		If you repeatedly do:
+			add numbers
+			multiply numbers
+			append digits
+			take prefix
+
+		Then you can take modulo at every step without losing divisibility information.
+
+	------Pattern 4 — When you see "Divisible" + "Prefix"-------
+		Immediately remainder.
+
+		Example:
+		Binary Prefix Divisible By 5
+
+		Prefix grows like:
+		binary: 1, 10, 101, 1011, ...
+		decimal grows HUGE
+
+		rem = (rem * 2 + bit) % 5
+
+	------Pattern 5 — Subarray or prefix sum problems-----
+		The classical result:
+		If (prefix[j] - prefix[i]) % k == 0
+		   =>
+		prefix[j] % k == prefix[i] % k
+
+		So remainder collisions → valid divisible subarrays.
+		
+		Clue that remainder should come in mind:
+			You want subarrays divisible by K
+			You are given big constraints
+
+
+
+	HOW TO TRAIN YOUR BRAIN TO SPOT THIS
+	Whenever you read a new problem, ask:
+
+	Q1: Do I need to check divisibility?
+	If yes → use remainders.
+
+	Q2: Will numbers become large?
+	If yes → use remainders.
+
+	Q3: Is sum too large for DP but K small?
+	If yes → track remainder, not sum.
+
+	Q4: Am I building a number digit-by-digit?
+	If yes → remainder formula.
+
+	Q5: Do I only care about modulo K conditions?
+	If yes → full number/sum is useless.
+
+
+****Use Prefix sum of size n + 1******
+	Use a prefix array of size (n + 1) with prefix[0] = 0 so subarray sums become clean:
+ 	sum(l..r) = prefix[r+1] − prefix[l].
+
+	2️⃣ To convert O(n²) subarray problems to O(n), track the running minimum prefix up to (i−k) while iterating forward.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

@@ -1,0 +1,190 @@
+🟦 PART 1 — What happens in Basic Auth (before JWT)?
+	You implemented:
+
+	1️⃣ PasswordEncoder (BCrypt)
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+	    return new BCryptPasswordEncoder();
+	}
+
+	Purpose:
+	Encrypts password when storing & checks if raw password matches encrypted password during login.
+
+	2️⃣ UserDetailsService (CustomUserDetailsService)
+	Spring Security needs user data to authenticate.
+
+	You wrote this:
+	@Override
+	public UserDetails loadUserByUsername(String username) {
+	    // fetch user from DB and return UserDetails
+	}
+
+	Purpose:
+	When user tries to login → Spring loads user from DB using this.
+
+3️⃣ AuthenticationManager
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+
+	Purpose:
+	A manager that takes username + password and checks if it's valid using:
+		UserDetailsService
+		PasswordEncoder
+		DaoAuthenticationProvider
+		authenticationManager.authenticate() = validate credentials
+
+4️⃣ SecurityConfig
+	You configured:
+		BasicAuth
+		Permit signup/login
+		Authenticate all other endpoints
+
+Flow:
+
+Client sends username + password (Basic Auth header)
+↓
+SecurityFilterChain
+↓
+UsernamePasswordAuthenticationFilter (built-in)
+↓
+AuthenticationManager
+↓
+DaoAuthenticationProvider
+↓
+CustomUserDetailsService loads user
+↓
+PasswordEncoder matches password
+↓
+If valid → request is authenticated
+↓
+Controller runs
+
+
+✔ Everything is stored in session
+✔ No JWT involved
+✔ Works only with username & password on every request
+
+
+
+
+
+🟩 PART 2 — What you implemented when adding JWT
+	When you added JWT authentication, you added 4 things:
+	1️⃣ JwtService
+	Functions:
+		Generate token
+		Validate token
+		Extract username
+		Extract expiration
+
+	Purpose:
+		Create and manage JWT tokens using a secret key.
+
+	Example:
+		String token = jwtService.generateToken(username);
+
+	2️⃣ JwtAuthFilter (OncePerRequestFilter)
+		This is the MOST IMPORTANT piece.
+
+	It:
+		✔ Reads Authorization: Bearer <token> header
+		✔ Extracts JWT
+		✔ Validates JWT
+		✔ Loads user using UserDetailsService
+		✔ Sets the user as authenticated in SecurityContext
+
+Flow:
+
+Incoming request
+↓
+JwtAuthFilter runs BEFORE UsernamePasswordAuthenticationFilter
+↓
+Does request have Bearer token?
+      Yes → validate → set authentication
+      No  → ignore
+↓
+Controller runs (only if authenticated)
+
+3️⃣ SecurityConfig UPDATED for JWT
+	You added:
+		✔ Stateless session
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+		Meaning:
+		No session stored. Each request must be authenticated using JWT.
+
+	✔ JwtAuthFilter added to chain
+		.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+
+		Meaning:
+		Validate JWT BEFORE any Spring Security filter.
+
+	✔ authenticationProvider configured
+		To authenticate login attempts.
+
+4️⃣ Login endpoint changed
+	Instead of Basic Auth:
+		Username + Password sent in body → authenticate → return JWT
+
+Flow:
+
+POST /login (username & password)
+↓
+AuthenticationManager.authenticate()
+↓
+If correct → JwtService.generateToken()
+↓
+Return AuthResponse(token)
+↓
+Client stores token
+
+
+Now every request requires:
+
+Authorization: Bearer <token>
+
+
+
+
+
+🟣 FINAL: COMPLETE SECURITY FLOW (JWT + DB login)
+
+🔸 SIGNUP
+save user -> encode password -> store in DB
+
+
+🔸 LOGIN FLOW
+POST /api/auth/login
+↓
+authenticationManager.authenticate(username, password)
+↓
+Spring calls CustomUserDetailsService.loadUserByUsername()
+↓
+PasswordEncoder checks password
+↓
+If valid → generate JWT
+↓
+Return token
+
+
+🔸 PROTECTED API FLOW
+User sends request with Authorization: Bearer <token>
+↓
+JwtAuthFilter runs first
+↓
+Extract token
+↓
+Validate signature + expiration
+↓
+Extract username
+↓
+Load user from DB
+↓
+Set authentication in SecurityContext
+↓
+Controller runs
+
+🧠 One-Line Summary for Interview
+
+Basic Auth = Spring authenticates using username + password on every request (session-based).
+JWT Auth = Login once → get token → every request authenticated via JwtAuthFilter (stateless).

@@ -1,0 +1,71 @@
+✅ 1. Synchronous Communication
+	Definition
+	Synchronous communication means:
+		Service A waits for Service B to respond before continuing.
+		It’s like making a phone call → you speak, you wait for their reply.
+
+	Example (Real Life)
+		You call a restaurant to order food.
+		You can’t proceed until they confirm your order.
+
+		You are blocked until you get the reply.
+
+	🖥 Example in Microservices
+		Let’s say Order Service wants to confirm payment:
+			Order Service → calls → Payment Service (REST API)
+			Order Service waits...
+			Payment Service responds "Payment Success"
+			Order Service continues processing
+
+		Here, Order Service blocks until Payment Service responds.
+
+	Used When
+		You need immediate response (payment, authentication).
+		You want strong consistency.
+
+	Common Technologies
+		REST API (HTTP)
+		gRPC
+
+✅ 2. Asynchronous Communication
+	Definition
+	Asynchronous communication means:
+		Service A sends a request and does NOT wait for Service B to respond.
+		It’s like sending a WhatsApp message → you don’t wait staring at the screen; you continue with your work.
+		The response can come later.
+
+🖥 Example in Microservices
+	Order is successfully created → send email notification.
+	Order Service → publishes event "OrderCreated" → Kafka/RabbitMQ
+	Order Service continues its work
+	Notification Service receives the event later and sends the email.
+	Order Service doesn’t need to wait.
+
+	Used When
+		You don’t need immediate response.
+		High performance needed.
+		Decoupled systems.
+
+	Common Technologies
+		Kafka
+		RabbitMQ
+		AWS SQS/SNS
+		Event streaming
+
+📌 Quick Summary Table
+	Type		Definition			Example					When to Use
+	Synchronous	Caller waits for response	REST call Order → Payment		Immediate result needed
+	Asynchronous	Caller does NOT wait		Order publishes event → Notification	Event-driven, no immediate reply needed
+
+📦 Practical Example combining both
+🔹 Synchronous
+	User places order → Need to confirm payment immediately
+	→ Use REST API.
+
+🔹 Asynchronous
+	After order is placed → Send email
+	→ Use Kafka/RabbitMQ.
+
+🎯 Easy to Remember
+	Synchronous = Blocking (Phone call)
+	Asynchronous = Non-blocking (WhatsApp message)

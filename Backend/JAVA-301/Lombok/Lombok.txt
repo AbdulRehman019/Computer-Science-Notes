@@ -1,0 +1,87 @@
+***************************************************************** Lombok *********************************************************
+1. Lombok is a popular library in the Java ecosystem, often used in Spring Boot applications.
+2. It aims to reduce the boilerplate code that developers have to write, such as getters, setters, constructors, and more.
+3. Lombok achieves this by generating this code automatically during compilation, based on your annotations you add to your Java classes.
+4. Lombok generates bytecode for methods like getters, setters, constructors, equals(), hashCode(), and toString(), as specified by the annotations used in your code.
+   This generated code is added to the class files(.class).
+5. The Java Compiler compiles your classes, including the generated code. This means that the generated methods become part of your compiled class files.
+5. When you run your application, the generated methods are available for use, just like any other methods in your classes. 
+
+
+
+
+
+Common Lombok Annotations
+🧩 1. @Getter / @Setter
+
+Generates public getter and setter for fields.
+
+Can be applied on class (all fields) or individual fields.
+
+@Getter @Setter
+public class User {
+    private String name;
+}
+
+🧩 2. @ToString
+
+Generates a toString() method automatically.
+
+Example output:
+User(name=John, age=25)
+
+🧩 3. @AllArgsConstructor
+
+Creates a constructor with all declared fields as parameters.
+
+@AllArgsConstructor
+public class Trade {
+    private String symbol;
+    private int quantity;
+}
+
+🧩 4. @NoArgsConstructor
+
+Creates a default constructor (no arguments).
+
+Needed when frameworks (like JPA) require a no-arg constructor.
+
+🧩 5. @RequiredArgsConstructor
+
+Generates constructor for final or @NonNull fields only.
+
+Acts like @NoArgsConstructor if no required fields exist.
+
+🧩 6. @Data
+
+Shortcut for:
+
+@Getter + @Setter + @ToString + @EqualsAndHashCode + @RequiredArgsConstructor
+
+
+Use it on DTO/model classes for compact code.
+
+🧩 7. @Builder
+
+Enables Builder Pattern (helps with object creation).
+
+User user = User.builder().name("John").age(25).build();
+
+🧩 8. @Value
+
+Immutable version of @Data.
+
+Makes class final, all fields private final, no setters.
+
+🔹 Curious Cat Notes
+
+After adding @AllArgsConstructor, you lose default constructor unless @NoArgsConstructor is also added.
+
+@RequiredArgsConstructor behaves like @NoArgsConstructor if there are no final or @NonNull fields.
+
+🔹 Advantages
+
+✅ Cleaner code
+✅ Easier maintenance
+✅ Fewer human errors
+✅ IDE & framework friendly (if Lombok plugin installed)

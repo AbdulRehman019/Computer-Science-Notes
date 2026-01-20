@@ -1,4 +1,4 @@
-Tables: 
+	Tables: 
 	1. WORKER_TABLE: Woker_Id, First_Name, Last_Name, Salary, Joining_Date, Department 
 	2. BONUS_TABLE: Worker_Ref_Id(Foreign Key), Bonus_Amount, Bonus_Date
 	3. TITLE_TABLE: Worker_Ref_Id, Worker_Title, Affected_From 
@@ -46,7 +46,7 @@ QUERIES:
 
 20. SELECT * FROM worker where YEAR(Joining_Date) = 2014 AND MONTH(Joining_Date) = 02;
 
-21. SELECT department, COUNT(department) as Department_Count from worker group by deparment having department = 'Admin'; 
+21. SELECT department, COUNT(department) as Department_Count from worker group by deparment having department = 'Admin';		// Wrong
 	OR 
     SELECT department, COUNT(department) as Department_Count from worker where department = 'Admin';
 

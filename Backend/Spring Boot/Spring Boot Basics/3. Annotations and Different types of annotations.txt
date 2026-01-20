@@ -44,6 +44,9 @@ Different Annotations:
 
 2. @RestController
 	Methods inside a controller class should be public so that they can be accessed and invoked by the spring framework or external HTTP Request.
+	It is made of two annotations: 
+	@ResponseBody: It converts the Java Object to JSON which needs to be returned to client. [Using jackson internally] 
+	@Controller: It is used to look for all the possible API's which can be called by client. 
 
 3. @RequestMapping, @GeMapping, @PostMapping
 	1. @RequestMapping
@@ -97,6 +100,37 @@ Different Annotations:
 
 4. @Document
 	It will say "Hey spring, this class is actually a collection in DB and whenever i will create object of it, it will be document(row of RDBMS)".
+
+
+
+Core Dependency Injection
+	@Autowired → Automatically injects a bean (dependency) into a class — handles object creation for you.
+
+	@Component → Marks a class as a Spring-managed bean so it’s automatically detected and instantiated.
+
+	@Configuration → Marks a class that defines one or more @Bean methods — used for custom bean configurations.
+
+	@Bean → Defines a bean manually inside a @Configuration class — Spring manages its lifecycle.
+
+	@Value → Injects values from properties files (e.g., @Value("${server.port}")).
+
+	@Qualifier → Used with @Autowired to specify which bean to inject when multiple beans of the same type exist.
+
+Layer-Specific Stereotypes
+
+	@Service → Specialized @Component for the service layer — holds business logic.
+
+	@Repository → Specialized @Component for data access layer — handles persistence and translates DB exceptions.
+
+	@Controller → Marks a class as a web controller — handles HTTP requests (used in MVC apps).
+
+REST API Specific
+
+	@PathVariable → Binds a value from the URL path to a method parameter (e.g., /users/{id}).
+
+	@RequestBody → Maps the incoming HTTP request body (usually JSON) to a Java object.
+
+	@ResponseBody → Converts a Java object returned by a method into JSON (used in REST responses).
 
 
 

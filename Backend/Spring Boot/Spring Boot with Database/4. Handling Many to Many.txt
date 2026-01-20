@@ -1,0 +1,141 @@
+How will you handle many to many relationship? 
+	You are using private User createdBy in Project. 
+
+package com.abd.TaskManagerApp.entity;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.time.LocalDateTime;
+@Entity
+@Table(name = "projects")
+@Data
+public class Project {
+    @Id
+    @GeneratedValue
+    private long id;
+
+    private String name;
+    private String description;
+    private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private User createdBy;
+}
+
+
+I have User createdBy, how will it be stored in DB and how will i return project will it contain a user or only user id?
+
+
+
+
+Your Entity
+@ManyToOne
+@JoinColumn(name = "created_by")
+private User createdBy;
+
+This means:
+	Each Project is created by one User.
+	The database table for projects will have a foreign key column named created_by.
+
+	That column will store the User’s primary key (id).
+
+In the Database
+	Let’s assume you have:
+
+	users table
+	id	name	email
+	1	Abdul	abdul@gmail.com
+	2	Riya	riya@gmail.com
+
+	projects table
+	id	name		description	created_at	created_by
+	10	Task Manager	Backend system	2025-10-30	1
+
+	The column created_by = 1 refers to user with id = 1.
+	That’s the foreign key relationship JPA created for you.
+
+In the Java object
+	When you load a project:
+		Project project = projectRepository.findById(10L).get();
+		The createdBy field will be a User object, not just an ID.
+
+	Example:
+		project.getCreatedBy().getName(); // "Abdul"
+
+	Internally, JPA fetched the User entity and linked it.
+
+In the REST API Response
+	If you return the entity directly like this:
+	@GetMapping("/projects/{id}")
+	public Project getProject(@PathVariable Long id) {
+	    return projectRepository.findById(id).get();
+	}
+
+	Then Jackson (the JSON serializer) will serialize everything it can —
+	so you might get something like:
+	{
+	  "id": 10,
+	  "name": "Task Manager",
+	  "description": "Backend system",
+	  "createdAt": "2025-10-30T12:00:00",
+	  "createdBy": {
+	    "id": 1,
+	    "name": "Abdul",
+	    "email": "abdul@gmail.com"
+	  }
+	}
+
+It contains the full User object (since createdBy is a User).
+
+⚠️ But Be Careful:
+	If your User entity also has a reference back to Project (like a List<Project> projects;),
+	you’ll get infinite recursion when serializing to JSON.
+
+	To fix that, use:
+		@JsonIgnore on the User’s projects field, or
+		@JsonManagedReference / @JsonBackReference pair.
+
+	Example:
+		// In User
+		@OneToMany(mappedBy = "createdBy")
+		@JsonIgnore
+		private List<Project> projects;
+
+	If You Want Only the userId in Response
+	You can create a DTO (Data Transfer Object) to control what you return:
+		public class ProjectResponse {
+		    private long id;
+		    private String name;
+		    private String description;
+		    private LocalDateTime createdAt;
+		    private Long createdBy; // only user id
+		}
+
+	And then map it manually or using ModelMapper:
+
+	Project project = projectRepository.findById(id).get();
+	ProjectResponse dto = new ProjectResponse();
+	dto.setId(project.getId());
+	dto.setName(project.getName());
+	dto.setDescription(project.getDescription());
+	dto.setCreatedAt(project.getCreatedAt());
+	dto.setCreatedBy(project.getCreatedBy().getId());
+	return dto;
+
+	Response:
+	{
+	  "id": 10,
+	  "name": "Task Manager",
+	  "description": "Backend system",
+	  "createdAt": "2025-10-30T12:00:00",
+	  "createdBy": 1
+	}
+
+✅ Summary
+	Layer			What’s stored / returned
+	Database		Only the foreign key (created_by = user.id)
+	Java entity		A full User object reference
+	API JSON (default)	Whole User object inside Project
+	API JSON (DTO)		Only userId if you design it that way

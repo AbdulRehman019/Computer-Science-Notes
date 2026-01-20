@@ -63,5 +63,8 @@ Problems Solved:
 
 	But then i realized there is no need to storing both.
 	If it is positive store +seats which means you have to include these seats.
-	If it is negative store -seates which means you have to exclude these seats.
+	If it is negative store -seates which means you have to exclude these seats. 
+
+3. My Calendar 1 
+	
 	

@@ -1,5 +1,6 @@
 Sliding Window Subarray
 
+You need to count number of subarrays following certain condition, you can think of f(k) - f(k - 1). 
 Pattern: f(k) - f(k - 1)
 
 1. In order to calculate subarray, we cannot say we have found this subarray hence add right - left + 1 because that for calculating the size or we cannot say
@@ -78,6 +79,7 @@ Problems solved:
 
 5. Fruit Into Baskets 
 	Similar to "Subarrays with K Different Integers". Here, we have to find maxLen with two different integers. 
+	Edge case: What if there is only one type of fruit. No need to check after while loop if map.size() == 2, if it is one also then you can update the maxLen. 
 
 6. Sliding Window Maximum 
 	Used a TreeMap to store the maximum in that window. 
@@ -88,4 +90,17 @@ Problems solved:
 	We also add nums[right] frequency to the TreeMap. 
 	And everytime store the highest number in that window to list. 
 
+	Solution 2: 
+		We could have used Priority Queue to get the maximum number. Time Complexity would be n * log(n). 
+		We used a Deque to maintain the maximum number in the front. 
+
+7. Minimum Window Substring
+	We used two maps to store the frequency of characters. 
+	map2 contains the freq of characters in string t. 
+	map1 contains the freq of the current window. 
+	We traverse on string s. 
+	Everytime we check if map1 contains all the characters in map2. If present we updated the minLen and leftIdx. 
+
+
+	// We can use count instead of checking everytime. 
 

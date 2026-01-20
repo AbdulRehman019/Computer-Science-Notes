@@ -1,0 +1,167 @@
+1. Activity / Interval Scheduling Basics
+🧩 Activity Selection Problem
+	Goal: Select max non-overlapping intervals.
+	Intuition:
+	→ Always pick the activity that ends earliest, leaving room for others.
+	→ Sort by end time, pick first, then pick next whose start ≥ last end.
+	💡 “Finish fast to allow more.”
+
+🧩 Non-overlapping Intervals (LeetCode 435)
+	Goal: Remove minimum intervals to make remaining non-overlapping.
+	Intuition:
+	→ Same as activity selection but instead of picking, count overlaps.
+	→ Sort by end time; whenever overlap occurs, remove the one that ends later.
+	💡 “Keep shorter intervals (earlier end) to avoid blocking space.”
+
+🧩 Meeting Rooms (LeetCode 252)
+	Goal: Check if one person can attend all meetings.
+	Intuition:
+	→ Sort by start time; if any start < previous end → overlap → return false.
+	💡 “No overlap means all meetings are attendable.”
+
+
+
+2. Interval & Sweep Line Problems
+🧩 Merge Intervals (LeetCode 56)
+	Goal: Merge overlapping intervals into one.
+	Intuition:
+	→ Sort by start; if current.start ≤ prev.end → merge (update end = max).
+	→ Else, push new interval.
+	💡 “Sort → merge if touching.”
+
+🧩 Meeting Rooms II (LeetCode 253)
+	Goal: Minimum meeting rooms required.
+	Intuition:
+	→ Each meeting = +1 room at start, -1 at end → count overlaps.
+	→ Sort starts and ends separately, or use a min-heap to track earliest end.
+	💡 “More simultaneous meetings → more rooms.”
+
+🧩 Minimum Number of Arrows to Burst Balloons (LeetCode 452)
+	Goal: Minimum arrows to burst all balloons (intervals).
+	Intuition:
+	→ Same as non-overlapping intervals.
+	→ Sort by end coordinate; shoot arrow at end of current interval → covers all overlapping balloons.
+	💡 “Shoot at end of overlap zone.”
+
+🧩 Car Pooling (LeetCode 1094)
+	Goal: Check if car can handle all trips.
+	Intuition:
+	→ Line sweep on passenger count: +p at start, -p at end.
+	→ Track running sum; if exceeds capacity → false.
+	💡 “Track passenger flow over timeline.”
+
+🧩 My Calendar I (LeetCode 729)
+	Goal: Add new booking if no overlap with existing.
+	Intuition:
+	→ Keep sorted intervals; new booking valid if start ≥ prev.end or end ≤ next.start.
+	→ Insert where it fits (no overlap).
+	💡 “Maintain sorted, non-overlapping bookings.”
+
+
+
+🟠 3. Greedy Sorting / Choice
+🧩 Largest Number (LeetCode 179)
+	Goal: Arrange numbers to form largest concatenated number.
+	Intuition:
+	→ Custom compare: “a before b” if ab > ba.
+	→ Sort by this rule (string-based).
+	💡 “Decide order by concatenation value, not numerical.”
+
+🟢 Minimum Absolute Difference in Array (LeetCode 1200)
+	Intuition:
+	→ The minimum absolute difference will always appear between adjacent elements when the array is sorted.
+	→ Why? Sorting places close-valued numbers next to each other, eliminating the need to compare distant pairs.
+	→ So:
+		Sort
+		Scan linearly and track smallest diff
+		Collect pairs that match that diff
+
+	💡 “Sorting clusters closest numbers side by side — check neighbors only.”
+
+🟢 Boats to Save People (LeetCode 881)
+	Intuition:
+	→ We want to use as few boats as possible, each holding at most 2 people and with a weight limit.
+	→ Best greedy:
+		Pair the heaviest person with the lightest person whenever possible.
+
+	If they can’t fit together, the heaviest goes alone.
+	→ Because the heaviest person can't pair with anyone heavier → try pairing with the minimum possible.
+
+	→ Two pointers after sorting:
+		i = lightest, j = heaviest
+		If people[i] + people[j] <= limit → pair → i++ and j--
+		Else → heavy goes alone → j--
+
+		Count boats
+
+	💡 “Always try to pair heaviest with lightest. If they don’t fit, no one fits with the heaviest.”
+
+4. Task / Scheduling Greedy
+🧩 Task Scheduler (LeetCode 621) – Count max frequency and calculate idle slots.
+	We will start from character which has maximum frequency. 
+	Why? Take example: "CCABC". If we start from A -> B -> C -> Idle -> C -> Idle -> C then we have three C. Now we will have idle slots. 
+	If we have started from C -> A -> C -> B -> C
+
+	We will take one priority queue which will have frequency of characters and everytime we will have the character with most frequency. 
+	After using one character we will put it in queue with the time at which it will be available again. 
+
+🧩 Reorganize String (LeetCode 767) – Greedy with heap to avoid adjacent duplicates. 
+	Similar concept, we don't need queue here because every character need to be hold once. 
+	Hence, we will use two variables char ch to hold the character and count to hold the count remaining. 
+
+🧩 Rearrange Characters to Form Target String (LeetCode 2287) – Count-based greedy. 
+	Goal: Maximum number of times you can form the target string from s.
+	Intuition:
+	→ Pure counting.
+	→ For each character in target:
+	possibleCount = freq_s[char] // freq_target[char]
+	→ Answer = minimum across all characters.
+
+	💡 "Limit depends on the rarest required character."
+
+✅ Set Intersection Size ≥ 2 (LC 757) — Short Revision Note
+	🎯 Goal
+	Pick the minimum number of integers such that each interval contains at least 2 of those integers.
+
+	🔑 Key Greedy Insight
+	Always select the two largest possible numbers inside each interval.
+
+	Why?
+	→ Larger numbers have a higher chance of lying inside future intervals, reducing how many new numbers you need to add.
+
+	📌 Sorting Strategy
+	Sort intervals by:
+		end ascending
+		If same end → start descending (because tighter intervals come first)
+
+	This ensures we always fill numbers as late as possible.
+
+🧠 Maintain Two Values
+	Keep track of:
+		a = second largest selected number
+		b = largest selected number
+
+	These represent the last two chosen integers.
+
+🚀 Greedy Cases for Each Interval
+	For interval [l, r]:
+		Case 1: Both a and b ≥ l
+		→ Already have 2 numbers inside → do nothing.
+
+		Case 2: Only b ≥ l
+		→ Add 1 number: r
+		→ Update: a = b, b = r
+
+		Case 3: Neither a nor b ≥ l
+		→ Add 2 numbers: r-1, r
+		→ Update: a = r-1, b = r
+
+⭐ Why It Works
+	Choosing the latest numbers inside intervals maximizes overlap with upcoming intervals → minimizing additions.
+	This is a classic choose-latest greedy.
+
+📌 One-Line Memory Trick
+	Sort by end ↑, pick r-1 and r.
+	Keep two largest chosen numbers.
+	Add 0 / 1 / 2 based on how many fall inside the interval.
+	

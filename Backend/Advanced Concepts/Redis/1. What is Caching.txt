@@ -1,0 +1,210 @@
+1. What is Caching?
+Caching is a technique used to store frequently accessed data in a fast-access storage layer (like memory) so that future requests for the same data can be served more quickly. Instead of repeatedly querying the database, the application retrieves the data from the cache, significantly reducing latency and improving performance.
+
+2. Key Benefits of Caching:
+
+Reduced Latency: Data is served from memory, which is much faster than querying a database.
+Lower Database Load: By reducing the number of database queries, caching minimizes the load on the database, improving its efficiency.
+Improved Scalability: Caching allows applications to handle more requests without degrading performance, making it easier to scale.
+Enhanced User Experience: Faster response times lead to a smoother and more responsive user experience.
+
+3. What is Redis?
+Redis (Remote Dictionary Server) is an open-source, in-memory data store that is widely used as a caching layer in modern applications. It is known for its high performance, flexibility, and support for various data structures.
+
+
+4. Key Features of Redis
+In-Memory Storage: Redis stores data in RAM, making it extremely fast for read and write operations.
+Data Structures: Redis supports multiple data structures such as strings, hashes, lists, and sets, making it versatile for various use cases.
+Persistence: While Redis is an in-memory store, it also supports data persistence to disk, ensuring data is not lost in case of a restart.
+Automatic Expiry: Redis allows you to set a Time-To-Live (TTL) for cached data, ensuring that stale data is automatically removed.
+Scalability: Redis can be easily scaled horizontally using clustering to handle large workloads.
+
+5. How Redis Works as a Cache
+In a Spring Boot application, Redis can be integrated as a caching layer to store frequently accessed data.
+
+
+Here’s how it works:
+
+Cache Check: When a request is made for data (e.g., order details), the application first checks if the data is available in the Redis cache.
+Cache Hit: If the data is found in Redis (cache hit), it is returned to the client immediately, bypassing the database.
+Cache Miss: If the data is not found in Redis (cache miss), the application retrieves it from the database, stores it in Redis, and then returns it to the client.
+
+
+
+6. Integrate Redis with Spring Boot
+In this milestone, let us integrate Redis as a caching layer in a Spring Boot application. The goal is to optimize the performance of the /products/{id} endpoint by caching product details, reducing database load, and improving response times.
+
+
+Activity
+Ensure that Redis is running on port 6379 ( localhost:6379)
+Start the server by redis-server
+redis-cli ping should return pong
+
+Add dependencies in the build.gradle file:
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+Configure applications.properties file:
+
+# Spring Data Redis
+spring.data.redis.host=localhost
+spring.data.redis.port=6379
+spring.data.redis.repositories.enabled=false
+
+# TTL in milliseconds (e.g., 1500000ms = 15 minutes)
+spring.cache.redis.time-to-live=1500000
+Redis is only used as a cache in the application. Hence repositories are disabled.
+
+Create a config folder under src/main/java/com/example/buy_buddy_backend
+
+
+7. Create a class RedisConfig.java to configure Redis:
+
+package com.example.buy_buddy_backend.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+
+@Configuration
+public class RedisConfig {
+    
+    @Bean
+    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(new GenericJackson2JsonRedisSerializer()));
+        return RedisCacheManager.builder(connectionFactory)
+                .cacheDefaults(config)
+                .build();
+    }
+}
+By default, Redis does serialize JSON, we have to enable it as seen above.
+This configuration is boilerplate, understanding how it works is sufficient.
+
+
+8. Annotate the main application with @EnableCaching:
+
+package com.example.buy_buddy_backend;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
+
+@SpringBootApplication
+@EnableCaching
+public class BuyBuddyBackendApplication {
+
+        public static void main(String[] args) {
+                SpringApplication.run(BuyBuddyBackendApplication.class, args);
+        }
+
+}
+Be sure to use the correct imports.
+
+9. Annotate the cachable endpoint with @Cachable in the ProductServiceImpl.java class :
+
+@Override
+@Cacheable(value = "products")
+    public Product getProductById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+    }
+The value here represents the value in a key: value datastore; by default, the key will be id.
+You’re all set! Run the application using:
+
+./gradlew bootrun
+Re-run the JMeter test.
+
+
+
+10. Meaning of value in @Cacheable
+	value = "products" represents the cache name
+	In Redis, this becomes something like a namespace or top-level key group
+	Think of it as a folder name.
+
+11. What is the Key?
+	In your method signature:
+		getProductById(Long id)
+
+	The parameter id is automatically used as the cache key.
+	So if you call:
+		getProductById(10);
+
+	Redis stores:
+	KEY:   products::10
+	VALUE: <serialized Product object>
+
+12. What is the Value?
+	The value is the return object from the method — in this case a Product.
+	So Redis stores the entire Product object, usually as JSON or Java serialized bytes, depending on your Redis configuration.
+
+
+13. Cache Invalidation with Redis
+	Cache invalidation ensures that the cache remains consistent with the underlying data source (e.g., database) by removing or updating stale data.
+	@CacheEvict is used to evict or remove the cache, typically used for deletion.
+	@CachePut is used to update the data.
+
+14. Steps to Implement Cache Invalidation
+	Activity
+	 Add Cache Invalidation to the Service - Update the ProductService class to include methods for updating and deleting products, using the @CacheEvict and @CachePut annotation to 	invalidate the cache:
+	
+    @Override
+    @Cacheable(value = "products")
+    public Product getProductById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+    }
+
+    @Override
+    @CachePut(value = "products")
+    public Product updateProduct(Long id, Product productDetails) {
+        Product product = getProductById(id);
+        product.setName(productDetails.getName());
+        product.setPrice(productDetails.getPrice());
+        return productRepository.save(product);
+    }
+
+    @Override
+    @CacheEvict(value = "products")
+    public void deleteProduct(Long id) {
+        Product product = getProductById(id);
+        productRepository.delete(product);
+    }
+}
+
+Create a new Product and perform GET, PUT, and DELETE.
+While sending the GET request for the first time, note down the time it took on Postman to retrieve the data.
+Send a few more GET requests and observe the time taken.
+Additionally, note down your observations by running redis-cli and keys * with other operations.
+
+
+
+
+1. Caching Basics
+	Caching is a technique used to store frequently accessed data in a fast-access storage layer (like memory) to reduce latency and improve performance.
+	Key benefits of caching include reduced database load, improved scalability, and enhanced user experience.
+
+2. Redis Overview
+	Redis is an open-source, in-memory data store widely used as a caching layer.
+	Key features of Redis include high performance, support for multiple data structures, persistence, and automatic expiry (TTL).
+
+3. Integrating Redis with Spring Boot
+	Redis can be integrated with Spring Boot using the spring-boot-starter-data-redis and spring-boot-starter-cache dependencies.
+	The @Cacheable annotation is used to cache the results of a method, while @CachePut and @CacheEvict are used to update and invalidate the cache, respectively.
+
+4. Cache Invalidation
+	Cache invalidation ensures that the cache remains consistent with the underlying data source.
+	Use @CacheEvict to remove stale data from the cache and @CachePut to update the cache with the latest data.
+
+5. Time-To-Live (TTL)
+	TTL ensures that cached data does not become stale by automatically expiring after a specified duration.
+	TTL can be configured globally in application.properties or customized for specific caches using a RedisCacheManager bean.
+
+6. Performance Improvements
+	By implementing caching, you can significantly reduce response times and database load, especially under high traffic.
+	In the BuyBuddy application, caching reduced the response time for fetching product details by ~85%.

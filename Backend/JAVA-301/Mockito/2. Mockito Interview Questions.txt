@@ -1,0 +1,171 @@
+Mockito Interview Questions: 
+Mockito Interview Questions (Comprehensive List)
+1. Basics of Mockito
+	What is Mockito, and why is it used in testing?
+	What is a mock object?
+	What is the difference between a mock object and a real object?
+	Why do we use mocking in unit tests?
+	How does Mockito help achieve isolation in unit testing?
+	What are the advantages of using Mockito over manually creating dummy objects?
+
+2. Mockito Annotations
+	What does the @Mock annotation do?
+	What is the purpose of @InjectMocks?
+	What is the difference between @Mock and @Spy?
+	Can we use @Mock and @Spy together in a single test?
+	Does @InjectMocks inject all mocks automatically?
+	How does Mockito decide which mocks to inject into a class annotated with @InjectMocks?
+	What happens if there are multiple mocks of the same type?
+	How do you handle multiple mocks of the same type being injected?
+	Can you inject mocks manually instead of using @InjectMocks?
+
+3. Stubbing Behavior
+	How do you make a mock return a specific value?
+	How do you make a mock throw an exception?
+	What is the difference between when(...).thenReturn(...) and doReturn(...).when(...)?
+	When should you use doReturn().when() instead of when().thenReturn()?
+	How do you mock methods that return void?
+	How do you mock dynamic behavior depending on arguments?
+	What is doAnswer() used for?
+	Can you stub multiple returns for consecutive method calls? (e.g., first return A, then B)
+
+4. Verifying Interactions
+	How do you verify that a mock method was called?
+
+	How do you verify that a method was called a certain number of times?
+
+	How do you check that a method was never called?
+
+	What does verifyNoMoreInteractions() do?
+
+	What happens if you verify a method that wasn’t called?
+
+	Can you verify the order of method calls in Mockito?
+
+	What is InOrder in Mockito and how is it used?
+
+5. Argument Matchers
+
+	What are argument matchers in Mockito?
+
+	What is the difference between any() and eq()?
+
+	Why can’t we mix raw values and matchers in the same method call?
+
+	What are some commonly used argument matchers?
+
+	How do you capture the actual arguments passed to a mock method?
+
+	What is ArgumentCaptor used for?
+
+	How do you verify that a specific argument value was passed to a mock?
+
+6. Using Mockito with JUnit
+
+	How do you use Mockito with JUnit 5?
+
+	What annotation initializes mocks automatically?
+
+	What does @ExtendWith(MockitoExtension.class) do?
+
+	How can you initialize mocks without using annotations?
+
+	What happens if you forget to initialize your mocks?
+
+	What’s the difference between MockitoAnnotations.openMocks(this) and MockitoJUnitRunner?
+
+7. Testing Scenarios
+
+	How would you test a service method that calls an external API using RestTemplate?
+
+	How would you test a repository method that interacts with a database?
+
+	How would you test a method that internally calls another private method?
+
+	How would you handle mocking static methods (if you’ve used mockito-inline)?
+
+	How would you test if your method throws an exception when a dependency fails?
+
+	How do you test code that has both real and mocked dependencies?
+
+	How do you decide whether to use @Mock or @Spy in a given scenario?
+
+8. Common Mistakes / Edge Cases
+
+	What happens if you forget to annotate your test class with @ExtendWith(MockitoExtension.class)?
+
+	What happens if you mix matchers (any()) with actual values in a single method call?
+
+	Why does when() fail with spies in some cases?
+
+	What’s the difference between a stub and a mock?
+
+	What’s the difference between mock() and spy() methods in Mockito?
+
+	Can Mockito mock final classes or static methods by default?
+
+	What happens if a mocked method returns null but you expected a real value?
+
+	What are some limitations of Mockito?
+
+9. Advanced / Scenario-Based Questions
+
+	How would you mock a chain of calls (e.g., userService.getUser().getAddress().getCity())?
+
+	How would you mock a method that returns a list or a stream?
+
+	How can you use ArgumentCaptor to verify values inside a complex object?
+
+	How would you mock different responses for different inputs?
+
+	How would you verify that no unexpected interactions happened with your mock?
+
+	How do you reset mocks between tests, and when is it necessary?
+
+	What’s the difference between mock() and @Mock annotation?
+
+	How does Mockito inject mocks — by type, by name, or by constructor?
+
+	How do you handle dependency injection in Mockito for constructors or setters?
+
+	How does Mockito handle generic types (like List<User>)?
+
+	How can you mock a dependency that’s created internally inside the method under test (new object creation)?
+
+10. Conceptual / Comparison Questions
+
+	What’s the difference between unit testing with Mockito and integration testing with @SpringBootTest?
+
+	When should you use Mockito vs. PowerMock?
+
+	Can Mockito mock private methods?
+
+	How do mocks differ from stubs and fakes?
+
+	What are test doubles?
+
+	What’s the main advantage of Mockito compared to other mocking frameworks?
+
+11. Practical / Hands-on Questions
+
+	Write a simple test using @Mock, @InjectMocks, and when() to test a service method.
+
+	Write a Mockito test that verifies a repository’s save() method is called.
+
+	Write a test that mocks a RestTemplate GET request and verifies the response.
+
+	Write a test that simulates an exception from a mock.
+
+	Write a test that uses ArgumentCaptor to verify an object’s property.
+
+12. Behavioral Questions (Advanced for 15 LPA-level)
+
+	Explain a scenario in your project where Mockito helped isolate a bug or logic issue.
+
+	How do you ensure your unit tests don’t depend on real API or DB calls?
+
+	How do you decide what to mock and what to keep real in a test?
+
+	How do you mock time-dependent behavior or random behavior in tests?
+
+	What are the common Mockito pitfalls you’ve encountered in your experience?

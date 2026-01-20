@@ -1,0 +1,204 @@
+What is ModelMapper?
+	ModelMapper is a Java library used to automatically map objects of one type to another — typically:
+	From Entity → DTO (for API responses)
+	From DTO → Entity (for saving to DB)
+
+	It saves you from writing repetitive, manual code like:
+		dto.setName(entity.getName());
+		dto.setEmail(entity.getEmail());
+
+Why Use ModelMapper?
+	✅ Reduces boilerplate mapping code
+	✅ Makes the code cleaner and more maintainable
+	✅ Supports nested and complex object mappings
+	✅ Allows custom mapping when field names differ
+	✅ Integrates easily with Spring Boot
+
+Basic Setup
+	➤ Add Dependency
+	Maven
+	<dependency>
+	    <groupId>org.modelmapper</groupId>
+	    <artifactId>modelmapper</artifactId>
+	    <version>3.2.0</version>
+	</dependency>
+
+	Gradle
+	implementation 'org.modelmapper:modelmapper:3.2.0'
+	
+Spring Boot Configuration
+	Create a configuration class:
+		com.abd.TaskManagerApp.config.ModelMapperConfig.java
+
+		package com.abd.TaskManagerApp.config;
+		import org.modelmapper.ModelMapper;
+		import org.springframework.context.annotation.Bean;
+		import org.springframework.context.annotation.Configuration;
+		
+		@Configuration
+		public class ModelMapperConfig {
+		
+		    @Bean
+		    public ModelMapper modelMapper() {
+		        return new ModelMapper();
+		    }
+		}
+
+	✅ This registers a singleton ModelMapper bean in the Spring context.
+	✅ You can now use it anywhere via dependency injection.
+
+Usage Example
+	Example Classes
+	public class User {
+	    private String name;
+	    private String email;
+	}
+
+	public class UserDTO {
+	    private String name;
+	    private String email;
+	}
+
+Example Mapping
+	@Autowired
+	private ModelMapper modelMapper;
+	
+	public UserDTO convertToDto(User user) {
+	    return modelMapper.map(user, UserDTO.class);
+	}
+
+	public User convertToEntity(UserDTO userDTO) {
+	    return modelMapper.map(userDTO, User.class);
+	}
+
+	If field names are same, mapping works automatically ✅
+
+Custom Mapping (Different Field Names)
+	When field names differ, define a PropertyMap:
+		modelMapper.addMappings(new PropertyMap<Order, OrderDTO>() {
+		    @Override
+		    protected void configure() {
+		        map().setCustomerName(source.getCustomerNumber() + "");
+		        map().setShippingStreetAddress(source.getShippingAddress());
+		        map().setBillingStreetAddress(source.getBillingAddress());
+		    }
+		});
+
+	If you also need reverse mapping (OrderDTO → Order), define another PropertyMap:
+		modelMapper.addMappings(new PropertyMap<OrderDTO, Order>() {
+		    @Override
+		    protected void configure() {
+		        map().setCustomerNumber(Integer.parseInt(source.getCustomerName()));
+		        map().setShippingAddress(source.getShippingStreetAddress());
+		        map().setBillingAddress(source.getBillingStreetAddress());
+		    }
+		});
+
+Advanced Features
+	Converters
+		You can write logic for complex transformations:
+		modelMapper.addConverter(ctx -> {
+		    Order order = ctx.getSource();
+		    OrderDTO dto = new OrderDTO();
+		    dto.setCustomerName(String.valueOf(order.getCustomerNumber()));
+		    return dto;
+		}, Order.class, OrderDTO.class);
+		
+Skipping Fields
+	Skip mapping certain fields:
+	modelMapper.typeMap(User.class, UserDTO.class)
+	           .addMappings(mapper -> mapper.skip(UserDTO::setPassword));
+
+Strict Matching
+	To ensure only exact field matches are mapped:
+		modelMapper.getConfiguration()
+		           .setMatchingStrategy(MatchingStrategies.STRICT);
+
+Common Use Cases
+	Scenario			Example
+	Entity → DTO			Send clean API response
+	DTO → Entity			Save request data to DB
+	Nested mapping			Map inside objects easily
+	Custom conversions		Format dates, enums, etc.
+
+Best Practices
+	✅ Define a single ModelMapper bean in config package
+	✅ Use DTOs for API layers — never expose entities directly
+	✅ Add custom mappings only when field names differ
+	✅ Keep mapping logic out of controllers (put it in services or mappers)
+	✅ Reuse the same mapper instance (avoid creating new ModelMapper() repeatedly)
+
+🚀 Summary
+	Feature			Description
+	Library			ModelMapper
+	Purpose			Object-to-object mapping
+	Automatic mapping	When field names match
+	Manual mapping		Use PropertyMap or Converter
+	Spring integration	Define as a @Bean in config package
+	Typical usage		Convert Entity ↔ DTO
+
+
+
+
+
+
+Solution 1: Configure a custom mapping
+	You can define a mapping rule once in your ModelMapperConfig:
+
+	package com.abd.OrderManagement.config;
+	
+	import com.abd.OrderManagement.dto.CustomerRequest;
+	import com.abd.OrderManagement.entity.Customer;
+	import org.modelmapper.ModelMapper;
+	import org.modelmapper.PropertyMap;
+	import org.springframework.context.annotation.Bean;
+	import org.springframework.context.annotation.Configuration;
+	
+	@Configuration
+	public class ModelMapperConfig {
+	    @Bean
+	    public ModelMapper modelMapper() {
+	        ModelMapper modelMapper = new ModelMapper();
+	
+	        // Custom mapping for differing field names
+	        modelMapper.addMappings(new PropertyMap<CustomerRequest, Customer>() {
+        	    @Override
+	            protected void configure() {
+	                map().setName(source.getCustomerName());
+	            }
+	        });
+	
+	        return modelMapper;
+	    }
+	}
+
+	Now this mapping rule will automatically be applied every time you call:
+
+	Customer customer = modelMapper.map(customerRequest, Customer.class);
+
+✅ Output:
+	customer.name = customerRequest.customerName
+
+	All other matching fields (email, address, phoneNo) will still be mapped automatically.
+
+
+
+✅ Solution 2: Map programmatically (on-the-fly)
+	If you only want this special mapping in one place (not globally configured), you can do it inline:
+
+	ModelMapper modelMapper = new ModelMapper();
+	modelMapper.typeMap(CustomerRequest.class, Customer.class)
+	    .addMapping(CustomerRequest::getCustomerName, Customer::setName);
+
+	Customer customer = modelMapper.map(customerRequest, Customer.class);
+
+✅ Solution 3: Use @JsonProperty (if mismatch only occurs in JSON)
+	If your JSON has customerName, but your DTO has name,
+	you could instead align them using:
+
+	public class CustomerRequest {
+	    @JsonProperty("customerName")
+	    private String name;   // JSON key: customerName → field: name
+	}
+
+	Then ModelMapper sees both fields as name and maps automatically.

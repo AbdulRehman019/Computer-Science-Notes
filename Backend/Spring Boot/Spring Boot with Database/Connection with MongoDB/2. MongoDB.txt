@@ -1,0 +1,162 @@
+MongoDB --> Data Redundancy but high availabilty
+MySQL --> Data Consistency(Always accurate data)
+
+What is MongoDB?
+	MongoDB is a NoSQL database — meaning it doesn’t store data in traditional rows and columns like relational databases (MySQL, PostgreSQL, etc.).
+	Instead, it stores data in flexible, JSON-like documents.
+
+Think of MongoDB as:
+	A database that stores your data as objects (documents) rather than rigid tables.
+
+Basic Structure of MongoDB
+	MongoDB stores data in a hierarchical format:
+
+	MongoDB Server
+	└── Database (e.g., task_manager)
+	    └── Collection (e.g., users)
+	        └── Document (actual data)
+	
+	1. Database
+		A database is like a container for collections (similar to a schema in SQL).
+
+	2. Collection
+		A collection is a group of documents (like a table in SQL).
+		However, unlike tables, documents inside a collection don’t need to have the same structure.
+
+	3. Document
+		A document is a JSON-like object that holds data in key-value pairs.
+		Internally, MongoDB stores documents in a binary format called BSON (Binary JSON).
+
+		Example of a document:
+		{
+		  "_id": "6743f2a28d1e",
+		  "name": "Abdul",
+		  "age": 25,
+		  "skills": ["Java", "Python", "React"],
+		  "address": {
+		    "city": "Delhi",
+		    "zip": 110001
+		  }
+		}
+
+		Notice that address itself is another embedded document — MongoDB supports nested structures.
+
+Key Features of MongoDB
+	Feature			Description
+	Document-Oriented	Data stored as flexible JSON-like documents
+	Schema-less		You can insert any structure of document; no need to define schema upfront
+	Scalable		Supports horizontal scaling via sharding
+	High Performance	Fast reads and writes using indexes and in-memory processing
+	Replication		Data redundancy using Replica Sets for fault tolerance
+	Rich Query Language	You can filter, sort, and aggregate data efficiently
+	Indexing		Supports single-field, compound, text, and geospatial indexes
+	Aggregation Framework	Powerful pipeline for data transformation and analysis
+
+Core MongoDB Concepts
+1. BSON (Binary JSON)
+	MongoDB uses BSON to store documents — it’s similar to JSON but allows:	
+	Extra data types (e.g., Date, ObjectId, Binary)
+	Faster encoding/decoding
+
+2. ObjectId
+	Each document has a unique _id (like a primary key).
+	If not provided, MongoDB automatically generates one as an ObjectId (a 12-byte unique value).
+
+	Example:
+		ObjectId("64c8f2a34b2f8a4e2f76e4b3")
+
+3. Collections and Embedded Documents
+	Instead of using foreign keys and joins like SQL, MongoDB often uses embedding:
+	{
+	  "name": "Abdul",
+	  "orders": [
+	    { "item": "Laptop", "price": 70000 },
+	    { "item": "Mouse", "price": 1000 }
+	  ]
+	}
+
+	So related data stays together.
+
+4. Referencing
+	If embedding causes large documents, you can also reference:
+	{
+	  "user_id": "123",
+	  "order_ids": ["a1", "b2", "c3"]
+	}
+
+Basic CRUD Operations
+	Let’s see how we perform operations in MongoDB shell or driver (like using Node.js or Python):
+	
+	➕ Insert
+	db.users.insertOne({ name: "Abdul", age: 25 });
+	db.users.insertMany([{ name: "Ali" }, { name: "Sara" }]);
+
+	🔍 Read
+	db.users.find(); // all documents
+	db.users.find({ age: { $gt: 20 } }); // filter
+	
+	✏️ Update
+	db.users.updateOne({ name: "Abdul" }, { $set: { age: 26 } });
+	db.users.updateMany({}, { $inc: { age: 1 } });
+	
+	❌ Delete
+	db.users.deleteOne({ name: "Ali" });
+	db.users.deleteMany({ age: { $lt: 20 } });
+
+Aggregation Framework
+	MongoDB has a powerful aggregation pipeline (like SQL’s GROUP BY + functions).
+	Example:
+		db.orders.aggregate([
+		  { $match: { status: "delivered" } },
+		  { $group: { _id: "$customerId", total: { $sum: "$amount" } } },
+		  { $sort: { total: -1 } }
+		]);
+
+Indexing
+	Indexes make queries faster.
+	db.users.createIndex({ name: 1 }); // ascending index on name
+
+Types of indexes:
+	Single-field
+	Compound
+	Text index
+	Geospatial index
+
+Replication and Sharding
+	Replication
+	A Replica Set has multiple MongoDB servers.
+	One is primary (writes allowed), others are secondaries (read-only replicas).
+	Ensures data redundancy and high availability.
+	Sharding
+	Distributes large data across multiple servers.
+	Each shard holds a portion of the data.
+	Enables horizontal scaling.
+
+MongoDB vs SQL Comparison
+	Feature		MongoDB				SQL (MySQL, PostgreSQL)
+	Data Format	JSON-like (BSON)		Tables (rows & columns)
+	Schema		Dynamic				Fixed
+	Relations	Embedded or referenced		Joins
+	Scalability	Horizontal (sharding)		Vertical (adding CPU/RAM)
+	Transactions	Multi-document (since v4.0)	Supported
+	Query Language	MQL (MongoDB Query Language)	SQL
+
+When to Use MongoDB
+	Use MongoDB when:
+		Your data structure changes frequently
+		You need high write performance
+		You’re dealing with unstructured or semi-structured data
+		You need horizontal scalability
+		You’re building modern apps (IoT, mobile, analytics, etc.)
+
+	Avoid MongoDB when:
+		You need complex transactions across many entities
+		Data has rigid structure and relationships
+		Strict ACID compliance is critical (e.g., banking systems)
+
+MongoDB Ecosystem
+	MongoDB Atlas → Cloud-based fully managed MongoDB service
+	Compass → GUI client to visualize and manage data
+	Mongoose → ODM library for Node.js
+	PyMongo → MongoDB driver for Python
+	Spring Data MongoDB → Integration for Java/Spring Boot apps

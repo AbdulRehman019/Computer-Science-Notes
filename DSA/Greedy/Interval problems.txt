@@ -1,3 +1,80 @@
 Interval problems:
 	1. You can sort by start or end depending on problem.
-	2. Overlap condition: if(end < mini || start > maxi) --> Non-overlap otherwise overlap
+	2. Overlap condition: if(end < mini || start > maxi) --> Non-overlap otherwise overlap 
+
+
+
+THE GOLDEN RULE (Easy to Remember)
+✔️ If you are SELECTING intervals → sort by END time
+✔️ If you are PROCESSING or MERGING intervals → sort by START time
+✔️ If you are PICKING NUMBERS for intervals → sort by END time
+
+
+
+In greedy problems involving 2d array of n*2. Should we sort by start time or end time? 
+
+Case 1: You want to schedule or select maximum non-overlapping intervals
+	(e.g., “Activity Selection Problem”, “Non-overlapping Intervals” – LeetCode 435)
+
+	✅ Sort by end time (interval[1])
+	Because:
+	You want to pick the interval that finishes earliest — leaving room for future intervals.
+
+	After sorting by end time, you greedily pick the next interval whose start ≥ previous end.
+
+	Example:
+	Arrays.sort(intervals, (a, b) -> Integer.compare(a[1], b[1]));
+	
+	Then loop:
+	int count = 0;
+	int lastEnd = Integer.MIN_VALUE;
+	
+	for (int[] interval : intervals) {
+	    if (interval[0] >= lastEnd) {
+	        count++;
+	        lastEnd = interval[1];
+	    }
+	}
+
+
+	Use this when:
+	You are selecting maximum number of intervals, or minimizing overlaps.
+
+Case 2: You need to merge overlapping intervals
+	(e.g., “Merge Intervals” – LeetCode 56)
+
+	✅ Sort by start time (interval[0])
+	Because:
+	You need to merge intervals that start earlier first.
+
+	Sorting by start helps you linearly check for overlaps with the next interval.
+
+	Example:
+	Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));
+
+	Then merge overlapping ones:
+	int[] current = intervals[0];
+	for (int i = 1; i < intervals.length; i++) {
+	    if (intervals[i][0] <= current[1]) { // overlap
+	        current[1] = Math.max(current[1], intervals[i][1]);
+	    } else {
+	        // add current to result and move to next
+	    }
+	}
+
+	Use this when:
+	You are merging, finding overlaps, or processing intervals sequentially.
+
+Case 3: You need to minimize resources (like meeting rooms)
+	(e.g., “Meeting Rooms II” – LeetCode 253)
+
+	Usually:
+	Sort by start time to process meetings in order.
+
+	Use a min-heap of end times to track ongoing meetings.
+
+✅ TL;DR — Quick Rule Table
+	Problem Type					Sort By			Reason
+	Max non-overlapping / Activity selection	End time (a[1])		Choose earliest finishing interval
+	Merging intervals				Start time (a[0])	Process intervals in order of start
+	Meeting rooms / Resource allocation		Start time (a[0])	Process in chronological order

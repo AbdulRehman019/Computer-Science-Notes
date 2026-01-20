@@ -1,0 +1,108 @@
+Learning Navigator Application. 
+
+1. Entity
+	Student: student_id, name, List<Student>, List<Exam>
+	Subject: subject_id, name, List<Student>
+	Exam: exam_id, subject_id, List<Student>
+
+2. Relationship
+	Student : Exam --> M : M
+	Student : Subject --> M : M
+	Subject : Exam --> 1 : M
+
+	Since, here we didn't had extra attributes for M : M relationship we used @ManyToMany. 
+	Otherwise, we make Join Table and its entity and use @OneToMany. 
+	Instead of List<Student> we use Set<Student>. 
+
+2. Owning Side handles the @ManyToMany and other side handles "mappedBy". 
+   Student: 
+	@ManyToMany
+    	@JoinTable(
+            name = "student_subject",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "subject_id")
+    	)
+    	private Set<Subject> subjects = new HashSet<>();
+
+
+
+   Non-owning Side
+   Subject: 
+	@ManyToMany(mappedBy = "subjects")
+    	private Set<Student> students = new HashSet<>();
+
+3. In JPA entities, equals() and hashCode() must be overridden when using Set relationships, 
+   because Hibernate relies on them to manage identity and avoid duplicate association rows. 
+   We base equality on immutable primary keys to maintain consistency.
+
+   @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Student)) return false;
+        Student student = (Student) o;
+        return id != null && id.equals(student.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    Mention this: Interviewer happy!
+
+4. 
+student
+ └── id (PK)
+ └── name
+
+subject
+ └── id (PK)
+ └── name
+
+exam
+ └── id (PK)
+ └── subject_id (FK)
+
+student_subject
+ └── student_id (FK)
+ └── subject_id (FK)
+
+student_exam
+ └── student_id (FK)
+ └── exam_id (FK)
+
+5. Subject Service performs CRUD operations as well as: 
+	public StudentResponse enrollStudentInSubject(Long studentId, Long subjectId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException(studentId));
+
+        Subject subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new SubjectNotFoundException(subjectId));
+
+        if(student.getSubjects().contains(subject)) {
+            throw new StudentAlreadyEnrolledException(studentId, subjectId);
+        }
+
+        student.getSubjects().add(subject);
+        subject.getStudents().add(student);
+
+        Student savedStudent = studentRepository.save(student);
+
+        // studentResponse.getSubjects() is empty because savedStudent and StudentResponse fields do not match.
+        StudentResponse studentResponse = modelMapper.map(savedStudent, StudentResponse.class);
+
+        // Added Set<SubjectResponse> manually
+        // Could have added it automatically using converter in modelmapper. 
+        Set<SubjectResponse> subjectResponses = savedStudent.getSubjects().stream()
+                .map(s -> modelMapper.map(s, SubjectResponse.class))
+                .collect(Collectors.toSet());
+        studentResponse.setSubjects(subjectResponses);
+
+        return studentResponse;
+    }
+
+6. “Bidirectional relationships cause infinite recursion if mapped fully. 
+   To avoid it, either use "summary DTOs" for nested collections, Jackson’s @JsonManagedReference/@JsonBackReference, or manual mapping with limited depth.” 
+
+7. If we have to perform similar type of conversions even if the fields are different we will use modelmapper. 
+   But when we need to convert like Student to Long, we will convert manually. 

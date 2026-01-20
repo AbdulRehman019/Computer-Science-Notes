@@ -1,4 +1,4 @@
-Sliding Window 
+Sliding Window Grind 
 1. Maximum Sum Subarray of Size K (LeetCode 643 – Maximum Average Subarray I)
 	→ Classic fixed-size window, compute sum efficiently.
 
@@ -9,11 +9,212 @@ Sliding Window
 	→ HashSet/Map with sliding window.
 
 4. Binary Subarray With Sum (LeetCode 930)
+	Use HashMap, to check whether (sum - goal) came before or not. 
 	It is difficult to calculate sum with exact goal. 
 	Instead you can calculate: (Sum <= goal) - (Sum <= goal - 1) 
 
-5. Max  Consecutive Ones III
+5. Max Consecutive Ones III
 	At most k zero flips → sliding window with a counter or use k as a counter. 
 
+6. Permutation in a String 
+	Goal:
+		Check if s2 contains any permutation of s1.
+
+	Idea:
+		Use a sliding window of size s1.length() over s2.
+		Compare character frequencies of current window with s1.
+
+	Steps:
+		Count freq of chars in s1.
+		Slide window over s2, update freq dynamically.
+		If window size == s1.length() and freq matches → return true.
+
+	Key Concept:
+		→ Fixed-size window + frequency matching (using arrays of size 26).
+
+	Complexity:
+		Time Complexity: O(26 * n) 
+		Space Complexity: O(1) 
+
+
+	Approach (Sliding Window + Count Concept)
+		freq1 → frequency of each character in s1.
+		freq2 → frequency in current window of s2.
+		size → number of unique characters in s1.
+		count → number of characters whose frequency currently matches.
+
+	Logic
+		Build initial window of size n (same length as s1).
+		If count == size → permutation found.
+
+	Slide window:
+		Remove one char from left, add one from right.
+		Update count only when a char’s frequency equality breaks or restores.
+		Continue until end of string.
+
+	Key Idea
+		Instead of comparing entire frequency arrays,
+		→ use count to track how many characters currently match their required frequency.
+		→ When count == size → window is valid.
+
+	Complexity
+		Time: O(m)
+		Space: O(1) (26 letters fixed)
+
+	Pattern Recognition
+		This count concept is reused in:
+			Minimum Window Substring
+			Find All Anagrams
+			Permutation in a String
+			Any sliding window problem that compares frequency of elements
+	
+
+7. Fruit Into Baskets
+	The problem is find the maxLen in which there are two different integers. 
+	Edge case: What if there is only one type of fruit. No need to check after while loop if map.size() == 2, if it is one also then you can update the maxLen. 
+
+8. Sliding Window Maximum 
+	Solution 1: Maintain a window of k size. Put elements in Priority Queue and get the maximum in window. 
+
+	Solution 2: Use Deque to maintain the descending order of the window. 
+		Approach – Monotonic Deque (O(n))
+			Use a Deque to store indices, not values.
+			Maintain elements in decreasing order of values (front = largest).
+			Each element is added and removed at most once → O(n).
+
+		Steps
+			Remove smaller elements from the back → they’ll never be max.
+			Add current index to the back.
+			Remove indices from the front if they’re out of the window (i - k).
+
+			Once the first window forms (i >= k-1),
+			→ Front of deque = index of max element, add it to result.
+
+		Complexity
+			Time: O(n)
+			Space: O(k)
+
+		Key Points
+			Deque is maintained in descending order (values).
+			Always store indices, not numbers.
+			peekFirst() → gives index of current window’s maximum.
+			Works efficiently because each element is processed once. 
+
+9. Minimum Window Substring 
+	Solution 1: We use two maps. map1 for string s and map2 for string t. 
+		    We traverse on t and put all characters in map2. 
+		    We started traversing on map1 and everytime followed these steps: 
+			1. Put the character at ith index in map1. 
+			2. Check if map1 contains all the characters in map2 with greater or same frequency. 
+				It is a while loop moving until the above condition is true and everytime we are removing a character from left. 
+				**** This condition is a overhead. Everytime we need to check if all the characters in map2 is in map1 with same frequency. **** 
+			3. If it does, update leftIdx and minLen. 
+
+	Solution 2: 
+		Minimum Window Substring — Notes
+
+		Problem:
+			Find the smallest substring of s that contains all characters of t (including duplicates).
+
+		Approach: 
+			Sliding Window + HashMaps
+			Store frequency of all chars in t → map2.
+			Use another map (map1) to track current window frequencies.
+			Expand window by moving right pointer and update map1.
+			When all required chars are matched → try shrinking from left to minimize window.
+			Keep track of smallest valid window.
+
+		Code Concept:
+			if(map2.containsKey(ch) && map1.get(ch).intValue() == map2.get(ch).intValue()) 
+			    count++;
+
+			while(count == map2.size()) {
+			    // valid window → update min length
+			    // shrink from left
+			}
+
+		🔹 Count Concept (Key Idea)			
+			count = number of characters whose frequency in current window matches the required frequency in t.
+			When count == map2.size(),
+			→ All required characters are satisfied → current window is valid.
+
+			This avoids comparing whole maps repeatedly.
+
+		Used in many problems like:
+			Permutation in String
+			Find All Anagrams
+			Smallest Window Substring
+
+		Time Complexity:
+			O(n + m) — each character visited at most twice (by left and right).
+
+		Space Complexity:
+			O(1) or O(256) (since fixed character set).
+
+
+
+
+
+
+
+Pattern Recognition
+	This count concept is reused in:
+		Minimum Window Substring
+		Find All Anagrams
+		Permutation in a String
+		Any sliding window problem that compares frequency of elements 
+
+10. Shortest Subarray with Sum at Least K 
+	We iterate through the array while maintaining prefix sums in increasing order.
+	If the new prefix sum is smaller than some of the previous ones → remove those (they’ll never be useful again).
+	If the difference between current prefix and the front of deque ≥ K → we’ve found a valid (and possibly shortest) subarray, so remove the front (it’s now outdated).
+	Keep doing this as we go, ensuring we always have the best candidates to get sum ≥ K with minimal length.
+
+	I am iterating and adding the num. When the cumulative sum drops, we remove all the previous greater sums, because in future when i found cumulative sum > k, then i would want to 	remove the number which is the smallest and came later in nums. In this way it is more likely that we will still be greater than k and the length will be smallest. 
+
+11. Substring with Concatenation of All Words 
+	Sliding Window + HashMaps 
+
+	1. Build Frequency Map for Target Words 
+	2. Why We Use Multiple Offsets
+		Each word has the same fixed length (wordLength).
+		This means valid windows can start at:
+			Offset 0
+			Offset 1
+
+			… up to (wordLength - 1)
+
+		Example:
+		s = "barfoo...", wordLength = 3
+		→ valid windows start at 0, 1, or 2.
+		
+		So, we run the sliding window from each offset separately. 
+
+		We start from 0 to wordLength because if we do so every possible substring will be covered. 
+
+	3. Sliding Window Logic
+		We use:
+			left → start index of window
+			j → moving end index (right pointer)
+			map1 → frequency map of current window words
+			wordMap → target frequency map
+			When a word count exceeds, we shrink the window from left. 
+
+	4. Step-by-Step Logic
+		For each offset i:
+			Initialize map1 = {}, left = i
+			Move j from i to n, stepping by wordLength
+			Extract curr = s.substring(j, j + wordLength)
+			If curr not in wordMap →
+				reset map1 and move left to j + wordLength (new window start)
+			Else:
+				Add curr to map1
+
+			If count of curr > allowed →
+			shrink window from left until valid
+
+			If window size matches total words →
+			✅ Add left index to answer list
+			Then, slide by one word to continue.
 
 		

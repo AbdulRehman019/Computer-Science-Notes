@@ -1,0 +1,119 @@
+Spring Security Flow: 
+
+Step-by-Step Flow
+1️⃣ Request Enters Spring Security Filter Chain
+	Every incoming request first goes through a series of security filters created by Spring Security.
+	These filters are managed by:
+		SecurityFilterChain
+
+	configured in your SecurityConfig class.
+
+	That chain includes filters like:
+		UsernamePasswordAuthenticationFilter
+		BasicAuthenticationFilter
+		ExceptionTranslationFilter
+		FilterSecurityInterceptor
+		Since you enabled:
+			http.httpBasic(Customizer.withDefaults());
+
+			→ the BasicAuthenticationFilter gets added automatically.
+
+2️⃣ BasicAuthenticationFilter intercepts the request
+	This filter checks the HTTP header:
+		Authorization: Basic base64(email:password)
+
+	If it finds it:
+		It decodes the credentials → gets email and password
+		Then creates a UsernamePasswordAuthenticationToken (unauthenticated)
+		new UsernamePasswordAuthenticationToken(email, password)
+
+	Then it delegates to the AuthenticationManager for verification.
+
+3️⃣ AuthenticationManager calls your UserDetailsService
+	The AuthenticationManager doesn’t authenticate directly — it uses your custom service:
+		CustomerDetailsService implements UserDetailsService
+
+	So it calls:
+		loadUserByUsername(email)
+
+	👉 Inside that method:
+		You query the database for a user by email.
+		If found, you return a CustomerDetails object (your UserDetails implementation).
+
+4️⃣ Password Verification Happens
+	Now Spring has:
+		Raw password (from request)
+		Encoded password (from DB via CustomerDetails.getPassword())
+		It uses your configured PasswordEncoder (e.g. BCryptPasswordEncoder) to check:
+		passwordEncoder.matches(rawPassword, encodedPassword)
+
+	✅ If it matches → authentication successful
+	❌ If not → BadCredentialsException
+
+5️⃣ SecurityContext is Updated
+	If authentication succeeds:
+		Spring Security creates a fully authenticated Authentication object.
+		It stores it inside the SecurityContextHolder (thread-local storage).
+
+		This means anywhere in your code, you can get the current user:
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+6️⃣ Authorization (Access Control)
+	Now that the user is authenticated, Spring Security checks their authorities (roles).
+		
+	It reads them from your CustomerDetails.getAuthorities():
+		return List.of(new SimpleGrantedAuthority("ROLE_" + customer.getRole()));
+
+	Then it checks:
+		For @PreAuthorize annotations(In controller), or
+		For path-based rules defined in SecurityConfig:
+
+	Example:
+		.requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+	If user’s authorities match → ✅ access granted
+	Else → ❌ 403 Forbidden
+
+7️⃣ Controller is Reached
+	If the user passes both:
+		Authentication ✅
+		Authorization ✅
+
+	Then Spring Security lets the request proceed to your controller, e.g.:
+		@GetMapping("/api/orders")
+		public List<Order> getOrders() { ... }
+
+		Now your business logic executes normally.
+
+8️⃣ Response Returned
+	If all is well, your controller returns the response.
+	Otherwise:
+		If auth fails → Spring sends 401 Unauthorized
+		If access denied → Spring sends 403 Forbidden
+
+🧭 Flow Summary (Visual Map)
+Client → DispatcherServlet → SecurityFilterChain
+      → BasicAuthenticationFilter
+            ↓
+        AuthenticationManager
+            ↓
+        UserDetailsService (load user)
+            ↓
+        PasswordEncoder (verify password)
+            ↓
+        SecurityContext (store user)
+            ↓
+        AccessDecisionManager (check roles)
+            ↓
+        Controller (execute API)
+
+🧠 TL;DR — Responsibilities
+Component			Responsibility
+SecurityFilterChain		Defines what filters to apply and what routes need auth
+BasicAuthenticationFilter		Extracts and processes Basic Auth header
+AuthenticationManager		Coordinates authentication
+UserDetailsService		Loads user details from DB
+UserDetails (CustomerDetails)	Represents user for Spring Security
+PasswordEncoder			Compares raw vs encoded password
+SecurityContext			Holds authenticated user info for current request
+AccessDecisionManager		Decides if user can access the resource

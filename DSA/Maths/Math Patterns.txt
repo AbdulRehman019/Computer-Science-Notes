@@ -1,0 +1,144 @@
+Math Patterns 
+
+1. Why N = N*10 + d and rem = (rem*10 + d) % k Represent the Same Thing
+	1. A number and its remainder behave the same under modulo
+		If two numbers give the same remainder when divided by k, they are equivalent modulo k:
+		𝑁 ≡ 𝑟𝑒𝑚(mod 𝑘)
+
+		This means:
+		Wherever you use 𝑁,
+		You can replace it with rem,
+		If the final result is taken modulo 𝑘
+
+	2. Appending a digit to N
+		Appending digit d:
+			newNumber=N×10+d
+	
+		When checking divisibility,
+		we only care about:
+			newNumbermodk
+	
+	3. Replace N with its remainder
+		Since N≡rem(modk):
+			N×10+d≡rem×10+d(modk)
+	
+		This means:
+			The full number N and its remainder rem produce the exact same effect
+			when you append a digit and take modulo 𝑘
+	
+		So whether you compute:
+			fullNumber = fullNumber * 10 + d
+			or:
+			remainder = (remainder * 10 + d) % k
+	
+		both are modeling the same number, just one in full form, one reduced modulo k.
+	
+	4. Key intuition
+		You can think of remainder as a compressed version of the number.
+		When you append a digit to the number → you multiply by 10 and add digit.
+		When you append a digit to the compressed version → same operation, but reduced modulo k.
+	
+		They evolve the same way, just at different scales:
+		Full Value			Reduced Value
+		Huge number like 1111111111	Only stores the remainder
+		Everything mod k		Equivalent to tracking the full number mod k
+	
+	✔ Final Statement
+		(rem * 10 + d) % k is the modulo-k “shadow” of (N * 10 + d)
+		Both describe the same number — one explicitly, the other in remainder form. 
+
+1. What is a digital root?
+	You repeatedly sum the digits:
+	Example:
+		987 → 9+8+7=24 → 2+4=6
+		So digital root of 987 is 6.
+
+	2. Hidden mathematical fact
+		When you sum digits, the total behaves exactly like the number modulo 9.
+
+		Example:
+		987 % 9 = 6
+		Digit root = 6
+
+		Another:
+		12345 % 9 = 6
+		1+2+3+4+5 = 15 → 1+5 = 6
+
+		Another:
+		999 % 9 = 0
+		Digit root = 9 (special case)
+	
+		Why?
+		Because every power of 10 is 1 mod 9:
+		10 % 9 = 1		
+		100 % 9 = 1
+		1000 % 9 = 1
+
+		987mod9=(9⋅1+8⋅1+7⋅1)mod9=(9+8+7)mod9
+		This is exactly the digit sum!
+
+		So summing digits until one digit remains is the same as applying modulo 9 repeatedly. 
+
+	3. Problem: Modulo 9 gives 0, but digital root gives 9
+		Example:
+		num = 18
+		18 % 9 = 0
+		digital root = 9
+
+		To fix that, we adjust the formula.
+
+	4. Final formula (working for all positive numbers)
+	digitalRoot(𝑛)={0,		𝑛=0
+			1+(𝑛−1) mod 9,	𝑛>0 
+
+3. Strategy to detect hidden patterns in recursive binary problems
+	(1) Check if the structure is self-similar
+		Ask:
+		“Does the next version look like the previous version or its complement?”
+	
+		If yes → a flip-based pattern exists → this is a hint.
+		
+		LC 779 → yes
+		Gray Code → yes
+		Count bits → yes
+		Thue-Morse → yes
+	
+		This should immediately trigger:
+		➡️ “Something to do with number of flips”
+		➡️ “Flips often map to number of 1 bits”
+
+	(2) Check whether the size doubles
+		When size doubles (2^n), positions usually map to bits of an index.
+
+		Example:
+		Row length = 2^(N−1)
+		So K falls into binary boundaries.
+
+		Whenever you see powers of 2 → bits are hiding inside the problem.
+		
+	(3) Track transitions instead of values
+		Instead of trying to compute the value directly:
+
+		Look at how the value changes:
+		First half → no change
+		Second half → flip
+
+		This is exactly what bits do:
+		A binary 1 indicates you crossed a boundary.
+		Which in this problem → indicates a flip.
+
+	(4) Ask this powerful question:
+		👉 “How many times does K land in the right half?”
+
+		This gives total flips.
+
+		Then notice:
+		Right-half = odd bit in binary path
+		⟹ Total flips = popcount(K−1)
+
+		Once you see this one time, you’ll begin to spot it automatically.
+
+4. (curr - target) % k = (curr - target + k) % k;
+	To avoid negative remainder. 
+
+	​

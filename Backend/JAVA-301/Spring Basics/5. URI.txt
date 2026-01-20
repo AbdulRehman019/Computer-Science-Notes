@@ -1,0 +1,276 @@
+What Is a Resource?
+	A resource in REST is any piece of information that can be named and accessed through a URI.
+	It’s the “thing” your API exposes to clients — the conceptual object that your system manages.
+
+	Think of a resource as a noun (something you can refer to, not an action).
+
+Examples of Resources
+	Type of Information	Resource			URI Example
+	A user account		user				/users/101
+	All users		users (collection)		/users
+	A product		product				/products/12
+	A blog post		post				/posts/45
+	Comments on that 	post comment (sub-resource)	/posts/45/comments
+	The image of a product	image				/products/12/image
+
+	Each of these can be a resource — a conceptual “thing” represented by a URI.
+
+
+
+
+1. What is a URI?
+	URI stands for Uniform Resource Identifier.
+	👉 It’s simply a string that uniquely identifies a resource — something you can fetch or interact with over the web.
+
+	In simpler terms, a URI tells you what you’re referring to (a webpage, an API endpoint, an image, etc.).
+
+🔹 Example of a URI:
+	https://api.example.com/users/101
+
+	This URI points to a specific resource (user with ID 101) on the server api.example.com.
+
+🧱 2. Structure of a URI
+	A URI can be broken into components:
+
+	scheme     host             path           query       fragment
+	│          │                │              │           │
+	https://   api.example.com  /users/101?sort=desc#info
+
+	Component		Meaning				Example
+	Scheme			Protocol used			http, https, ftp
+	Host			Domain name or IP address	api.example.com
+	Port (optional)		Network port number		:8080
+	Path			Resource hierarchy (folders/subfolders)	/users/101
+	Query (optional)	Filters or parameters		?sort=desc&page=2
+	Fragment (optional)	Section inside the resource	#info
+
+🛣️ 3. What is a URI Path?
+	The URI Path is the part of the URI that comes after the host (and port) — it defines the route to the specific resource on the server.
+
+	In our example:
+	https://api.example.com/users/101
+	                        └─────── URI Path ───────┘
+
+	URI Path = /users/101
+	It’s like the “file path” of the resource on the web, forming a hierarchical structure.
+
+	🧩 Path Hierarchy Example:
+	/users            → All users (Collection Resource)
+	/users/101        → Single user (Document Resource)
+	/users/101/posts  → Posts made by user 101 (Sub-collection)
+	/users/101/posts/5 → Specific post (Nested Document)
+	
+	This hierarchy helps REST APIs model real-world relationships naturally.
+
+🧠 4. URI vs. URL vs. URN — The Quick Distinction
+	Term		Stands For			Identifies				Example					Notes
+	URI		Uniform Resource Identifier	Any resource (by name or location)	https://api.example.com/users/101	Broadest term
+	URL		Uniform Resource Locator	Resource by its location		https://api.example.com/users		Every URL is a URI
+	URN		Uniform Resource Name		Resource by name only, not location	urn:isbn:0451450523			Rarely used in APIs
+
+	👉 In practice: when you say “URL” or “URI” in web development, both usually refer to the same thing (a full web address).
+
+⚙️ 5. URI Path Design Best Practices (for APIs)
+	Principle			Good Example			Bad Example
+	Use nouns, not verbs		/users/101			/getUser
+	Hierarchical structure		/users/101/orders/45		/getOrderForUser?userId=101&orderId=45
+	Use plural for collections	/users				/userList
+	Use lowercase and hyphens	/user-profiles			/UserProfiles
+	Avoid file extensions		/users/101			/users/101.json (only if content negotiation fails)
+
+🧩 6. Example Breakdown
+	URI:
+		https://shop.example.com/api/v1/products/45/reviews?page=2
+
+	Part					Meaning
+	Scheme: https				Secure HTTP protocol
+	Host: shop.example.com			Server name
+	Path: /api/v1/products/45/reviews	Route to the reviews of product 45
+	Query: ?page=2				Query parameter for pagination
+	
+	Full URI: Identifies a specific API resource endpoint	
+
+✅ Summary
+	Concept			Description
+	URI			The complete address that identifies a resource
+	URI Path		The part of the URI that defines where the resource is within the server
+
+	Example	URI → https://api.example.com/users/101
+	URI Path → /users/101
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1. What Is a URI Query?
+
+A URI query (or query string) is the part of a URI that comes after the ?, containing key–value pairs separated by &.
+
+Example:
+https://api.example.com/users?age=25&country=india
+
+
+Here:
+
+Base URI Path: /users
+
+Query String: age=25&country=india
+
+It’s used to filter, sort, paginate, or modify how resources are retrieved.
+
+🧠 2. Structure of a Query String
+scheme://host/path?key1=value1&key2=value2
+
+
+Each key=value pair is called a query parameter.
+
+Example:
+
+GET /products?category=mobile&sort=price&order=asc&page=2
+
+Key	Value	Meaning
+category	mobile	Filter by category
+sort	price	Sort by price
+order	asc	Ascending order
+page	2	Pagination page number
+🧾 3. When to Use Query Parameters (vs. Path Parameters)
+Use Case	Example	Use Path Parameter or Query Parameter?
+Identify a specific resource	/users/101	✅ Path parameter
+Filter or search resources	/users?country=india	✅ Query parameter
+Sort or order results	/users?sort=name	✅ Query parameter
+Paginate results	/users?page=2&limit=10	✅ Query parameter
+Perform an action	/users/101/reset-password	✅ Path (Controller Resource)
+
+🔹 Rule of thumb:
+
+Path parameters → identify a resource.
+
+Query parameters → refine how you retrieve or view that resource.
+
+🧩 4. Common Query Parameter Patterns
+
+Let’s explore common and recommended design patterns 👇
+
+✅ Filtering
+GET /users?country=india&age=25
+
+
+→ Return users from India aged 25.
+
+You can allow multiple filters:
+
+GET /users?role=admin&active=true
+
+✅ Sorting
+GET /products?sort=price&order=asc
+
+
+Or, more compact:
+
+GET /products?sort=price,-rating
+
+
+(-rating indicates descending order)
+
+✅ Pagination
+
+Used to avoid overloading responses.
+
+GET /users?page=2&limit=20
+
+
+Response should include pagination info:
+
+{
+  "page": 2,
+  "limit": 20,
+  "total": 100,
+  "data": [ ... ]
+}
+
+✅ Searching
+GET /users?search=abdul
+
+
+Server returns all users matching that string.
+
+✅ Field Selection (Partial Response)
+
+To optimize bandwidth:
+
+GET /users/101?fields=name,email
+
+
+→ Returns only name and email fields.
+
+Response:
+
+{ "name": "Abdul", "email": "abdul@example.com" }
+
+✅ Filtering by Range
+GET /products?price_min=1000&price_max=5000
+
+
+or
+
+GET /products?created_after=2024-01-01
+
+✅ Include Related Resources (Expansion)
+GET /orders/45?include=customer,items
+
+
+→ Includes linked resources in one response.
+
+⚙️ 5. Good Design Practices
+Principle	Description	Example
+Use meaningful names	Keep keys intuitive	?country=india not ?c=india
+Keep query params lowercase	Consistency	?sort=date not ?Sort=Date
+Support multiple values	Use commas or repeat keys	?category=mobile,laptop or ?category=mobile&category=laptop
+Be consistent across APIs	Use the same naming everywhere	Always page, not p in one API and pg in another
+Avoid using query params to define resources	/users?id=101 ❌ use /users/101 ✅	
+Use URL encoding for special chars	?search=New%20York	
+🧩 6. Example of a Well-Designed URI with Queries
+GET https://api.shopkart.com/v1/products?category=mobile&brand=samsung&sort=-price&page=2&limit=10
+
+
+Meaning:
+
+Return page 2 of Samsung mobiles
+
+Sorted by price (descending)
+
+Show 10 items per page
+
+🧠 7. Bad vs. Good Design Examples
+Bad URI	Why it’s bad	Good URI
+/getAllUsers	Verb in path	/users
+/users/list?pageNumber=1&pageSize=20	Inconsistent param names	/users?page=1&limit=20
+/user?id=101	Resource identified via query	/users/101
+/products?filterBy=category:mobile,brand:samsung	Hard to parse	/products?category=mobile&brand=samsung
+
+✅ In summary
+
+Concept	Description	Example
+Query string	Portion of URI after ?, used to refine request	/users?active=true&page=2
+When to use	To filter, sort, search, or paginate resources	/products?sort=price
+When not to use	To identify a resource (use path instead)	/users/101 not /users?id=101

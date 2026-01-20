@@ -42,7 +42,7 @@
 		Setter Injection
 		Field Injection (not preferred for testing)
 
-		Avoid tight coupling by depending on interfaces, not concrete classes(Dependency Inversion Principle).
+		Avoid tight coupling by depending on interfaces, not concrete classes.
 
 2. What is Spring Container?
 	✅ Spring Container
@@ -176,31 +176,6 @@
 			
 				    // ...
 			}
-
-		1️⃣ @Primary (Default Choice)
-			Example
-				@Component
-				@Primary
-				public class PaytmService implements PaymentService {}
-
-				@Component
-				public class PhonePeService implements PaymentService {}
-
-				@Autowired
-				private PaymentService paymentService;
-
-
-		2️⃣ @Qualifier (Most Common & Recommended)
-			Example 
-				@Component("paytm")
-				public class PaytmService implements PaymentService {}
-
-				@Component("phonepe")
-				public class PhonePeService implements PaymentService {}
-
-				@Autowired
-				@Qualifier("phonepe")
-				private PaymentService paymentService;
 
 		💡 Notes:
 			The value in @Qualifier("...") must match the name of the bean (usually the class name with the first letter in lowercase or explicitly given using 					@Component("name")).

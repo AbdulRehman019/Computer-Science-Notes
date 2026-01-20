@@ -1,0 +1,72 @@
+JWT (JSON Web Token) – Interview Explanation
+
+1️⃣ What is JWT?
+	Answer:
+	JWT (JSON Web Token) is a stateless authentication mechanism used to securely transmit user information between a client and a server in the form of a token.
+
+2️⃣ Why do we use JWT?
+	Answer:
+	JWT is mainly used for:
+		Authentication in REST APIs
+		Making applications stateless
+		Avoiding server-side session storage
+		Scaling applications easily
+
+3️⃣ How JWT Works (Flow – Very Important)
+	Interview explanation (step-by-step):
+	User sends username & password to the server
+	Server validates credentials
+	Server generates a JWT token
+	Token is sent back to the client
+	Client sends the token in every request in:
+		Authorization: Bearer <token>
+
+	Server validates the token and allows access
+
+4️⃣ Why JWT is Stateless?
+	Answer:
+	The server does not store session data.
+	All required user information is present inside the token itself.
+
+5️⃣ Structure of JWT (Must Know)
+	JWT has three parts, separated by dots:
+	header.payload.signature
+
+	1️⃣ Header
+	Token type (JWT)
+	Signing algorithm (e.g., HS256)
+
+	2️⃣ Payload
+	User data (claims)
+	Example: userId, role
+
+	3️⃣ Signature
+	Ensures token integrity
+	Prevents tampering
+
+6️⃣ Is JWT Secure?
+	Answer:
+	JWT is secure only if implemented properly:
+		Use HTTPS
+		Keep tokens short-lived
+		Store secret keys securely
+		Do not store sensitive data in payload
+
+7️⃣ Where is JWT stored on client side?
+	Answer:
+	Usually stored on the client side and sent in the Authorization header as a Bearer token.
+
+8️⃣ JWT vs Session-Based Authentication
+	JWT		Session
+	Stateless		Stateful
+	No server storage	Server stores session
+	Good for REST APIs	Traditional web apps
+	Scales easily	Harder to scale
+
+9️⃣ JWT in Spring Security (High Level)
+	Answer:
+	JWT is validated using a filter
+	If valid, user is authenticated
+	Security context is set
+	Request reaches controller
+	No need to explain filters deeply.

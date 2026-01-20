@@ -1,0 +1,173 @@
+Concurrency Issues (Thread Interference)
+	When multiple threads access and modify shared data at the same time, problems can occur — this is called a concurrency issue.
+
+	Example Problem:
+		class Counter {
+		    int count = 0;
+
+		    void increment() {
+		        count++;  // Not atomic (3 steps)
+		    }
+		}
+	
+	If two threads call increment() simultaneously:
+		Both read the same value (say count = 5)
+		Both add 1 → each gets 6
+
+		Both write back 6
+		✅ Expected: 7
+		❌ Actual: 6
+
+➡️ This is called a race condition — result depends on the timing of threads.
+
+Common Concurrency Issues 
+	| Issue                         | Description                                                                                     |
+	| ----------------------------- | ----------------------------------------------------------------------------------------------- |
+	| **Race Condition**            | Multiple threads modify shared data simultaneously, causing unpredictable results.              |
+	| **Thread Interference**       | One thread’s operation interferes with another’s operation on shared data.                      |
+	| **Memory Consistency Errors** | One thread’s changes to shared data are not immediately visible to others (due to CPU caching). |
+
+
+What is a Memory Consistency Error?
+	A Memory Consistency Error occurs when different threads have inconsistent views of shared data —
+	that is, one thread’s update to a shared variable is not visible to another thread immediately. 
+
+	Why It Happens
+		Java threads may cache variables in their local CPU memory for performance.
+		So, even though two threads share the same variable, they might each be working on a separate copy.
+
+		Unless properly synchronized, changes in one thread might not be visible to others, because the value isn’t yet written back to main memory (RAM).
+
+	Example (Problem Case) 
+		class SharedData {
+		    boolean flag = false;
+		
+		    void writer() {
+		        flag = true;  // update shared variable
+		        System.out.println("Writer set flag = true");
+		    }
+		
+		    void reader() {
+		        while (!flag) {
+		            // waiting for flag to become true
+		        }
+		        System.out.println("Reader detected flag = true");
+		    }
+		}
+
+		public class MemoryErrorDemo {
+		    public static void main(String[] args) {
+		        SharedData data = new SharedData();
+		
+		        Thread t1 = new Thread(() -> data.reader());
+		        Thread t2 = new Thread(() -> data.writer());
+		
+		        t1.start();
+		        t2.start();
+		    }
+		}
+
+What can go wrong
+	writer() sets flag = true
+	But the reader thread might never see it, because:
+	It could be reading the cached value (still false)
+	Hence, it might loop forever!
+	This is a memory consistency error. 
+
+Why Synchronization Fixes It
+	The Java Memory Model (JMM) defines happens-before relationships — rules that ensure visibility and ordering between threads.
+	Whenever you use synchronization constructs, Java enforces these rules:
+		When a thread releases a lock, all its changes to shared variables are flushed to main memory.
+		When another thread acquires that same lock, it reads the latest values from main memory.
+
+	So, synchronization ensures visibility and ordering.
+
+Fixed Version using synchronized
+	class SharedData {
+	    boolean flag = false;
+	
+	    synchronized void writer() {
+	        flag = true;
+	        System.out.println("Writer set flag = true");
+	    }
+	
+	    synchronized void reader() {
+	        while (!flag) {
+	            // waiting
+	        }
+	        System.out.println("Reader detected flag = true");
+	    }
+	}
+
+	Now both threads synchronize on the same lock, so:
+		Changes made by the writer are visible to the reader.
+		The program terminates correctly. 
+
+Fixed Version using volatile
+	You can also solve it using volatile — which tells Java “don’t cache this variable, always read/write from main memory.”
+
+	class SharedData {
+	    volatile boolean flag = false;
+
+	    void writer() {
+	        flag = true;
+	        System.out.println("Writer set flag = true");
+	    }
+	
+	    void reader() {
+	        while (!flag) {
+	            // waiting
+	        }
+	        System.out.println("Reader detected flag = true");
+	    }
+	}
+
+	Now flag updates are immediately visible to all threads.
+	volatile doesnot guarantee atomicity. Hence, for compound operations like i++ we need to use synchronization. 
+
+Synchronization
+	Synchronized Keyword: 
+		Used to lock a method or a block of code so that only one thread can execute it at a time. 
+
+		class Counter {
+		    int count = 0;
+	
+		    synchronized void increment() {
+		        count++;
+		    }
+		}
+
+	Now, if two threads call increment(), one will wait until the other finishes.
+
+	Synchronized Block (More Efficient): 
+		You can also lock only part of the method:
+		class Counter {
+		    int count = 0;
+		
+		    void increment() {
+		        synchronized(this) {  // Lock only this block
+		            count++;
+		        }
+		    }
+		}
+
+	How It Works
+		Each object in Java has an intrinsic lock (monitor lock).
+		When a thread enters a synchronized method/block:
+			It acquires the lock
+			Other threads trying to access the same lock must wait
+			When it exits the synchronized code, the lock is released
+
+	Synchronization Types
+	Type			Description
+	Synchronized Method	Locks the whole method
+	Synchronized Block	Locks a specific section
+	Static Synchronization	Locks at the class level (shared among all objects)
+
+
+	Other Concurrency Tools (from java.util.concurrent)
+	Tool						Description
+	ReentrantLock					More flexible than synchronized
+	volatile keyword				Ensures visibility (thread reads latest value from main memory)
+	AtomicInteger					Provides thread-safe operations on integers
+	Semaphore, CountDownLatch, CyclicBarrier	Advanced synchronization utilities

@@ -1,0 +1,73 @@
+1. Why to avoid @Data in JPA entity?
+2. What to prefer hasRole("") or PreAuthorize()?
+3. Implementation flow?
+	I start with entities and repositories, then implement core business services without security. 
+	Once the logic is stable and testable, I add JWT-based authentication and role authorization, and finally expose APIs via controllers.
+
+4. How will you handle if two users are trying to book last available room?
+	Even with @Transactional, this race condition still exists:
+	Two users:
+		both see availableRooms = 1
+		both pass the check
+		both book
+
+	So:
+		@Transactional is necessary
+		but not sufficient
+
+	Transactions guarantee atomicity, not isolation by default.
+
+	How real systems solve this (3 approaches)
+		🥇 Option 1: Pessimistic Locking (BEST for this problem)
+			Lock the hotel row when reading.
+
+			Concept:
+				“If one transaction is booking, nobody else can touch this hotel.”
+
+			Implementation idea:
+				@Lock(LockModeType.PESSIMISTIC_WRITE)
+				Optional<Hotel> findById(Long id);
+
+			This causes:
+				First booking → locks row
+				Second booking → waits
+				After commit → second sees updated rooms
+
+			✅ Simple
+			✅ Safe
+			❌ Less scalable (acceptable here)
+
+		📌 Interview line:
+			“For limited inventory like rooms, pessimistic locking is safest.”
+
+		🥈 Option 2: Optimistic Locking (Advanced, scalable)
+		Add a version column:
+			@Version
+			private Long version;
+
+		Flow:
+			Both read version = 1
+			First commits → version becomes 2
+			Second fails → OptimisticLockException
+			You retry or reject.
+
+		✅ High performance
+		❌ More complex logic
+
+		📌 Interview line:
+			“Optimistic locking works well when conflicts are rare.”
+
+		🥉 Option 3: Database constraint (last line of defense)
+		Ensure availableRooms >= 0
+
+		Let DB throw exception
+			❌ Reactive
+			❌ Poor UX
+			✔️ Useful as backup
+
+5. How do you pass userId and hotelId?
+	I don’t accept userId from the request. I extract it from JWT to avoid spoofing. 
+	HotelId is a path variable because booking is a sub-resource of a hotel. Booking details go in the request body.
+
+6. Where to call generate token?
+7. What will be the responsibility of AuthController? What will be in sign-up and login?

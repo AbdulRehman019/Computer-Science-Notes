@@ -1,0 +1,89 @@
+1. Annotations & Setup
+	@ExtendWith(MockitoExtension.class)
+	class MyServiceTest {
+
+	    @Mock
+	    private Dependency dependency;   // Mock object
+	
+	    @InjectMocks
+	    private MyService myService;     // The class under test
+	
+	    // Optional: if not using @ExtendWith
+	    @BeforeEach
+	    void init() {
+	        MockitoAnnotations.openMocks(this);
+	    }
+	}
+
+2. Stubbing (defining mock behavior)
+	Use when(...).thenReturn(...) or related methods:
+
+	when(dependency.methodCall()).thenReturn("someValue");
+	when(dependency.getValue(anyInt())).thenThrow(new RuntimeException());
+	when(dependency.calculate(eq(5))).thenAnswer(invocation -> invocation.getArgument(0) + " processed");
+
+	Common variants:
+		doReturn("mocked").when(dependency).getSomething();
+		doThrow(new Exception()).when(dependency).save(any());
+
+3. Verification (checking interactions)
+	Check if a method was called:
+		verify(dependency).methodCall();
+		verify(dependency, times(2)).methodCall();
+		verify(dependency, never()).methodCall();
+		verify(dependency, atLeastOnce()).methodCall();
+
+	Check order of calls:
+		InOrder inOrder = inOrder(dependency1, dependency2);
+		inOrder.verify(dependency1).start();
+		inOrder.verify(dependency2).finish();
+
+4. Argument Matchers
+	Used when you don’t care about exact arguments:
+		when(dependency.process(anyString())).thenReturn("ok");
+		when(dependency.compute(eq(5), anyDouble())).thenReturn(10.0);
+
+	Available matchers:
+		any(), anyString(), anyInt(), eq(), isNull(), notNull(), argThat().
+
+5. Capturing Arguments
+	Used to capture actual arguments passed to mocks:
+
+	ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+	verify(dependency).send(captor.capture());
+	assertEquals("expectedValue", captor.getValue());
+
+6. Mocking Static Methods (if needed)
+	Available from Mockito 3.4+:
+
+	try (MockedStatic<UtilityClass> mocked = mockStatic(UtilityClass.class)) {
+	    mocked.when(() -> UtilityClass.staticMethod()).thenReturn("mockedValue");
+	    assertEquals("mockedValue", UtilityClass.staticMethod());
+	}
+
+7. Useful Utilities
+	reset(mock);             // Clear interactions/stubs
+	verifyNoMoreInteractions(mock);  
+	verifyNoInteractions(mock);
+
+Example
+	@ExtendWith(MockitoExtension.class)
+	class UserServiceTest {
+	
+	    @Mock
+	    private UserRepository userRepository;
+	
+	    @InjectMocks
+	    private UserService userService;
+	
+	    @Test
+	    void shouldReturnUserById() {
+	        User mockUser = new User(1, "John");
+	        when(userRepository.findById(1)).thenReturn(Optional.of(mockUser));
+	
+	        User result = userService.getUser(1);
+	
+	        assertEquals("John", result.getName());
+	        verify(userRepository).findById(1);
+	    }
+	}

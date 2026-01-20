@@ -1,0 +1,220 @@
+1. ORM (Object–Relational Mapping)
+	Concept:
+	ORM is a technique (not a library or tool) that lets you map Java objects to database tables automatically.
+
+	Why we need ORM:
+	Normally, you’d write a lot of SQL to insert, update, and fetch data.
+	With ORM, you can work with Java objects directly — and it will handle the SQL in the background.
+
+	Example
+	Without ORM 👇
+	String sql = "INSERT INTO users (id, name) VALUES (?, ?)";
+	PreparedStatement stmt = connection.prepareStatement(sql);
+	stmt.setInt(1, user.getId());
+	stmt.setString(2, user.getName());
+	stmt.executeUpdate();
+
+	With ORM 👇
+	entityManager.persist(user);
+
+	ORM will automatically generate the SQL and handle mapping between:
+
+	Java class → Database table
+	Java field → Table column
+
+	So, ORM = "Mapping Java objects ↔ Database tables"
+
+📘 2. JPA (Java Persistence API)
+	Concept:
+	JPA is a specification (like an interface) that defines how ORM should work in Java.
+
+	It does not provide actual implementation.
+	It just defines rules and interfaces for ORM.
+
+	Think of it like this:
+	JPA is the standard, not the tool.
+
+	Example:
+	JPA defines annotations like:
+
+	@Entity
+	@Table(name = "users")
+	public class User {
+	    @Id
+	    @GeneratedValue
+	    private Long id;
+	
+	    private String name;
+	}	
+	
+	You can use these annotations with any JPA-compliant ORM implementation such as:
+		Hibernate (most popular)
+		EclipseLink
+		OpenJPA
+
+	So, JPA = "Standard API for ORM in Java"
+
+🧠 3. Hibernate
+	Concept:
+	Hibernate is an implementation of JPA (plus it adds extra features beyond JPA).
+
+	It’s the actual library that does the work of converting Java objects to SQL queries and managing the database connection, caching, lazy loading, etc.
+
+	When you use Hibernate in a Spring Boot project, it automatically:
+		Maps your entities
+		Creates tables (if hibernate.hbm2ddl.auto is set)
+		Handles CRUD operations
+		Supports caching and relationships (@OneToMany, @ManyToOne, etc.)
+
+🧩 Summary Table
+	Concept			Type					What it Does				Example
+	ORM			Technique				Maps Java objects to DB tables		Idea behind JPA/Hibernate
+	JPA			Specification (Interface)		Defines rules for ORM in Java		@Entity, @Id, etc.
+	Hibernate		Implementation (Library)		Implements JPA and does the actual ORM	Automatically handles SQL
+
+How They Work Together in Spring Boot
+Spring Boot Application
+        ↓
+       JPA (Interfaces, Annotations)
+        ↓
+    Hibernate (Implementation)
+        ↓
+    Database (MySQL, PostgreSQL, etc.)
+
+So when you write:
+	userRepository.save(user);
+
+👉 JPA defines the save() method (in CrudRepository)
+👉 Hibernate executes the SQL to insert the record.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Big Picture Overview
+	Here’s the hierarchy from top to bottom:
+		Spring Data JPA  →  JPA (specification)  →  Hibernate (implementation)  →  Database
+	
+⚙️ What is Spring Data JPA?
+	Spring Data JPA is a part of the Spring Framework that builds on top of JPA to make data access simpler and less repetitive.
+
+	You can think of it as:
+	"A convenience layer that sits on top of JPA and Hibernate."
+	Instead of writing boilerplate code like:
+		EntityManager em = ...;
+		User user = em.find(User.class, id);
+
+	You can simply do:
+		userRepository.findById(id);
+
+	Spring Data JPA automatically:
+		Creates repository implementations at runtime.
+		Provides ready-made CRUD methods.
+		Supports derived query methods (like findByEmail(), findByNameAndAge()).
+		Integrates seamlessly with Hibernate.
+
+🧠 How It All Works Together
+	When you call this in Spring Boot:
+		userRepository.save(user);
+
+	Here’s what happens under the hood:
+	Spring Data JPA
+		Provides the save() method in JpaRepository interface.
+
+	JPA
+		Defines what the save() operation means in ORM terms (persist or merge).
+
+	Hibernate
+		Actually performs the SQL operation (INSERT or UPDATE).
+
+	Database
+		Stores the record.
+
+	So the call chain looks like:
+		userRepository.save(user)
+		        ↓
+		Spring Data JPA Repository
+		        ↓
+		JPA EntityManager API
+		        ↓
+		Hibernate ORM Engine
+		        ↓
+		SQL query → Database
+
+🔍 Example
+	Let’s say you have:
+
+	@Entity
+	public class User {
+	    @Id
+	    @GeneratedValue
+	    private Long id;
+	    private String name;
+	    private String email;
+	}
+
+	Your repository:
+	public interface UserRepository extends JpaRepository<User, Long> {
+	    List<User> findByName(String name);
+	}
+
+	Now, without writing any SQL, you can do:
+		userRepository.save(new User("Abdul", "abdul@gmail.com"));
+		List<User> users = userRepository.findByName("Abdul");
+
+	Spring Data JPA:
+		Automatically creates the implementation for findByName
+		Uses JPA’s EntityManager internally
+		Hibernate executes the SQL query
+
+🧩 Summary Table
+	Layer				Provided By			Purpose					Example
+	Spring Data JPA			Spring Framework		Simplifies CRUD & query creation	userRepository.findByName()
+	JPA				Java EE spec			Defines ORM rules			@Entity, EntityManager
+	Hibernate			Third-party lib			Implements JPA				SQL generation, caching
+	Database			Vendor (MySQL, etc.)		Stores data				Actual tables and rows
+
+🔄 Analogy
+	Imagine a restaurant:
+	Spring Data JPA = Waiter who takes your order (“save this user”)
+	JPA = The menu that defines available dishes (operations)
+	Hibernate = The chef who actually cooks it (runs SQL)
+	Database = The kitchen pantry (stores ingredients/data) 
+
+
+
+
+
+Explaination: 
+ORM is only a technique or principle which says "Hey, there is an idea why don't we map the java class and tables? Our work will be much easier". 
+JPA said "Sounds good to me... But if we are going to do that we need some rules. Let me define those rules for you and i will provide the interfaces as well". 
+Hibernate said "Okay Okay I will do the heavy lifting I will follow ORM principle and JPA rules and interfaces and implement everything to interact with DB". 
+Spring Data JPA said "Hey there, you have done all these but for developers it is too much let me wrap you all and provide the developers only the method he needs to call to interact". 
+Spring Data said "Okay, Spring Data JPA you did a nice job but you did this for only SQL DB. Let me contain you and some other people to interact with other DBs". 
+
+Spring Data Family 
+--includes--> 
+Spring Data JPA 
+--uses--> 
+JPA 
+--implemented by--> 
+Hibernate(ORM) 
+--uses--> 
+JDBC 
+--connects to--> 
+DB. 

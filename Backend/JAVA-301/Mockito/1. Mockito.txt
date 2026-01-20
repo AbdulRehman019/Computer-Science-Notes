@@ -1,0 +1,241 @@
+Suppose you wrote a code and unit test cases for it and you checked your unit test cases are working fine. 
+You push the changes and now you want to merge it. 
+
+Will it directly merge it? No, it won't directly merge it. There is a pipeline for it. 
+What does it do? 
+	It build the existing code + your code. Run all the previous test cases as well as your test case and if the build is successfull and all the test cases passed. 
+	It runs another pipeline to merge your code. 
+
+
+
+Lets take an example: 
+Suppose Google Maps has one more feature where it shows you the prices at uber. 
+For doing so it must call Uber's API. 
+Google must test that it is getting proper responses or not. 
+For it, they wrote a unit test where they call the Uber API. 
+
+What if the Uber's API is down? No response will be return and nothing would be displayed at google for that time. 
+It is happening because they are directly depending on third party API. 
+
+How to get rid of it? 
+Uber must provide another API, which contains hard coded data and whenever the main API fails. 
+It uses the "Stub" API to return the data. 
+Hence, the user will never face issues. 
+
+In unit test cases we don't depend on third party API, instead we use some "Stub". 
+(In programming, a stub is a piece of code that acts as a temporary, simplified replacement for a more complex or unavailable component or function. 
+It mimics the behavior of the real component, allowing other parts of the system to be developed and tested in isolation, even if the actual dependency is not yet fully implemented or accessible.) 
+
+Stubs are pre-configured responses when a dependency is called from the system under test. 
+
+
+
+Why Mockito comes into picture? 
+Suppose, there are 10 classes which are dependent on some other piece of code. 
+For all these 10 classes, we need to create different stubs for the same piece of code. 
+We will have more stubs than the actual implementation. 
+This is called Class Explosion. 
+
+Mockito is a way to create stubs locally inside the test class or method. 
+We don't need to create seperate class for stubs. 
+
+
+The need for Mockito
+	Testing code concerned with Uber API in Google Maps without mocking leads to:
+	Slows the unit tests as it involves network calls to Uber servers
+	Running the unit tests can become expensive if any of these APIs are rate-limited or charged by Uber
+	Unit tests cannot be run if the Uber API servers are temporarily down
+
+
+
+
+Mockito is one of the most popular Java testing frameworks, primarily used for unit testing. It helps developers mock (i.e., imitate) the behavior of complex, real objects so that you can test your code in isolation, without relying on actual implementations or external dependencies like databases, APIs, or file systems.
+
+Let’s go step-by-step to understand it in detail 👇
+
+🧠 1. What Is Mockito?
+	Mockito is a mocking framework for Java, part of the broader testing ecosystem (JUnit + Mockito).
+	It lets you create mock objects of classes and interfaces.
+	You can define their behavior — what they should return when certain methods are called.
+	You can verify interactions — whether a specific method was called, how many times, with what arguments, etc.
+	So, instead of depending on the real object (which might be slow, external, or complicated), you use a mock that behaves exactly how you tell it to.
+
+🧩 2. Why Do We Need Mockito?
+	When writing unit tests, the goal is to test one class in isolation — not the entire system.
+	Let’s say you have this setup:
+		public class OrderService {
+		    private PaymentService paymentService;
+		    private EmailService emailService;
+		
+		    public OrderService(PaymentService paymentService, EmailService emailService) {
+		        this.paymentService = paymentService;
+		        this.emailService = emailService;
+		    }
+		
+		    public boolean placeOrder(Order order) {
+		        boolean paymentDone = paymentService.processPayment(order);
+		        if(paymentDone) {
+		            emailService.sendConfirmation(order);
+		            return true;
+		        }
+		        return false;
+		    }
+		}
+
+	If you try to test OrderService, it depends on:
+		PaymentService (maybe it calls an external payment API)
+		EmailService (maybe it sends an email)
+
+	You don’t want your unit test to actually:
+		Call a real payment API
+		Send a real email
+		So you use Mockito to mock these dependencies.
+
+🧪 3. Example: Using Mockito
+	✅ Step 1: Add Dependency
+
+	Maven
+	<dependency>
+	    <groupId>org.mockito</groupId>
+	    <artifactId>mockito-core</artifactId>
+	    <version>5.12.0</version>  <!-- latest as of 2025 -->
+	    <scope>test</scope>
+	</dependency>
+
+✅ Step 2: Write Test with Mocks
+	import static org.mockito.Mockito.*;
+	import static org.junit.jupiter.api.Assertions.*;
+	import org.junit.jupiter.api.Test;
+	import org.mockito.Mockito;
+
+	public class OrderServiceTest {
+	
+	    @Test
+	    void testPlaceOrder_Success() {
+	        // 1️⃣ Create mocks
+	        PaymentService paymentService = mock(PaymentService.class);
+	        EmailService emailService = mock(EmailService.class);
+	
+	        // 2️⃣ Define behavior
+	        when(paymentService.processPayment(any(Order.class))).thenReturn(true);
+	
+	        // 3️⃣ Inject mocks into the class under test
+	        OrderService orderService = new OrderService(paymentService, emailService);
+	
+	        // 4️⃣ Call the method to test
+	        Order order = new Order();
+	        boolean result = orderService.placeOrder(order);
+
+	        // 5️⃣ Verify and assert
+	        assertTrue(result);
+	        verify(paymentService, times(1)).processPayment(order);
+	        verify(emailService, times(1)).sendConfirmation(order);
+	    }
+	}
+
+🧩 Breakdown:
+	Step					Purpose
+	mock(Class)				Creates a mock object of the given class/interface
+	when(...).thenReturn(...)		Defines what should happen when a mock method is called
+	verify(mock, times(n))			Checks if the mock method was called (and how many times)
+	any(Class.class)			Argument matcher (ignores specific object)
+
+🧰 4. Mockito Annotations
+	Instead of creating mocks manually, Mockito provides annotations to simplify setup:
+
+	import org.junit.jupiter.api.extension.ExtendWith;
+	import org.mockito.InjectMocks;
+	import org.mockito.Mock;
+	import org.mockito.junit.jupiter.MockitoExtension;
+	
+	@ExtendWith(MockitoExtension.class)
+	public class OrderServiceTest {
+	
+	    @Mock
+	    private PaymentService paymentService;
+	
+	    @Mock
+	    private EmailService emailService;
+	
+	    @InjectMocks
+	    private OrderService orderService; // Mockito injects mocks automatically
+	
+	    @Test
+	    void testPlaceOrder_Success() {
+	        when(paymentService.processPayment(any(Order.class))).thenReturn(true);
+	
+	        Order order = new Order();
+	        boolean result = orderService.placeOrder(order);
+	
+	        assertTrue(result);
+	        verify(paymentService).processPayment(order);
+	        verify(emailService).sendConfirmation(order);
+	    }
+	}
+
+
+✅ Annotations:
+	@Mock → Creates and injects mock object.
+	@InjectMocks → Creates an instance of the class and injects the mocks into it automatically.
+	@ExtendWith(MockitoExtension.class) → Enables Mockito support in JUnit 5.
+
+🧮 5. Common Mockito Methods
+	Method					Description
+	mock(Class)				Creates a mock object
+	when(...).thenReturn(...)		Defines mock behavior
+	when(...).thenThrow(...)		Define mock to throw an exception
+	verify(mock)				Checks if a method was called, how many times it was called
+	verifyNoInteractions(mock)		Ensures mock wasn’t called
+	doReturn(...).when(mock).method(...)	Alternative syntax for stubbing void methods
+	ArgumentCaptor				Captures arguments passed to mock methods
+
+	Example of capturing arguments:
+	ArgumentCaptor<Order> captor = ArgumentCaptor.forClass(Order.class);
+	verify(emailService).sendConfirmation(captor.capture());
+	Order capturedOrder = captor.getValue();
+	assertEquals("John", capturedOrder.getCustomerName());
+
+🧠 6. Mockito vs Real Dependencies
+	Real Dependency	Mockito Mock
+	Might call DB/API	Never calls real systems
+	Slow, unpredictable	Fast, deterministic
+	Hard to control		Fully configurable
+	Complex to set up	Very easy to use
+
+🧩 7. Mockito Integration With Spring Boot
+	When you write tests for Spring Boot applications, you often use:
+
+	@MockBean
+	private SomeService someService;	
+
+	This tells Spring to replace the real bean in the ApplicationContext with a Mockito mock — great for integration tests.
+
+⚡ Summary
+	Concept				Description
+	Purpose				To isolate units of code by mocking dependencies
+	Framework Type			Mocking framework for Java
+	Common Use			Unit testing with JUnit
+	Main Features			Mocking, stubbing, verification, argument capturing
+	Advantages			No external dependencies, faster tests, easier debugging
+
+8. verify() 
+	verify() is used to check whether a mock’s method was called, how many times it was called, and with what arguments.
+
+9. ArgumentCaptor() 
+	ArgumentCaptor allows you to capture the arguments passed to a mocked method during a test, so you can inspect or assert on them. 
+
+10. What is the Answer interface?
+	In Mockito:
+		public interface Answer<T> {
+		    T answer(InvocationOnMock invocation) throws Throwable;
+		}
+
+	Answer<T> is a functional interface.
+	It lets you define custom behavior when a method of a mock is called.
+	The answer() method receives an InvocationOnMock object, which contains:
+		Method arguments
+		Mock instance
+		Method being invoked
+
+	Use case: When you cannot simply return a static value with when(...).thenReturn(...) or need behavior that depends on input arguments. 
+	

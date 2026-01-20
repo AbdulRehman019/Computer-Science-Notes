@@ -1,0 +1,414 @@
+I want to know if i am combining two entities which annotation to use where and what that annotation will tell spring? Don't explain me basic annotations like @Entity. Explain me by taking a class. Take a class, explain the annotations like OneToMany and all the fields it contains and what it tells to spring
+You said:
+I understood but little confusion. 
+There are two entities Order and GroceryItem. They both have many to many relationship. Since, they can have some fields which will be common to both of them combine(quantity and price). Hence we decided to make another entity OrderItem. This is the owner for both Order and GroceryItem. Since, order can have multiple groceryitem, hence it can have multiple OrderItem. Hence, we make a Set<OrderItem> orderItems. Similarly, since each groceryitem can be a part of multiple orders, GroceryItem contains Set<OrderItem>. 
+
+In both Order and GroceryItem we used mappedBy because we don't want the foreign key here we want in OrderItem. 
+
+Now suppose we get a order, it contains two apple and one milk. In order to save it we need to make a order object. I didn't understood the flow because we need totalprice too which cannot be calculated without making GroceryItem objects. And how everything is stored? what is the sequence?
+
+
+
+* Which annotation goes where
+* What information it conveys to **Spring Data JPA / Hibernate**
+* What happens behind the scenes when you use it
+
+🧩 Example: Order ↔ OrderItem ↔ GroceryItem
+	We’ll take the following real-world case:
+		* An `Order` contains **multiple** `OrderItem`s.
+		* Each `OrderItem` refers to **one** `GroceryItem`.
+
+So:
+	👉 **Order → OrderItem = OneToMany**
+	👉 **OrderItem → GroceryItem = ManyToOne**
+
+Class 1: `Order`
+	@Entity
+	public class Order {	
+	    @Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	    private Long id;
+		
+	    private LocalDateTime orderDate;
+	    private Double totalPrice;
+	
+	    // 🔽 One order has many order items
+	    @OneToMany(
+	        mappedBy = "order", 
+	        cascade = CascadeType.ALL, 
+	        orphanRemoval = true, 
+	        fetch = FetchType.LAZY
+	    )
+	    private Set<OrderItem> orderItems = new HashSet<>();
+	}
+	```
+	
+✅ What happens here
+	@OneToMany(mappedBy = "order")
+		Tells Spring/Hibernate:
+  		“I am the *inverse side* of the relationship. The ownership is maintained in the `OrderItem` entity’s `order` field.”
+
+	mappedBy field:
+		Points to the name of the variable in `OrderItem` that has the `@ManyToOne` annotation.
+		Example: `mappedBy = "order"` means — look for `private Order order;` inside `OrderItem`.
+
+	Effect:
+		Spring won’t create a new join table for this.
+		It’ll use the foreign key (`order_id`) already present in the `order_items` table (managed by the owning side).
+
+	cascade = CascadeType.ALL
+		Tells Spring:
+		 “When I save/delete an Order, do the same for all its OrderItems.”
+	
+		It propagates the persistence operations:
+			If you save an `Order`, it automatically saves its `orderItems`.
+ 			If you delete an `Order`, its related `orderItems` are deleted too.
+
+	orphanRemoval = true
+		Tells Spring:
+		“If an OrderItem is removed from the Set in Java, also delete it from the DB.”
+
+		Example:
+		  order.getOrderItems().remove(item);
+
+ 		→ Hibernate executes `DELETE FROM order_item WHERE id = ?`
+
+	fetch = FetchType.LAZY
+		Tells Spring:
+  		“Don’t fetch OrderItems when Order is loaded; only load them when accessed.”
+		Behind the scenes: creates a *proxy* collection that triggers a query only on demand.
+
+Class 2: `OrderItem`
+	@Entity
+	public class OrderItem {
+	
+	    @Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	    private Long id;
+	
+	    private Integer quantity;
+	    private Double itemPrice;
+	
+	    // 🔽 Many order items belong to one order
+	    @ManyToOne(fetch = FetchType.LAZY)
+	    @JoinColumn(name = "order_id", nullable = false)
+	    private Order order;
+
+	    // 🔽 Many order items belong to one grocery item
+	    @ManyToOne(fetch = FetchType.LAZY)
+	    @JoinColumn(name = "grocery_item_id", nullable = false)
+	    private GroceryItem groceryItem;
+	}
+
+✅ What happens here
+	@ManyToOne
+	Tells Spring:
+	“I am the *owning side* of this relationship.”
+	The foreign key will be created **in this table (order_item)** pointing to the parent (`order`).
+
+	Owning side means:
+	  * This side has the `@JoinColumn`.
+	  * This side controls what value is stored in the FK column (`order_id`).
+
+	* When you persist `OrderItem`, it will insert something like:
+	  INSERT INTO order_item (order_id, grocery_item_id, quantity, item_price) VALUES (?, ?, ?, ?)
+ 
+	@JoinColumn(name = "order_id", nullable = false)
+	Tells Spring:
+  	“Create a column `order_id` in the `order_item` table as a foreign key to the `order` table’s primary key.”
+
+	Parameters:
+	  * `name`: the name of the column in this table.
+	  * `nullable`: false → can’t have an `OrderItem` without an `Order`.
+	  * `referencedColumnName` (optional): which column in parent to refer (default = `id`).\
+
+	fetch = FetchType.LAZY
+	* Tells Hibernate to delay loading the related `Order` or `GroceryItem` until needed.
+	* Prevents “N+1 select” problem unless you specifically access them.
+
+Class 3: `GroceryItem`
+	@Entity
+	public class GroceryItem {
+	
+	    @Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	    private Long id;
+	
+	    private String name;
+	    private Double price;
+	    private Integer quantity;
+	
+	    // 🔽 One grocery item can appear in many order items
+	    @OneToMany(mappedBy = "groceryItem", fetch = FetchType.LAZY)
+	    private Set<OrderItem> orderItems = new HashSet<>();
+	}
+
+✅ What happens here
+	@OneToMany(mappedBy = "groceryItem")
+	* Tells Spring:
+	  “I am the inverse side of the relationship; the foreign key exists in the `OrderItem` table in the field `groceryItem`.”
+	* No join column created here.
+	* `OrderItem` owns the relationship.
+
+The Flow (How Spring Decides What To Use)
+	Here’s what happens when you save an order:
+	Order order = new Order();
+	order.setOrderDate(LocalDateTime.now());
+
+	OrderItem item1 = new OrderItem();
+	item1.setOrder(order);  // establish ownership
+	item1.setGroceryItem(apple);
+	item1.setQuantity(2);
+	item1.setItemPrice(50.0);
+	
+	order.getOrderItems().add(item1);
+
+	orderRepository.save(order);
+
+🔁 Behind the scenes:
+1. JPA sees `Order` has a `@OneToMany(cascade = ALL)`.
+2. It saves the `Order` → gets generated ID.
+3. It saves each `OrderItem`, filling `order_id` FK with that ID.
+4. Since `mappedBy` = `"order"`, Hibernate knows `OrderItem` is the owning side — so it writes the FK in `order_item`.
+
+## 💡 Key Takeaways
+
+| Relationship          | Annotation on Owning Side  | Annotation on Inverse Side      | Where FK Resides                   |
+| --------------------- | -------------------------- | ------------------------------- | ---------------------------------- |
+| OneToMany / ManyToOne | `@ManyToOne + @JoinColumn` | `@OneToMany(mappedBy = "...")`  | Child table                        |
+| ManyToMany            | `@ManyToMany + @JoinTable` | `@ManyToMany(mappedBy = "...")` | Join table                         |
+| OneToOne              | `@OneToOne + @JoinColumn`  | `@OneToOne(mappedBy = "...")`   | Either side depending on ownership |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I understood but little confusion. 
+There are two entities Order and GroceryItem. They both have many to many relationship. Since, they can have some fields which will be common to both of them combine(quantity and price). Hence we decided to make another entity OrderItem. This is the owner for both Order and GroceryItem. Since, order can have multiple groceryitem, hence it can have multiple OrderItem. Hence, we make a Set<OrderItem> orderItems. Similarly, since each groceryitem can be a part of multiple orders, GroceryItem contains Set<OrderItem>. 
+
+In both Order and GroceryItem we used mappedBy because we don't want the foreign key here we want in OrderItem. 
+
+Now suppose we get a order, it contains two apple and one milk. In order to save it we need to make a order object. I didn't understood the flow because we need totalprice too which cannot be calculated without making GroceryItem objects. And how everything is stored? what is the sequence?
+
+## 🧩 Step 1 — Quick Recap of Entities
+
+You already got this part right:
+
+### `Order`
+
+```java
+@Entity
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private LocalDateTime orderDate;
+    private Double totalPrice;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<OrderItem> orderItems = new HashSet<>();
+}
+```
+
+---
+
+### `GroceryItem`
+
+```java
+@Entity
+public class GroceryItem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private Double price;
+    private Integer quantityAvailable;
+
+    @OneToMany(mappedBy = "groceryItem", fetch = FetchType.LAZY)
+    private Set<OrderItem> orderItems = new HashSet<>();
+}
+```
+
+---
+
+### `OrderItem`
+
+```java
+@Entity
+public class OrderItem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Integer quantity;
+    private Double itemPrice;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "grocery_item_id")
+    private GroceryItem groceryItem;
+}
+```
+
+✅ **Ownership:** `OrderItem` owns both relationships.
+✅ **FKs:** `order_id` and `grocery_item_id` exist inside the `order_item` table.
+
+---
+
+## 🧠 Step 2 — Understand the Flow Logically
+
+When a new order is placed (say, 2 apples + 1 milk), we want to:
+
+1. Get the existing `GroceryItem`s (apple, milk) from DB.
+2. Create a new `Order`.
+3. For each item in the cart, create a new `OrderItem`.
+4. Associate `OrderItem` with both the `Order` and the `GroceryItem`.
+5. Calculate total price.
+6. Save the order (cascading will save `OrderItem`s automatically).
+
+---
+
+## ⚙️ Step 3 — Flow in Code
+
+Let’s simulate how this happens in code:
+
+```java
+@Service
+public class OrderService {
+
+    @Autowired
+    private GroceryItemRepository groceryItemRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    public Order placeOrder(Map<Long, Integer> itemQuantities) {
+        // itemQuantities = { appleId: 2, milkId: 1 }
+
+        Order order = new Order();
+        order.setOrderDate(LocalDateTime.now());
+
+        double totalPrice = 0.0;
+
+        for (Map.Entry<Long, Integer> entry : itemQuantities.entrySet()) {
+            Long itemId = entry.getKey();
+            int quantity = entry.getValue();
+
+            GroceryItem groceryItem = groceryItemRepository.findById(itemId)
+                    .orElseThrow(() -> new RuntimeException("Item not found"));
+
+            // Create OrderItem for this grocery item
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrder(order); // Link to order
+            orderItem.setGroceryItem(groceryItem); // Link to grocery item
+            orderItem.setQuantity(quantity);
+
+            double itemTotal = groceryItem.getPrice() * quantity;
+            orderItem.setItemPrice(itemTotal);
+
+            totalPrice += itemTotal;
+
+            order.getOrderItems().add(orderItem);
+        }
+
+        order.setTotalPrice(totalPrice);
+
+        // This will cascade and save all OrderItems too
+        return orderRepository.save(order);
+    }
+}
+```
+
+---
+
+## 🧩 Step 4 — Behind the Scenes (What Hibernate Does)
+
+Let’s walk through what actually happens step by step when `orderRepository.save(order)` is called:
+
+| Step | Action                                         | What Hibernate Does                                                  |
+| ---- | ---------------------------------------------- | -------------------------------------------------------------------- |
+| 1    | You call `new Order()`                         | Object created in memory, not saved yet                              |
+| 2    | You attach `OrderItem`s to it                  | Establishes Java object references                                   |
+| 3    | You set `orderItem.setOrder(order)`            | JPA now knows ownership (FK should point to this order)              |
+| 4    | You save order (`orderRepository.save(order)`) | Hibernate inserts into `orders` table                                |
+| 5    | Hibernate gets the generated `order_id`        | Uses this to fill the FK in each `order_item`                        |
+| 6    | Hibernate inserts into `order_item` table      | Each row has `(id, order_id, grocery_item_id, quantity, item_price)` |
+| 7    | Since GroceryItems already exist               | No insert happens in `grocery_item` table                            |
+| 8    | Transaction commits                            | Data saved in all 3 tables                                           |
+
+---
+
+## 🧾 Step 5 — What Gets Stored in the Database
+
+### Table: `orders`
+
+| id | order_date       | total_price |
+| -- | ---------------- | ----------- |
+| 1  | 2025-11-08T23:45 | 180.0       |
+
+### Table: `grocery_item`
+
+| id | name  | price | quantity_available |
+| -- | ----- | ----- | ------------------ |
+| 1  | Apple | 50.0  | 100                |
+| 2  | Milk  | 80.0  | 50                 |
+
+### Table: `order_item`
+
+| id | order_id | grocery_item_id | quantity | item_price |
+| -- | -------- | --------------- | -------- | ---------- |
+| 1  | 1        | 1               | 2        | 100.0      |
+| 2  | 1        | 2               | 1        | 80.0       |
+
+---
+
+## 🧩 Step 6 — Why You Couldn’t Compute Total Price Earlier
+
+You’re absolutely right — you **can’t calculate total price** until you know:
+
+* Which grocery items are included
+* Their quantities
+* Their prices
+
+That’s why we:
+
+1. Fetch `GroceryItem`s from DB first.
+2. Create `OrderItem`s.
+3. Compute each `itemPrice`.
+4. Sum them to compute `totalPrice` for `Order`.
+
+So the **GroceryItem → OrderItem → Order** link is not just structural; it’s functional.
+
+---
+
+## 💡 Quick Summary
+
+| Concept                 | Who Owns Relationship | What Table Has FK | Annotation Used                         |
+| ----------------------- | --------------------- | ----------------- | --------------------------------------- |
+| Order ↔ OrderItem       | OrderItem             | order_item        | `@ManyToOne` in OrderItem               |
+| GroceryItem ↔ OrderItem | OrderItem             | order_item        | `@ManyToOne` in OrderItem               |
+| OrderItem ↔ Order       | OrderItem owns        | order_item        | `@JoinColumn(name = "order_id")`        |
+| OrderItem ↔ GroceryItem | OrderItem owns        | order_item        | `@JoinColumn(name = "grocery_item_id")` |
+
+---
+
+Would you like me to also show **the reverse process** (how JPA loads all items when you fetch one order and how Lazy loading affects it)? It’ll help you understand the “read flow” side too.

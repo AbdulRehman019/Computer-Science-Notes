@@ -1,0 +1,92 @@
+1. Entity-Level Annotations
+@Entity
+	Marks the class as a JPA entity (mapped to a table).
+	Must have a no-arg constructor and a primary key (@Id).
+
+@Table(name = "table_name")
+	Customizes table name (optional).
+	Example: @Table(name = "users")
+
+2. Primary Key & ID Generation
+@Id
+	Marks the primary key field of the entity.
+
+@GeneratedValue(strategy = …)
+	Defines how the primary key is generated.
+
+Common strategies:
+	Strategy		Description
+	AUTO			JPA chooses based on DB
+	IDENTITY		DB auto-increment
+	SEQUENCE		Uses database sequence
+	TABLE			Uses a separate table to generate IDs
+
+3. Column-Level Annotations
+	@Column(name = "column_name")
+	Customizes column mapping.
+
+	Common attributes:
+		nullable, unique, length, name.
+
+	@Transient
+		Field not saved in the database.
+	
+	@Lob
+		Maps to large data types (CLOB/BLOB).
+
+	@Enumerated(EnumType.STRING)
+		Stores enum as string instead of ordinal number.
+
+	@Temporal(TemporalType.DATE/TIME/TIMESTAMP)
+		Specifies how Date or Calendar is stored.
+
+4. Relationship Annotations
+	@OneToOne
+		One entity ↔ one entity.
+		Often used with @JoinColumn.
+	
+	@OneToMany
+		One entity ↔ many related entities.
+		Usually paired with @ManyToOne on the other side.
+
+	@ManyToOne
+		Many entities ↔ one parent entity.
+
+	@ManyToMany
+		Many entities ↔ many entities.
+		Uses @JoinTable for mapping a join table.
+
+	@JoinColumn(name = "column_name")
+		Specifies the foreign key column.
+
+	@JoinTable
+		Defines join table for @ManyToMany.
+
+5. Embedded Objects
+	@Embeddable
+		Marks a class whose fields can be embedded in another entity.
+
+	@Embedded
+		Used inside an entity to include fields from an @Embeddable class.
+
+6. Versioning & Lifecycle
+	@Version
+		Adds version field for optimistic locking (prevents concurrent update conflicts).
+		@PrePersist / @PostPersist / @PreUpdate / @PostUpdate
+
+		Callback methods for entity lifecycle events.
+
+🧠 Quick Recap Table
+	Annotation			Purpose
+	@Entity				Marks class as database entity
+	@Table				Customize table name
+	@Id				Primary key
+	@GeneratedValue			Auto-generate key
+	@Column				Customize column mapping
+	@Transient			Skip persistence
+	@Enumerated			Map enums
+	@OneToMany, @ManyToOne, @OneToOne, @ManyToMany	Define relationships
+	@JoinColumn, @JoinTable		Define foreign key / join table
+	@Embedded, @Embeddable		Embed fields from another class
+	@Version			Handle optimistic locking
+	@PrePersist etc.		Lifecycle callbacks

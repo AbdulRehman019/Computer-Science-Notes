@@ -1,0 +1,205 @@
+🧩 1️⃣ What is Log4j?
+
+Log4j (Logging for Java) is a logging framework developed by the Apache Software Foundation.
+It allows developers to record application runtime information such as:
+
+Debug information
+
+Errors and exceptions
+
+Application flow tracking
+
+Performance data
+
+Logging helps in debugging, monitoring, and maintaining your applications.
+
+🧠 2️⃣ Why do we need Log4j (vs System.out.println)?
+System.out.println()	Log4j
+Not configurable (always prints to console)	Fully configurable (console, file, rolling files, etc.)
+No log levels	Different log levels (DEBUG, INFO, ERROR, etc.)
+Can’t be turned off	Can enable/disable at runtime
+Not thread-safe or performant	Highly optimized for concurrency
+No formatting or context info	Rich context and formatting options
+⚙️ 3️⃣ Log4j Architecture
+
+The Log4j architecture is made up of 3 main components:
+
+Logger → Appender → Layout
+
+1️⃣ Logger
+
+The class that your application uses to log messages.
+
+It defines the level of logging.
+
+Example:
+
+Logger logger = Logger.getLogger(MyClass.class);
+logger.info("This is an info message");
+
+2️⃣ Appender
+
+Determines where the log messages go.
+
+Examples:
+
+ConsoleAppender → logs to console
+
+FileAppender → logs to a file
+
+RollingFileAppender → creates new files when size/time limits are reached
+
+3️⃣ Layout
+
+Defines how log messages are formatted.
+
+Examples:
+
+PatternLayout → custom format like date, level, message, class name
+
+JSONLayout → outputs logs in JSON format
+
+🧱 4️⃣ Log Levels
+
+Log4j provides hierarchical log levels to filter output:
+
+Level	Description
+TRACE	Most detailed, fine-grained info (for debugging)
+DEBUG	Debugging messages for developers
+INFO	General runtime information
+WARN	Potential issues (not errors yet)
+ERROR	Errors that might affect functionality
+FATAL	Critical errors — may cause shutdown
+OFF	Turns off logging
+
+If your configuration level is INFO, then DEBUG and TRACE logs won’t appear.
+
+🧾 5️⃣ Basic Setup (log4j.properties)
+
+Create a file named log4j.properties inside src/main/resources.
+
+Example:
+
+# Root logger option
+log4j.rootLogger=INFO, console, file
+
+# Console Appender
+log4j.appender.console=org.apache.log4j.ConsoleAppender
+log4j.appender.console.layout=org.apache.log4j.PatternLayout
+log4j.appender.console.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p %c:%L - %m%n
+
+# File Appender
+log4j.appender.file=org.apache.log4j.RollingFileAppender
+log4j.appender.file.File=logs/app.log
+log4j.appender.file.MaxFileSize=5MB
+log4j.appender.file.MaxBackupIndex=10
+log4j.appender.file.layout=org.apache.log4j.PatternLayout
+log4j.appender.file.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p %c:%L - %m%n
+
+🧩 6️⃣ Example Java Code
+import org.apache.log4j.Logger;
+
+public class MyApp {
+    private static final Logger logger = Logger.getLogger(MyApp.class);
+
+    public static void main(String[] args) {
+        logger.info("Application started");
+
+        try {
+            int result = 10 / 0;
+        } catch (Exception e) {
+            logger.error("Exception occurred: ", e);
+        }
+
+        logger.debug("Debug details");
+        logger.warn("Potential issue detected");
+        logger.info("Application finished");
+    }
+}
+
+
+Output in console/file:
+
+2025-11-06 23:56:22 INFO  MyApp:8 - Application started
+2025-11-06 23:56:22 ERROR MyApp:12 - Exception occurred: java.lang.ArithmeticException: / by zero
+2025-11-06 23:56:22 WARN  MyApp:16 - Potential issue detected
+
+🚀 7️⃣ Modern Version — Log4j2
+Why Log4j2?
+
+Log4j 1.x is deprecated and replaced by Log4j2, which offers:
+
+Much faster performance (asynchronous logging)
+
+Better configuration options (XML, JSON, YAML)
+
+Automatically reloads configuration when changed
+
+Example: log4j2.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss} [%t] %-5level %logger{36} - %msg%n" />
+    </Console>
+    <File name="File" fileName="logs/app.log">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+    </File>
+  </Appenders>
+
+  <Loggers>
+    <Root level="info">
+      <AppenderRef ref="Console"/>
+      <AppenderRef ref="File"/>
+    </Root>
+  </Loggers>
+</Configuration>
+
+Example: Java Code for Log4j2
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public class MyApp {
+    private static final Logger logger = LogManager.getLogger(MyApp.class);
+
+    public static void main(String[] args) {
+        logger.info("Application started");
+        logger.error("Something went wrong", new RuntimeException("Test Error"));
+    }
+}
+
+🔁 8️⃣ Spring Boot and Log4j2
+
+Spring Boot by default uses Spring Boot Starter Logging, which includes Logback (not Log4j).
+If you want to use Log4j2, exclude Logback and include Log4j2 dependencies:
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+}
+
+
+Then add log4j2.xml in src/main/resources.
+
+🧩 9️⃣ Key Annotations (Spring Boot context)
+
+You usually don’t write Logger logger = ... manually; instead, use Lombok:
+
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
+@Service
+public class RestaurantService {
+    public void findRestaurants() {
+        log.info("Fetching restaurants");
+        log.debug("Querying MongoDB...");
+    }
+}
+
+🧩 10️⃣ Summary
+Concept	Purpose
+Logger	Where you write logs
+Appender	Where logs are sent (console, file, etc.)
+Layout	How logs are formatted
+Levels	Control verbosity of logs
+Log4j2	Modern, fast, thread-safe logging framework
+Spring Boot	Uses Logback by default, but can switch to Log4j2 easily

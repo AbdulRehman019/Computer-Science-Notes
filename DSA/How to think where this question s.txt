@@ -85,6 +85,19 @@ Sometimes you may need to take wrong choices while moving forward, in that case 
 You need to use Heap/PriorityQueue in such cases. 
 
 
+
+********************************************** Sliding Window Count Pattern ******************************** 
+Instead of traversing everytime on both maps and checking if both contains equal elements. 
+Use count. Always apply count on unique characters not number of characters. 
+
+Pattern Recognition
+This count concept is reused in:
+	Minimum Window Substring
+	Find All Anagrams
+	Permutation in a String
+	Any sliding window problem that compares frequency of elements
+
+
 ****************************************************** Left Rotate Array by k places **************************************************
 If you see a problem that involves shifting, rotating, or rearranging an array in-place → think about reversing parts of it.
 Reversal is a powerful trick to reorder arrays efficiently in-place.

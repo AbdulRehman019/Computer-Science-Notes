@@ -1,0 +1,91 @@
+When we need to find MAX / MIN in a window
+Recognize the scenario
+	If you see something like:
+		Shortest/Largest subarray satisfying a condition 
+		Prefix sum difference condition: prefix[j] - prefix[i] >= k
+		And you can’t just use sliding window (because of negatives, or dynamic ranges)
+
+👉 It’s probably a monotonic deque / prefix sum problem.
+
+Goal:
+	Find maximum or minimum element in every window of size k.
+
+	Common Problems:
+		Sliding Window Maximum (Leetcode #239)
+		Minimum in every subarray/window
+
+	Approach:
+		Use a Deque (Monotonic Queue) to keep useful elements only.
+		Maintain decreasing order (for max) or increasing (for min).
+		Remove elements that are out of the current window.
+
+	Key Idea:
+		Maintain a structure that always gives current window’s max/min in O(1).
+
+	Complexity:
+		Time: O(n)
+		Space: O(k)
+
+2️⃣ When we need to count number of subarrays
+Goal:
+	Count subarrays that satisfy a condition (sum, product, max, etc.)
+
+Common Pattern:
+	Count = 𝑓(condition ≤ 𝐾) − 𝑓(condition ≤ 𝐾 − 1)
+	Count=f(condition≤K)−f(condition≤K−1)
+
+Examples:
+	Subarrays with Bounded Maximum (#795)
+	Subarrays with Product < K (#713)
+	Subarrays with At Most K Distinct Integers (#992)
+
+Key Function:
+	int f(int[] nums, int k) {
+	    int left = 0, count = 0;
+	    for (int right = 0; right < nums.length; right++) {
+	        // move left if window invalid
+	        while (condition violated) left++;
+	        count += right - left + 1;
+	    }
+	    return count;
+	}
+
+
+Key Idea:
+	Count all valid subarrays ending at each right.
+	Use f(k) - f(k-1) to get count of subarrays satisfying exact condition.
+
+Complexity:
+	O(n)
+	
+3️⃣ When we need frequency check or matchi	ng pattern
+Goal:
+	Maintain and update element frequencies dynamically.
+
+Common Problems:
+	Minimum Window Substring (#76)
+	Permutation in String (#567)
+	Find All Anagrams in a String (#438)
+
+Approach:
+	Maintain two frequency maps (or arrays).
+	Use a variable count to track how many characters currently match.
+	Move left/right and update count only when equality breaks or restores.
+
+Key Idea:
+	Avoid full frequency comparison → use count to track matches efficiently.
+
+Pattern:
+	if (freq2[ch] == freq1[ch]) count++;
+	if (freq2[ch] == freq1[ch] + 1) count--; // broke equality
+
+	When count == totalUniqueChars → valid window.
+
+Complexity:
+	O(n)
+
+🧠 Summary Table
+	Type			Goal				Core Idea			Example
+	1️⃣ Max/Min		Find max/min element per window	Use Monotonic Deque		Sliding Window Maximum
+	2️⃣ Counting		Count subarrays satisfying a condition	Use f(k) - f(k-1) and (right-left+1)	Bounded Max, Product < K
+	3️⃣ Frequency Matching	Check for pattern/frequency match	Maintain count of matched elements	Min Window Substring, Anagrams

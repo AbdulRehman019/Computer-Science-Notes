@@ -1,0 +1,203 @@
+Rules of API design
+1. Use Nouns, Not Verbs, in URIs
+	Your URIs should represent resources (nouns), not actions (verbs).
+
+	✅ Good
+	GET /users/101
+	POST /orders
+	DELETE /users/101
+
+	❌ Bad
+	GET /getUser/101
+	POST /createOrder
+	DELETE /deleteUser/101
+
+	Why:
+	The HTTP method (GET, POST, PUT, etc.) already defines the action — no need to put verbs in the URI.
+
+2. Use Plural Nouns for Collections
+	Resources that represent a list should use plural names.
+	✅ /users, /products, /orders
+	❌ /user, /product, /orderList
+
+	Why:
+	It reflects that the endpoint represents a collection of items, not a single one.
+
+3. Follow Hierarchical Resource Structure
+	Use path hierarchy to show relationships between resources.
+
+	✅
+	/users/101/orders
+	/users/101/orders/5
+
+	❌
+	/getOrdersForUser?userId=101
+
+	Why:
+	Makes the relationship clear and RESTful.
+
+4. Use HTTP Methods Properly
+	Each method has a clear semantic meaning:
+	Method	Action				Example			Idempotent?
+	GET	Retrieve resource		GET /users		✅
+	POST	Create new resource		POST /users		❌
+	PUT	Replace entire resource		PUT /users/101		✅
+	PATCH	Partially update resource	PATCH /users/101	✅
+	DELETE	Remove resource			DELETE /users/101	✅
+
+	Tip: Never use GET for actions that change data.
+
+5. Use Query Parameters for Filtering, Sorting, and Pagination
+	✅
+	GET /products?category=mobile&sort=price&order=asc&page=2&limit=10
+
+	❌
+	GET /products/filter/mobile/sort/price/asc/page/2
+
+	Why:
+	Query parameters make optional, non-structural information clean and flexible.
+
+6. Use Consistent Naming Conventions
+	Element			Convention		Example
+	Resource names		lowercase, plural	/users
+	Words in path		hyphen-separated	/user-profiles
+	Query params		lowercase		?sort=created-date
+	No file extensions	Avoid 			/users.json (use content negotiation)	
+
+7. Use Proper HTTP Status Codes
+	Return meaningful responses — don’t just send 200 for everything.
+
+	Code				Meaning				Use Case
+	200 OK				Success				GET /users
+	201 Created			Resource created		POST /users
+	204 No Content			Successfully deleted		DELETE /users/101
+	400 Bad Request			Invalid input			Missing or bad parameters
+	401 Unauthorized		Authentication required		Invalid token
+	403 Forbidden			Authenticated but not allowed	No permission
+	404 Not Found			Resource doesn’t exist		Wrong ID
+	409 Conflict			Resource conflict		Duplicate entry
+	500 Internal Server Error	Unexpected server failure	Exception thrown
+
+8. Secure Your APIs
+	Always use HTTPS.
+	Implement authentication and authorization (JWT, OAuth2, etc.).
+	Never expose sensitive data in URLs.
+	Use rate limiting and API keys if needed.
+
+9. Return Consistent Response Formats
+	Use a consistent JSON structure everywhere.
+
+	✅ Good
+	{
+	  "status": "success",
+	  "data": {
+	    "id": 101,
+	    "name": "Abdul Rehman"
+	  }
+	}
+
+	❌ Bad
+
+	{
+	  "userId": 101,
+	  "success": true,
+	  "info": "Name: Abdul"
+	}
+	
+	Tip:
+		Include:
+			data: main content
+			error: for errors (with message, code)
+			meta: for pagination or extra info
+
+10. Version Your API
+	Always include versioning in the URI or header.
+
+	✅
+	/api/v1/users
+	or
+	Header-based:
+	Accept: application/vnd.myapp.v1+json
+
+	Why:
+	When you make breaking changes, you can keep older versions working.
+
+11. Support Pagination for Large Lists
+	Avoid sending all records in one go.
+
+	✅
+	GET /users?page=2&limit=20
+
+	Response should include metadata:
+	{
+	  "page": 2,
+	  "limit": 20,
+	  "total": 150,
+	  "data": [ ... ]
+	}
+
+12. Use Meaningful Error Messages
+
+	✅ Good
+	{
+	  "error": {
+	    "code": 400,
+	    "message": "Email field is missing"
+	  }
+	}	
+
+	❌ Bad
+	{
+	  "error": "Something went wrong"
+	}
+
+	Why:
+	It helps clients debug easily.
+
+13. Statelessness
+	Each API call should contain all information needed to process it —
+	the server should not store session state between requests.
+
+	✅ The client sends auth token or user ID every time.
+	❌ Server “remembers” logged-in user in session.
+
+	Why:
+	Stateless APIs are easier to scale and cache.
+
+14. Use HATEOAS (Optional for Hypermedia APIs)
+	Include links to related resources in responses.
+	Example:
+	{
+	  "id": 45,
+	  "name": "Order #45",
+	  "links": [
+	    { "rel": "self", "href": "/orders/45" },
+	    { "rel": "customer", "href": "/users/101" }
+	  ]
+	}
+
+	Why:
+	Allows navigation through the API dynamically.
+
+15. Documentation and Examples
+	Use OpenAPI / Swagger to document:
+	Endpoints
+	Request and response formats
+	Status codes
+	Example payloads
+
+✅ Example:
+	Swagger UI or Postman Collections for easy testing.
+
+🧠 Summary: REST API Design Golden Rules
+#	Rule	Essence
+1	Use nouns, not verbs	/users, not /getUsers
+2	Use plural resource names	/orders
+3	Use proper HTTP methods	GET, POST, etc.
+4	Use query params for filters	?page=2&limit=10
+5	Return correct status codes	201 Created, 404 Not Found
+6	Keep responses consistent	JSON with data, error, etc.
+7	Secure with HTTPS + auth	Tokens, rate limits
+8	Version your API	/api/v1/
+9	Keep stateless	No server session
+10	Document everything	Swagger/OpenAPI

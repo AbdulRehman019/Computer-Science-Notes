@@ -1,0 +1,232 @@
+# JWT with Spring Security – Comprehensive Notes
+
+🌐 What is JWT?
+	* JWT (**JSON Web Token**) is a compact, URL-safe token for **stateless authentication**.
+	* It is used to securely transfer claims between parties.
+	* Consists of **Header**, **Payload (claims)**, and **Signature**.
+
+🧱 Structure:
+	<Header>.<Payload>.<Signature>
+
+	* **Header**: Algorithm & token type
+	* **Payload**: User data / claims (e.g. `sub`, `roles`, `iat`, `exp`)
+	* **Signature**: Ensures integrity (signed with secret or private key)
+
+🛡️ JWT in Spring Security – Why?
+	* Replaces session-based auth → **stateless**
+	* Every request carries token
+	* No need to store user sessions on the server
+	* Easy to scale APIs
+
+🔧 Spring Security JWT Architecture
+
+Main Components:
+	1. **SecurityConfig**
+		* Defines URL access rules
+		* Registers custom filter (`JwtAuthFilter`)
+		* Disables default Basic Auth for JWT-only flows
+
+	2. **JwtAuthFilter**
+		* A filter that runs on **every request** (`OncePerRequestFilter`)
+		* Checks for `Authorization` header
+		* Extracts token, validates it, loads user into context
+
+	3. **JwtService**
+		* Generates and validates JWT
+		* Responsible for signing, extracting claims, verifying expiration
+
+	4. **AuthenticationManager**
+		* Used during login to authenticate username/password
+
+	5. **DTOs (AuthRequest, AuthResponse)**
+
+	Simplify request/response formats for login and token handling
+
+🔁 Authentication Flow in Detail
+	1️⃣ First Request – Login (No Token)
+		* **User sends:** POST `/api/auth/login` with username & password
+		* `AuthController` calls `AuthenticationManager` to authenticate
+		* If valid → `JwtService.generateToken(username)`
+		* Token sent in response (e.g. `{ "token": "..." }`)
+
+	2️⃣ Second Request – Access Secured Endpoint
+		* **Client includes token** in `Authorization: Bearer <token>` header
+		* `JwtAuthFilter`:
+		  * Checks header → extracts token
+		  * Extracts username → `UserDetailsService.loadUserByUsername`
+		  * Validates token via `JwtService.validateToken`
+		  * Sets authentication in SecurityContext (no login required)
+		* Controller is now aware of the authenticated user
+
+	3️⃣ Future Requests – Already Authenticated Context
+		* Token still passed in header
+		* Filter validates and uses it to auto-authenticate
+		* No database check if using caching (optional improvement)
+
+🚀 Implementation Steps
+	Step 1: Add Dependencies (`spring-boot-starter-security`, `jjwt`)
+
+	Step 2: Create `JwtService`
+		* Generates & validates token
+		* Uses secret key (base64 encoded)
+
+	Step 3: Create `JwtAuthFilter`
+		* Extracts and validates JWT
+		* Loads UserDetails and sets `Authentication`
+
+	Step 4: Modify `SecurityConfig`
+		* Register filter
+		* Disable CSRF (for simple deployments)
+		* Configure URL access & roles
+
+	Step 5: Create Login Endpoint
+		* Accepts username/password
+		* Authenticatess with `AuthenticationManager`
+		* Generates and returns JWT
+
+🧪 Code Skeletons (Key Snippets)
+	`Authorization` Header Format:
+		Authorization: Bearer eyJhbGciOiJIUzI...
+
+	Login Request Body:
+	```json
+	{
+	  "username": "test@mail.com",
+	  "password": "123456"
+	}
+
+🧠 Things to Remember
+	* Store secret key safely (e.g. `.env`, Config Server)
+	* Token has expiry – handle refresh logic if needed
+	* Filter must run **before** `UsernamePasswordAuthenticationFilter`
+	* Use roles: `ROLE_ADMIN`, `ROLE_USER`
+	* Don't enable `httpBasic()` when using JWT
+	* Use `@PreAuthorize` for method-level security
+	* Avoid putting sensitive data (like passwords) in JWT payload
+
+🧾 Example: Complete Flow Summary
+	1. **User Login:** Validates username/password → returns JWT
+	2. **Client stores token** (e.g. in localStorage)
+	3. **Client sends token** in all further requests in headers
+	4. **Filter intercepts→verifies→authenticates**
+	5. **Backend processes + authorizes via roles**
+	6. **Token expires** → must re-login or use refresh token pattern
+
+📥 Testing with Postman
+	Login:
+		* Method: `POST`
+		* URL: `/api/auth/login`
+		* Body (raw JSON):
+
+	json
+	{
+	  "username": "user@mail.com",
+	  "password": "userpass"
+	}
+
+	Use Token:
+		* Add Authorization header:
+			Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6...
+
+🏁 Final Tips
+	* JWT simplifies scaling, but doesn't secure access by itself – regular security hygiene still required
+	* Always validate token signature and expiration
+	* Some APIs may need role-based access → use `hasRole()` or `@PreAuthorize`
+	* Explore advanced features like Refresh Tokens and Revocation if needed
+
+	✨ You're ready to implement JWT authentication in Spring Security with confidence!
+
+
+
+
+
+
+Key Idea: Who Handles the First Request?
+	Every request in Spring Security goes through the Security Filter Chain, which is configured in your SecurityConfig.
+	So yes, SecurityConfig is the first place that defines how the request will be handled, but it’s not where the request itself arrives. Instead:
+		The request first goes to Spring Security’s chain of filters.
+		That filter chain is built using the rules you define in SecurityConfig.
+
+🧩 What Happens on the First Request?
+	Let’s assume there's no JWT token yet (i.e., user has not logged in).
+
+	🔁 Flow:
+		Client sends HTTP request (e.g., POST /api/auth/login)
+		Request enters Security Filter Chain
+		The chain is configured via SecurityConfig
+
+	For this request:
+		It checks the filters in the order they were added
+		Since no JWT is present, your JwtAuthFilter won't authenticate anything
+		If using Basic Authentication, the request would go to BasicAuthenticationFilter
+		If not using basic and this is a public URL (e.g. your login endpoint), request bypasses filters and reaches controller
+
+	🔍 How Does It Decide Between Basic Auth vs JWT?
+	1. Basic Authentication
+		If you enable Basic Authentication:
+			http.httpBasic(Customizer.withDefaults());
+
+		Then Spring Security adds BasicAuthenticationFilter to the chain.
+
+	Behavior:
+		If the request matches a protected URL, it checks the Authorization: Basic <creds> header.
+		If Basic header is present → it tries to authenticate immediately.
+		If not present → sends 401 Unauthorized and asks for credentials.
+
+	➡ This is how Basic Auth decides to run.
+
+2. JWT Authentication
+	You manually add JWT authentication via:
+	.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+	Behavior:
+		On every request, JwtAuthFilter checks the Authorization header for Bearer <token>
+		If token present → validate and authenticate
+		If no token → it does nothing and lets request pass down the chain
+
+	Login request should be public → user receives token as response
+
+	🔄 So What Happens in Your Current Setup?
+		Based on your config (Basic Auth is commented out):
+		// .httpBasic(Customizer.withDefaults()); // 👈 disables BASIC AUTH
+
+		No Basic Auth right now.
+
+	First request:
+	Goes to JwtAuthFilter, sees no Bearer token → does nothing
+	Passes down the chain
+
+	Checks URL permissions:
+	/api/auth/login and /api/auth/create-user are public → allowed
+
+	Others require authentication
+	Login endpoint returns JWT token
+
+	For next requests, JwtAuthFilter sees token → authenticates
+
+
+
+
+Always Make Sure:
+
+/generateToken is not protected by Spring Security — it should be public.
+
+You have a JWT filter (OncePerRequestFilter) to validate incoming tokens.
+
+Your SecurityConfig applies the JWT filter before the UsernamePasswordAuthenticationFilter.
+
+
+
+
+
+
+🧠 Summary
+Step	What Happens
+Request Arrives	Goes to Filter Chain (not straight to SecurityConfig)
+Filter Decision	Filters defined in SecurityConfig decide how to handle it
+Basic Auth	Needs .httpBasic() to be enabled – looks for Basic header
+JWT Auth	Your custom JwtAuthFilter looks for Bearer header
+No Token	Request allowed only if URL is public or login endpoint
+
+👉 If you're using JWT, you don’t need Basic Auth — so you disable .httpBasic().
+If Basic was enabled, Spring Security would use headers or challenge depending on config.

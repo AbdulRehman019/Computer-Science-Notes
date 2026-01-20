@@ -1,0 +1,126 @@
+Eureka Server in Microservice Architecture
+	How do microservice-based applications discover each other in Spring Boot? Eureka Server.
+
+	Eureka Server is a critical component in a microservice architecture. 
+	It serves as a service registry and discovery mechanism, enabling microservices to locate and communicate with each other. 
+	As microservices are often distributed across multiple servers and containers, Eureka Server provides a centralized platform for managing and tracking these services.
+
+	Here are some key reasons why Eureka Server is important in a microservice architecture:
+	Service Registry:
+		Eureka Server acts as a central registry for all microservices in the architecture. 
+		Each microservice registers itself with Eureka Server when it starts, providing information such as its name, IP address, and port number. 
+		This allows other microservices to easily discover and connect to each other.
+	
+	Service Discovery:
+		Eureka Server enables microservices to discover each other dynamically without requiring hard-coded IP addresses or manual configuration. 
+		When a microservice needs to communicate with another microservice, it can query Eureka Server to obtain the necessary connection information. 
+		This simplifies service discovery and makes it more efficient.
+
+	Load Balancing:
+		Eureka Server can be integrated with load balancers to distribute traffic evenly across multiple instances of a microservice. 
+		This helps ensure high availability and scalability by preventing overloading of individual instances.
+
+	Health Monitoring:
+		Eureka Server provides health monitoring capabilities for microservices. 
+		It periodically sends heartbeat requests to registered microservices and marks them as "UP" or "DOWN" based on their responses. 
+		This information can be used by other microservices to avoid interacting with unhealthy or unavailable services.
+
+	Fault Tolerance:
+		Eureka Server's service discovery and health monitoring capabilities contribute to the fault tolerance of microservice architectures. 
+		If a microservice instance fails, other microservices can automatically discover and connect to a healthy instance, ensuring uninterrupted communication.
+
+	Eureka Server plays a vital role in managing the complexity and dynamics of microservice architectures. 
+	It simplifies service discovery, enables load balancing, provides health monitoring, and enhances fault tolerance, making it an essential component for building resilient and 	scalable microservice systems.
+
+
+
+Setting up the Eureka Server
+	Let’s set up the Eureka Server for our application.
+
+	1. Go to https://start.spring.io/
+	2. Create a new project called eureka-server
+	3. Add the Eureka Server dependency. Ensure that it’s spring-cloud-netflix Eureka server.
+	4. Generate and place the application in buy-buddy-microservices parent folder with the other microservices.
+	5. Open the eureka-server application in your IDE to configure it.
+
+	6. Configure applications.properties:
+		spring.application.name=eureka-server
+		server.port=8761
+		eureka.client.register-with-eureka=false
+		eureka.client.fetch-registry=false
+
+	The client properties are set to false because Eureka is a server and not a client. This ensures that the expected behaviour is achieved.
+
+	Annotate the main class to configure the application as a Eureka Server.
+	@EnableEurekaServer
+	The Eureka server is set up! Next, we need to configure individual applications.
+
+	
+
+Setting up Eureka Discovery for individual applications
+	To have the Eureka server discover our microservices, we need to do some individual configurations.
+
+	Step 1: Add Eureka Client Dependency
+		In each microservice (e.g., Order, Customer, Product), add the Eureka Client dependency to enable service registration and discovery.
+
+		Gradle:
+		Add the following dependency to your build.gradle:
+		implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+	Step 2: Enable Eureka Client
+		In the main class of each microservice, add the @EnableEurekaClient annotation to enable Eureka discovery.
+		Example for Order Service:
+			import org.springframework.boot.SpringApplication;
+			import org.springframework.boot.autoconfigure.SpringBootApplication;
+			import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+			
+			@SpringBootApplication
+			@EnableDiscoveryClient
+			public class OrderServiceApplication {
+			    public static void main(String[] args) {
+			        SpringApplication.run(OrderServiceApplication.class, args);
+			    }
+			}
+			Repeat this step for all microservices (Customer, Product, etc.).
+
+	Step 3: Configure Eureka Client
+		In each microservice’s application.properties or application.yml, configure the Eureka Client to register with the Eureka Server.
+		Example for Order Service:
+			# Application name (must be unique)
+			spring.application.name=order-service
+			
+			# Eureka Server URL
+			eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+			
+			# Optional: Enable health checks (recommended)
+			eureka.client.healthcheck.enabled=true
+		
+		Example for Customer Service:
+			spring.application.name=customer-service
+			eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+			eureka.client.healthcheck.enabled=true
+
+		Example for Product Service:
+			spring.application.name=product-service
+			eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+			eureka.client.healthcheck.enabled=true
+
+	Step 4: Start the Microservices
+		Start the Eureka Server:
+			Ensure the Eureka Server is running at http://localhost:8761.
+
+		Start the Microservices:
+			Start the Order, Customer, and Product services.
+			Each service will automatically register itself with the Eureka Server.
+
+		Optional Step: Add Spring Cloud Dependency Config
+		If the application(s) errors out, add Spring Cloud Dependency configs in the build.gradle file:
+			ext {
+			        set('springCloudVersion', "2024.0.0")
+			}
+
+			dependencyManagement {
+			        imports {
+			                mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+			        }
+			}

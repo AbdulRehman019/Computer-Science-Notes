@@ -1,0 +1,108 @@
+I am confused about what is the difference between MongoRepository and MongoTemplate
+what if we are using both how spring will know which to use? what will be the flow? 
+can we make multiple respositoryservice? 
+syntax of using mongotemplate?
+
+
+
+MongoRepository vs MongoTemplate
+	Both are ways to interact with MongoDB — but they serve different purposes.
+
+	Feature				MongoRepository								MongoTemplate
+	Type				High-level abstraction (built on top of MongoTemplate)			Low-level, flexible API
+	Usage				When you just need CRUD operations (save, findAll, delete, etc.)	When you need complex or custom queries
+	Boilerplate Code		Very little (Spring Data auto-generates code)				You write queries manually
+	Example				restaurantRepository.findAll()						mongoTemplate.find(query, Restaurant.class)
+	Annotation			You define an interface extending MongoRepository			You inject a MongoTemplate bean and use it directly
+
+How they work internally
+	Actually, MongoRepository uses MongoTemplate under the hood.
+	When you call restaurantRepository.findAll(),
+	Spring Data delegates that operation to an internal MongoTemplate.
+
+	So, you don’t need both in simple cases — one is enough.
+
+What if we use both?
+	You can use both in the same service class — for example:
+	@Service
+	@Primary
+	public class RestaurantRepositoryServiceImpl implements RestaurantRepositoryService {
+	
+	    @Autowired
+	    private RestaurantRepository restaurantRepository;  // Uses auto CRUD
+	
+	    @Autowired
+	    private MongoTemplate mongoTemplate;  // For custom queries
+	
+	    @Override
+	    public List<Restaurant> findAllRestaurantsCloseBy(...) {
+	        // For example: use MongoTemplate when you need filtering
+	        Query query = new Query(Criteria.where("city").is("Delhi"));
+	        List<RestaurantEntity> entities = mongoTemplate.find(query, RestaurantEntity.class);
+	
+	        // Or use repository for simple findAll
+	        List<RestaurantEntity> repoEntities = restaurantRepository.findAll();
+	
+	        ...
+	    }
+	}
+
+Spring knows which to use because:
+	restaurantRepository is injected from your RestaurantRepository extends MongoRepository
+	mongoTemplate is injected from Spring’s built-in MongoTemplate bean
+
+	You decide which one to call — Spring won’t automatically “choose” between them.
+	It just provides both, you control the flow.
+
+Can we make multiple RepositoryServices?
+	Yes!
+	That’s the whole idea of abstraction through interfaces.
+
+	Example:
+	public interface RestaurantRepositoryService {
+	    List<Restaurant> findAllRestaurantsCloseBy(...);
+	}	
+
+	Two implementations:
+	@Service
+	@Primary
+	public class RestaurantRepositoryServiceImpl implements RestaurantRepositoryService {
+	    // uses real MongoDB (MongoTemplate or MongoRepository)
+	}
+
+	@Service
+	public class RestaurantRepositoryServiceDummyImpl implements RestaurantRepositoryService {
+	    // returns dummy data for testing
+	}
+
+	Spring will use the one marked with @Primary (unless you use @Qualifier).
+
+
+Syntax of using MongoTemplate
+	Here are common examples 👇
+	➤ Fetch all
+	List<RestaurantEntity> list = mongoTemplate.findAll(RestaurantEntity.class);
+
+	➤ Find by condition
+	Query query = new Query();
+	query.addCriteria(Criteria.where("city").is("Delhi"));
+	List<RestaurantEntity> delhiRestaurants = mongoTemplate.find(query, RestaurantEntity.class);
+
+	➤ Insert
+	mongoTemplate.insert(restaurantEntity);
+	
+	➤ Update
+	Query query = new Query(Criteria.where("id").is("123"));
+	Update update = new Update().set("name", "New Name");
+	mongoTemplate.updateFirst(query, update, RestaurantEntity.class);
+
+	➤ Delete
+	mongoTemplate.remove(new Query(Criteria.where("id").is("123")), RestaurantEntity.class);
+
+Typical flow in your case
+	Controller calls → RestaurantService
+	RestaurantService calls → RestaurantRepositoryService
+	RestaurantRepositoryServiceImpl uses either:
+	restaurantRepository → simple CRUD (uses internal MongoTemplate)
+	or mongoTemplate → custom query logic
+	Converts entities → DTOs using ModelMapper

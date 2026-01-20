@@ -1,0 +1,143 @@
+
+Spring Boot follows a **layered architecture** to organize code into logical layers, each with a specific responsibility.
+This makes your code **clean, testable, and maintainable**.
+
+Spring Boot Layered Architecture
+	A typical Spring Boot application has **4 main layers**:
+
+	| Layer                                        | Responsibility                                                                         | Example Classes            |
+	| -------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------- |
+	| **1️⃣ Controller Layer (Web Layer)**         | Handles **HTTP requests and responses**. Acts as the entry point for the client.       | `UserController`           |
+	| **2️⃣ Service Layer (Business Logic Layer)** | Contains **business logic** — rules and computations that define how your app behaves. | `UserService`              |
+	| **3️⃣ Repository Layer (Data Access Layer)** | Handles **database operations** — CRUD, queries, etc.                                  | `UserRepository`           |
+	| **4️⃣ Model Layer (Domain Layer)**           | Represents **data structures or entities**.                                            | `User`, `Order`, `Product` |
+
+1️⃣ Controller Layer
+	* Located in `controller` package.
+	* Uses annotations like:
+
+  @RestController
+  @RequestMapping("/users")
+  ```
+* Purpose:
+
+  * Receive API requests.
+  * Pass data to service layer.
+  * Return responses to the client (usually JSON).
+
+Example:
+
+```java
+@RestController
+@RequestMapping("/users")
+public class UserController {
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
+}
+```
+
+---
+
+### 2️⃣ **Service Layer**
+
+* Located in `service` package.
+* Uses annotation:
+
+  ```java
+  @Service
+  ```
+* Purpose:
+
+  * Contains business logic.
+  * Acts as a bridge between the Controller and Repository.
+  * Should not deal directly with HTTP or database APIs.
+
+Example:
+
+```java
+@Service
+public class UserService {
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+}
+```
+
+---
+
+### 3️⃣ **Repository Layer**
+
+* Located in `repository` package.
+* Uses annotation:
+
+  ```java
+  @Repository
+  ```
+* Purpose:
+
+  * Directly interacts with the database.
+  * Uses JPA/Hibernate to perform CRUD operations.
+
+Example:
+
+```java
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+}
+```
+4️⃣ Model / Entity Layer
+	* Located in `model` or `entity` package.
+	* Uses annotations:
+	  @Entity
+	  @Table(name = "users")
+
+	Purpose:
+	 * Represents database tables or domain objects.
+
+	Example:
+	@Entity
+	@Table(name = "users")
+	public class User {
+	    @Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	    private Long id;
+	
+	    private String name;
+	    private String email;
+	
+	    // getters & setters
+	}
+
+🔄 Flow of Data
+Client → Controller → Service → Repository → Database
+                     ↑           ↓
+                     ←—— Response ———
+
+1. The **Controller** receives an HTTP request.
+2. It calls the **Service** for business logic.
+3. The **Service** calls the **Repository** to access or modify data.
+4. The **Repository** interacts with the **database**.
+5. The result bubbles back up the layers to the **Controller**, which returns a response to the **client**.
+
+Benefits
+
+✅ Separation of concerns
+✅ Easier testing (each layer can be mocked)
+✅ Easier maintenance
+✅ Scalable and extensible design
+
