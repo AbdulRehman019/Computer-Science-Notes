@@ -75,7 +75,7 @@
 			    console.log(i);	// It will not give an error
 			}
 
-	2. var adds itself to the window object.					2. let and const doesnot add to the window object.
+	2. var adds itself to the window(global) object.				2. let and const doesnot add to the window object.
 
 6. What is window?
 	There are various features in JavaScript is not actually the part of JS but we can use it inside JS.
@@ -122,12 +122,21 @@
 	Phases of the JavaScript Execution Context
 	There are two phases of JavaScript execution context:
 
-	Creation phase: In this phase, the JavaScript engine creates the execution context and sets up the script's environment. It determines the values of variables and functions and 	sets up the scope chain for the execution context.
+	Creation phase/Memory phase: In this phase, the JavaScript engine creates the execution context and sets up the script's environment. 
+	It determines the values of variables and functions and sets up the scope chain for the execution context. In this phase, memory is allocated to the functions and variables. 
 
 	Execution phase: In this phase, the JavaScript engine executes the code in the execution context. It processes any statements or expressions in the script and evaluates any 	function calls.
 
 	Everything in JS happens inside this execution context. It is divided into two components. One is memory and the other is code. It is important to remember that these phases and 	components are applicable to both global and functional execution contexts.
 
+	Since, memory phase happens before hence the memory is allocated before even the code runs thats why hoisting is possible. 
+	For var it happens but if we have let or const, hoisting will happen but if we try to access it before initialization it will give "Reference Error". 
+
+	Example: console.log(x);	// It will give error. 
+		 let x = 10;
+
+		 console.log(y);	// It will give undefined. 
+		 var y = 10;
 8. Lexical Scope
 	When we have a nested group of functions, the inner function has access to variables and other resources of the parent function. This means child functions are lexically bound to 	the execution context of their parents.
 
@@ -139,6 +148,21 @@
 		    }
 		 }
 	The printMyName() function had access to name variable of findMyName() function. This will work only in one direction, you cannot access variables and other resources residing in 	the inner function from the parent function.
+
+	Example: function hello() {
+			console.log(x);
+		 }
+
+		 let x = 100;
+		 hello();
+
+	Since, x is not present inside the function hello, it will take it from outside(parent or outer or global scope). 
+	If it was present inside the function, it would take it from there. 
+
+	Local can access the outside one. 
+	Outside one cannot access local one. Suppose, there was let x = 10; inside function hello() and i was trying to access it outside function. It won't work. 
+
+	Function + lexical scope = Closure. 
 
 9. Lexical Enviroment
 	When the JavaScript engine creates a new execution context for a function, it creates a new lexical environment to store variables defined in that function during the execution 	phase.
@@ -186,6 +210,51 @@
 	}
 
 	abcd(function() {console.log("Hey");}
+
+	// Normal function 
+	// Global Scope
+	function add(a, b) {
+		return a + b;
+	}
+
+	// Function assigned to variable 
+	// Script Scope
+	// One more scope will be created known as local when the function is called. 
+	let sum = function(a, b) {
+		return a + b;
+	}
+
+	let diff = function(a, b) {
+		return a - b;
+	}
+
+	// Function passed as arguments to other function
+	function operate(operationFunc, a, b) {
+		return operateFunc(a, b);
+	}
+
+	operate(sum, 2, 3);
+	operate(diff, 2, 3); 
+
+	// Arrow Functions 
+	let sum = (a, b) => {return a + b;}
+	If it is a one line function, you can remove return
+	let sum = (a, b) => a + b;
+
+	// Function returned from a function 
+	function outer() {
+		function inner() {
+			console.log("hello");
+		}
+
+		return inner;
+	}
+
+	let returnedFuncVar = outer();
+	console.log(returnedFunVar);		f inner() { console.log("hello"); }
+	returnedFuncVar();			hello 
+
+    Higher Order Functions are functions that take one or more functions as arguments, or returns a function as its result. 
 
 13. How array is created behind the scene?
     Array is created like objects behind the scene.

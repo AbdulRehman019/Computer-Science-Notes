@@ -1,0 +1,108 @@
+How do you handle transactions in Spring Boot?
+In Spring Boot, transactions are handled using the Spring Transaction Management framework, which simplifies handling database transactions in an application. A transaction ensures that multiple operations are treated as a single unit of work, where either all the operations succeed (commit) or none of them are applied (rollback) in case of an error.
+
+
+
+Steps to Handle Transactions:
+
+
+Enable Transaction Management:
+Annotate your Spring Boot application or configuration class with @EnableTransactionManagement. This enables the transaction management feature in Spring Boot.
+In most cases, Spring Boot automatically configures transaction management, so manual configuration is not always necessary.
+Example:
+java @SpringBootApplication @EnableTransactionManagement public class MyApp { public static void main(String[] args) { SpringApplication.run(MyApp.class, args); } }
+
+
+
+Use @Transactional Annotation:
+The @Transactional annotation is applied to service methods or class-level to define the transactional boundary.
+Spring will manage the transaction by starting it before the method execution and committing it when the method completes successfully. If an exception occurs, Spring will roll back the transaction.
+Example:
+```java
+@Service
+public class UserService {
+
+   @Autowired
+   private UserRepository userRepository;
+@Transactional
+public void createUser(User user) {
+userRepository.save(user);
+// Additional operations can be included in the transaction
+}
+}
+```
+
+In this example, if any error occurs while saving the user, Spring will roll back the entire transaction.
+
+
+
+Transaction Propagation and Isolation:
+The @Transactional annotation can be customized with propagation and isolation settings.
+Propagation: Defines how transactions should behave with nested method calls.
+REQUIRED (default): Joins an existing transaction or starts a new one if none exists.
+REQUIRES_NEW: Always creates a new transaction, suspending any existing one.
+NESTED: Executes within a nested transaction if the main transaction exists.
+Isolation: Defines the level of isolation between concurrent transactions.
+READ_COMMITTED (default): Prevents dirty reads but allows non-repeatable reads.
+REPEATABLE_READ: Prevents dirty and non-repeatable reads.
+SERIALIZABLE: Fully isolates transactions, ensuring data integrity at the cost of performance.
+Example of Transaction Propagation and Isolation:
+java @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED) public void processOrder(Order order) { // Transactional logic for processing order }
+
+
+
+Transaction Rollback on Exceptions:
+By default, Spring rolls back transactions for unchecked exceptions (subclasses of RuntimeException) and commits the transaction if no exceptions are thrown.
+You can customize rollback behavior using the rollbackFor or noRollbackFor attributes to handle specific exceptions.
+Example of Rollback for a Checked Exception:
+java @Transactional(rollbackFor = Exception.class) public void performOperation() throws Exception { // Code that may throw a checked exception }
+
+
+
+Programmatic Transaction Management:
+In some cases, you may need more fine-grained control over transactions. You can manage transactions programmatically using the TransactionTemplate or PlatformTransactionManager.
+This method is less commonly used in Spring Boot applications since the declarative approach with @Transactional is simpler.
+Example of Programmatic Transaction Management:
+```java
+@Service
+public class TransactionalService {
+
+   @Autowired
+   private PlatformTransactionManager transactionManager;
+public void performTransactionalOperation() {
+TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+transactionTemplate.execute(status -> {
+try {
+// Code inside the transaction
+} catch (Exception ex) {
+status.setRollbackOnly();  // Mark the transaction for rollback
+}
+return null;
+});
+}
+}
+```
+
+
+
+Best Practices for Handling Transactions:
+Apply @Transactional at the service layer:
+Transactions should typically be applied at the service layer to ensure that database operations across multiple repositories are handled as a single unit.
+
+Avoid mixing multiple data sources in a single transaction:
+Transactions across multiple databases (XA transactions) are complex and can affect performance. It's better to avoid this unless necessary.
+
+Keep transactional methods short:
+Long-running transactional methods can lead to locks on database resources, reducing performance and increasing the risk of deadlocks.
+
+
+
+Summary:
+Enable transaction management in Spring Boot with @EnableTransactionManagement.
+Use the @Transactional annotation on service methods to manage transactions declaratively.
+Customize transaction propagation, isolation, and rollback behavior as needed.
+Handle exceptions to roll back transactions automatically.
+For advanced scenarios, use programmatic transaction management with TransactionTemplate.
+
+
+In conclusion, Spring Boot simplifies transaction handling with the @Transactional annotation, allowing you to control how transactions are managed, including automatic rollback and propagation settings. This approach ensures that multiple database operations are executed as a unit of work, ensuring data consistency and integrity.

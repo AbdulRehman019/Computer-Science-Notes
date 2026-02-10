@@ -1,0 +1,113 @@
+Where does Spring Boot obtain beans when the @Autowired annotation is used?
+	When the @Autowired annotation is used in Spring Boot, Spring automatically injects the bean (or dependency) from the Spring IoC (Inversion of Control) container. 
+	The IoC container manages the lifecycle, creation, and configuration of all the beans in a Spring application. Here’s how Spring Boot obtains beans for dependency injection when 	@Autowired is used:
+
+	1. Component Scanning and Bean Registration:
+		Spring Boot automatically scans for components (classes annotated with @Component, @Service, @Repository, @Controller, etc.) in the specified package and registers them as 		beans in the Spring IoC container.
+
+		When @Autowired is used, Spring looks for the appropriate bean in the IoC container and injects it into the dependent class.
+
+		Example:
+		@Service
+		public class MyService {
+			public void performService() {
+				System.out.println("Performing service...");
+			}
+		}
+
+		@RestController
+		public class MyController {
+		   // Dependency injection
+		   @Autowired
+		   private MyService myService;
+			@GetMapping(“/perform”)
+			public void perform() {
+				myService.performService();  // Injected MyService bean is used here
+			}
+		}
+
+	In this example,@Autowiredinjects theMyServicebean intoMyController. 
+	Spring Boot automatically detectsMyServiceas a bean because it is annotated with@Service(which is a specialized form of@Component`).
+
+2. @Bean-Defined Beans:
+	Spring Boot can also obtain beans defined explicitly using the @Bean annotation inside a @Configuration class.
+	A method annotated with @Bean tells Spring to register the return value as a bean in the IoC container. The @Autowired annotation can then inject these beans where needed.
+
+	Example:
+	@Configuration
+	public class AppConfig {
+	   @Bean
+	   public MyService myService() {
+	       return new MyService();
+	   }
+	}
+
+	@RestController
+	public class MyController {
+	   // Dependency injection
+	   @Autowired
+	   private MyService myService;
+	   @GetMapping(“/perform”)
+	   public void perform() {
+	   myService.performService();  // Injected MyService bean is used here
+	}
+
+	In this example, the myService() method inside AppConfig is annotated with @Bean, so Spring registers it as a bean. 
+	@Autowired then injects this bean wherever it’s needed, such as in MyController.
+
+3. Automatic Configuration (Auto-Configuration):
+	Spring Boot's auto-configuration feature automatically configures many commonly used beans based on the classpath and application properties.
+	For example, if you add spring-boot-starter-data-jpa to your dependencies, Spring Boot will automatically configure a DataSource bean, EntityManager, and other necessary beans for 	database access.
+
+	These beans can then be injected using @Autowired.
+
+	Example:
+	java @Autowired private DataSource dataSource;
+
+	Here, @Autowired automatically injects a DataSource bean, which was auto-configured by Spring Boot based on the classpath dependencies and properties.
+
+
+4. Qualifying Multiple Beans:
+	If there are multiple beans of the same type in the IoC container, Spring Boot may not know which one to inject. 
+	In such cases, you can use the @Qualifier annotation to specify which bean should be injected.
+
+	Example:
+	@Bean
+	public MyService defaultService() {
+		return new MyService("Default");
+	}
+
+	@Bean
+	public MyService backupService() {
+		return new MyService("Backup");
+	}
+
+	@Autowired
+	@Qualifier("backupService")
+	private MyService myService;
+
+	Here, two beans of the same type (MyService) are defined, so @Qualifier is used with @Autowired to specify which one should be injected.
+
+
+5. Dependency Resolution by Type:
+	When using @Autowired, Spring tries to inject beans by type. It searches the IoC container for a bean of the required type and injects it.
+	If there’s only one bean of the required type, Spring will inject it automatically. 
+	If there are multiple beans of the same type, Spring may throw an exception unless a qualifier is provided.
+
+6. Optional Injection:
+	If you want Spring to inject a bean only if it exists in the IoC container, you can use @Autowired(required = false) to mark the dependency as optional. 
+	If no matching bean is found, the dependency will remain null.
+
+	Example:
+	java @Autowired(required = false) private MyOptionalService myOptionalService;
+
+	In this case, if MyOptionalService is not present in the IoC container, no exception is thrown, and myOptionalService will be null.
+
+
+Conclusion:
+	When @Autowired is used in Spring Boot, Spring injects beans from the IoC container. These beans can come from:
+	1. Component Scanning: Automatically detected beans (e.g., @Component, @Service, @Repository, @Controller).
+	2. @Bean Definitions: Beans explicitly declared using the @Bean annotation in @Configuration classes.
+	3. Auto-Configuration: Beans auto-configured by Spring Boot based on classpath dependencies and configuration.
+
+	Spring Boot’s dependency injection mechanism simplifies the development process by allowing automatic bean management, reducing the need for manual configuration and wiring of 	dependencies.

@@ -141,4 +141,17 @@ Math Patterns
 4. (curr - target) % k = (curr - target + k) % k;
 	To avoid negative remainder. 
 
+
+5. If n % k = rem
+   (n + k.x) % k = rem
+   It means if till a point sum % k = rem
+   We add the multiple of k in sum, then again its modulo with k will give remainder
+   Hence, we can conclude if we get the same remainder again, we added the multiple of k
+
+6. Consider this array: [23,2,6] and k = 7
+   If we do 23 % 7 = 2
+   (23 + 2) % 7 = 4 = (2 + 2) % 7
+   (23 + 2 + 6) % 7 = 3 = (4 + 6) % 7
+   sum % k = previous Remainder % k
+   The number will never go out of range. 
 	​

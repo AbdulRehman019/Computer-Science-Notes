@@ -1,0 +1,117 @@
+How does Spring handle transaction rollbacks?
+
+In Spring, transaction management is handled in a declarative manner using the @Transactional annotation. 
+Transaction rollback occurs when an exception is thrown during the execution of a method that is part of a transaction, causing the transaction to be undone, or "rolled back," to its previous state. 
+Spring provides flexibility to control when to trigger a rollback and how it should behave.
+
+Here’s an explanation of how Spring handles transaction rollbacks, including key concepts and configurations:
+
+1. Default Rollback Behavior
+	By default, Spring will roll back a transaction when a runtime exception (unchecked exception) or error occurs during method execution. 
+	This is the standard behavior when no special configurations are set.
+
+	Unchecked exceptions: These are subclasses of RuntimeException, such as NullPointerException, IllegalArgumentException, etc.
+	Errors: These are subclasses of Error, such as OutOfMemoryError, StackOverflowError, etc.
+
+	Example:
+		@Transactional
+		public void performOperation() {
+		    // Code that may throw a runtime exception
+		    if (someCondition) {
+		        throw new IllegalArgumentException("Invalid input");
+		    }
+		    // Other business logic
+		}
+
+	In this case, if an IllegalArgumentException is thrown, the transaction will be rolled back automatically.
+
+2. Configuring Rollback for Checked Exceptions
+	By default, Spring does not roll back for checked exceptions (subclasses of Exception), such as SQLException, IOException, etc. 
+	However, you can configure Spring to roll back for checked exceptions by specifying them in the @Transactional annotation.
+
+	Example of rollback for checked exceptions:
+		@Transactional(rollbackFor = Exception.class)
+		public void performOperation() throws Exception {
+		    // Code that may throw a checked exception
+		    throw new IOException("File not found");
+		}
+
+	In this case, the IOException will trigger a rollback, even though it's a checked exception.
+
+3. Rollback for Specific Exception Types
+	You can also configure Spring to roll back for specific exception types, either checked or unchecked. 
+	This is useful when you only want to roll back for certain exceptions, allowing other exceptions to be handled differently.
+
+	Example of rollback for a specific exception:
+		@Transactional(rollbackFor = {SQLException.class, CustomException.class})
+		public void performDatabaseOperation() throws SQLException {
+		    // Database operations that might throw SQLException
+		    throw new SQLException("Database error");
+		}
+
+	Here, only SQLException and CustomException will cause a rollback, while other exceptions will not.
+
+4. Rollback for Specific Methods (Non-Rollback)
+	You can also configure no rollback behavior for specific methods or exceptions by using noRollbackFor. 
+	This allows you to prevent rollback for certain exceptions even if the transaction is marked for rollback.
+
+	Example of no rollback for a specific exception:
+		@Transactional(noRollbackFor = IllegalArgumentException.class)
+		public void performOperation() {
+		    // This method will not trigger a rollback for IllegalArgumentException
+		    if (someCondition) {
+		        throw new IllegalArgumentException("Invalid input");
+		    }
+		}
+
+	In this case, even though an IllegalArgumentException is thrown, it will not cause a rollback. 
+
+5. Rollback Rules and Propagation
+	The rollback behavior can also be influenced by the propagation level of the transaction. For example:
+	- If a transaction is set to PROPAGATION_REQUIRES_NEW, it will start a new transaction, and if that transaction fails, only the new transaction will be rolled back, not the parent 	transaction.
+	- If a transaction has PROPAGATION_REQUIRED and an exception occurs, the parent transaction will also be rolled back.
+
+	Example:
+		@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+		public void performIndependentOperation() throws Exception {
+		    // Code that may throw a checked exception
+		    throw new SQLException("Database error");
+		}
+
+	In this case, the exception in performIndependentOperation will only roll back the current method's transaction, and not the parent method's transaction (if one exists).
+
+6. Rollback for Commit Success
+	In a typical use case, if the method completes successfully (without throwing any exceptions that trigger a rollback), the transaction will be committed at the end of the method 	execution. If a rollback is triggered, all changes made within the transaction will be undone, returning the database to its previous state before the transaction began.
+
+7. Programmatic Rollback
+	While declarative rollback via @Transactional is the most common approach, Spring also allows for programmatic rollback. You can manually trigger a rollback in the code using 	TransactionAspectSupport or the PlatformTransactionManager.
+
+	Example of programmatic rollback:
+		@Autowired
+		private PlatformTransactionManager transactionManager;
+			public void performOperation() {
+			DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+			def.setName("exampleTransaction");
+			def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+			TransactionStatus status = transactionManager.getTransaction(def);
+
+			try {
+		    		// Business logic here
+    				if (someCondition) {
+				        throw new RuntimeException(&quot;Manual rollback&quot;);
+				}
+
+				    transactionManager.commit(status);
+				} catch (RuntimeException e) {
+				    transactionManager.rollback(status);  // Rollback explicitly
+				}
+
+	In this example, the transaction is explicitly rolled back in case of an exception.
+
+Summary:
+	Rollback for runtime exceptions (default behavior in Spring).
+	Rollback for checked exceptions is configurable using rollbackFor or noRollbackFor.
+	Programmatic rollback can be done using PlatformTransactionManager or TransactionAspectSupport.
+	Spring's rollback handling is integrated with the transaction propagation settings, ensuring consistent transaction management across various layers of the application.
+
+	This flexibility allows Spring to handle complex transactional use cases while ensuring data consistency and providing mechanisms to manage when and how transactions should be 	rolled back.

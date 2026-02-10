@@ -1,0 +1,65 @@
+What is the use of the @Configuration in Springboot
+@Configuration is an annotation in Spring Boot that indicates a class is a source of bean definitions. It is used to define beans and their dependencies in a Spring application context. The Spring container processes the annotated class to generate and manage beans during runtime.
+
+
+
+The @Configuration annotation is applied to classes that contain bean definitions. Within these classes, methods are annotated with @Bean to define individual beans. These beans are then managed by the Spring IoC (Inversion of Control) container.
+
+
+
+Example
+Here’s an example of how to use @Configuration in a Spring Boot application:
+
+
+
+1. Define a Configuration Class:
+Create a class and annotate it with @Configuration to indicate that it contains bean definitions.
+
+   import org.springframework.context.annotation.Bean;
+   import org.springframework.context.annotation.Configuration;
+@Configuration
+public class AppConfig {
+   @Bean
+   public MyService myService() {
+       return new MyServiceImpl();
+   }
+
+   @Bean
+   public MyRepository myRepository() {
+       return new MyRepositoryImpl();
+   }
+
+}
+In this example:
+- The AppConfig class is annotated with @Configuration, indicating that it contains bean definitions.
+- The myService and myRepository methods are annotated with @Bean, indicating that they return beans to be managed by the Spring container.
+
+
+
+2. Use the Configured Beans:
+These beans can now be injected into other components using Spring’s dependency injection mechanism.
+
+   import org.springframework.beans.factory.annotation.Autowired;
+   import org.springframework.stereotype.Component;
+@Component
+public class MyComponent {
+   private final MyService myService;
+   private final MyRepository myRepository;
+
+   @Autowired
+   public MyComponent(MyService myService, MyRepository myRepository) {
+       this.myService = myService;
+       this.myRepository = myRepository;
+   }
+
+   public void doSomething() {
+       // Use myService and myRepository
+   }
+
+}
+In this example:
+- The MyComponent class uses dependency injection to get instances of MyService and MyRepository.
+- Spring automatically injects the beans defined in the AppConfig class.
+
+Summary:
+The @Configuration annotation in Spring Boot is used to define and configure beans in an application context. By annotating a class with @Configuration and its methods with @Bean, you can centralize and manage bean creation and configuration, making your application setup more modular, maintainable, and testable.

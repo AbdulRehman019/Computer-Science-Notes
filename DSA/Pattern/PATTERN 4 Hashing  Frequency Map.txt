@@ -1,0 +1,207 @@
+PATTERN 4: Hashing / Frequency Map (15 problems)
+
+Core idea: Count or store seen elements
+1. Two Sum
+2. Contains Duplicate
+3. First Unique Character in a String
+4. Ransom Note
+5. Group Anagrams
+6. Valid Anagram
+7. Happy Number
+8. Isomorphic Strings
+9. Word Pattern
+10. Intersection of Two Arrays
+11. Top K Frequent Elements
+12. Longest Consecutive Sequence
+13. Majority Element
+14. Find All Duplicates in an Array
+15. Subarray Sum Equals K (revisit with map) 
+
+Core Idea: If we are traversing over the array or string and at any index we need to iterate again to check if it previously existed or what was it's count till now. 
+	   Instead of iterating again, we use set or map or array. 
+
+
+1️⃣ Hashing / Frequency Map
+When to think?
+	count / frequency
+	seen before
+	duplicate / unique
+	anagram / pattern mapping
+	subarray sum
+
+Default approach?
+	HashMap / HashSet
+	Common variants
+	Two-way map → Isomorphic / Word Pattern
+	Prefix sum + map → Subarray Sum = K
+	Frequency + sorting → Top K
+
+Classic mistakes?
+	Forget reverse mapping
+	Sliding window with negative numbers
+	Anchor problem
+	Top K Frequent Elements
+
+
+
+3. First Unique Character in a String 
+	What used? Array of 26 size(int[] count). 
+
+	Filled the array with -2. Traverse on the string, if any character appear once we stored it's index, if it appeared more than once we stored -1. 
+	We traversed again and if count[i] != -2 && count[i] != -1, then we took the minimum index stored. If it is neither -2 or -1, it means it appeared only once. 
+
+	If the final answer is n, it means none of the elements appeared once. 
+
+4. Ransom Note
+	Approach 1: 
+		What used? Map to store the frequency of each character in magazine. 
+
+		We traversed on ransom note, if character in ransomNote does not exist in magazine, we cannot form ransomNote, hence return false. 
+		If it exists, we decreased the count from map and if the count becomes zero we removed from map. 
+		So next time if we get the same character in ransomNote, it won't exist in magazine. 
+
+	Approach 2: 
+		What used? Array of 26 size. If we have only lowercase or uppercase letters we can simply use array. 
+
+		Stored the count of characters in array. 
+		Traversed on magazine, if the count[ransomNote.charAt(i) - 'a'] <= 0, it means it does not exist in magazine. 
+		If it is > 0, it means it exist but we used one character so decrease the count. 
+
+5. Group Anagrams
+	Approach 1: 
+		What used? Map
+
+		Since, anagrams have same and equal number of characters. We use its property. 
+		If we will sort it, then we will get unique string for anagrams. Hence, we used this as key. 
+
+		Time Complexity: O(n * m * log(m))
+
+	Approach 2: Since, we were sorting in previous approach we have an additional overhead of m * log(m). 
+		    We will try to make unique like this a1b1. Suppose we have string "abaaac", it's unique can be a2b1c1. 
+
+8. Isomorphic Strings
+	Problem intuition
+		We are given two strings s and t of same length.
+
+		They are isomorphic if:
+			Characters in s can be replaced to get t
+			Replacement must be consistent
+			Mapping must be one-to-one
+
+		Key constraints (VERY IMPORTANT)
+			We must satisfy both directions:
+			Point 1:
+			One character in s cannot map to two different characters in t
+
+			Point 2:
+			One character in t cannot map to two different characters in s
+
+		👉 Most wrong solutions only check Point 1 and miss Point 2.
+
+	Approach 1: Two HashMaps (Most intuitive & safest)
+		What used?
+			Map<Character, Character> map1 → s → t
+			Map<Character, Character> map2 → t → s
+
+		Why two maps?
+			map1 ensures Point 1
+			map2 ensures Point 2
+
+		Core idea
+			While traversing both strings together:
+			If a mapping does not exist, create it
+			If it exists, verify it matches
+
+		Code logic breakdown
+			map1.putIfAbsent(s.charAt(i), t.charAt(i));
+			map2.putIfAbsent(t.charAt(i), s.charAt(i));
+
+			putIfAbsent ensures we do not overwrite existing mapping
+			Mapping is created only the first time the character appears
+
+		Validation step
+			if (map1.get(s.charAt(i)) != t.charAt(i)) return false;
+			if (map2.get(t.charAt(i)) != s.charAt(i)) return false;
+
+		Two cases:
+			If already mapped to same character → OK
+			If already mapped to different character → ❌ Not isomorphic
+
+		Why this approach is good?
+			Very clear
+			Easy to reason
+			No hidden edge cases
+
+		Time: O(n)
+		Space: O(1) (at most 26/128 characters)
+
+	Approach 2: Single HashMap + containsValue check
+		What used?
+		Map<Character, Character> map → s → t
+
+		Core idea
+		Explicitly handle Point 1
+		Manually check Point 2 using containsValue
+
+		Logic
+			if (map.containsKey(first)) {
+			    if (map.get(first) != second) return false;
+			}
+
+			Ensures same character in s maps consistently
+
+			else {
+			    if (map.containsValue(second)) return false;
+			    map.put(first, second);
+			}
+
+			Prevents two characters in s mapping to same character in t
+
+		Why containsValue?
+			Because we don’t have a reverse map, we must check:
+			“Is this character in t already used by someone else?”
+
+		Drawback of this approach ⚠️
+			containsValue() is O(n)
+			Overall worst-case becomes O(n²)
+
+		Still acceptable for:
+			Small alphabets
+			Interview explanation (but mention drawback)
+
+9. Word Pattern 
+	Same as isomorphic string. Here mapping is character to string instead of character to character. 
+
+11. Top K Frequent Elements
+	Approach 1: Use Map + PriorityQueue 
+		Store the frequency of elements in map
+		Store the integers in ascending order of their frequency in priority queue.
+		Traversing throught the unique elements in map and removing the ones whose frequency is not in top k.  
+
+	Approach 2: Use TreeMap + Custom Operator to sort on values. 
+
+	Approach 3: Used map to store freq. 
+		Use List<Integer>[] bucket = new List[n + 1] to store (freq, elements). 
+		If we have an array of n size the max frequency can be n. 
+
+		Traverse once on array to store freq. 
+		Traverse once on map to store elements with frequency in bucket. 
+
+		Simply traverse from end in bucket to get top elements with most frequency. 
+
+14. Find All Duplicates in an Array 
+	Element nums[i] belongs to nums[i] - 1 index. 
+	We try to move every element to their respective index, if the same element already existed at that index, we found a duplicate. 
+
+15. Subarray Sum Equals K 
+	You cannot follow sliding window here. 
+	Why? Because you have negative numbers, so you won't be able to decide when to move left. 
+
+	Hence, thought of using map and storing if the sum has appear before. 
+	At every point we checked if (sum - k) appeared before. If yes, how many times it appeared. 
+
+	Previously we used to store every index it appeared? But why to store every index when you only need how many times it appeared? 
+	Hence, instead of maintaining Map<Integer, List<Integer>> we maintained Map<Integer, Integer>. First integer represent sum and the second integer represents count. 
+
+	One edge case: What if summation from 0th index to current index is equal to k. Instead of handling it differently we stored (0, 1) in map. 
+	This edge case is used in many Map problems where you need to store sum or count beforehand. 

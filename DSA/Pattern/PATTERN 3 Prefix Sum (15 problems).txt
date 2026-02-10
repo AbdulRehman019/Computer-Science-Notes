@@ -1,0 +1,171 @@
+PATTERN 3: Prefix Sum (15 problems)
+
+Core idea: Precompute cumulative data
+1. Subarray Sum Equals K
+2. Continuous Subarray Sum
+3. Range Sum Query – Immutable
+4. Range Sum Query 2D – Immutable
+5. Find Pivot Index
+6. Product of Array Except Self
+7. Corporate Flight Bookings
+8. Minimum Value to Get Positive Step by Step Sum
+9. Car Pooling
+10. Number of Ways to Split Array
+11. Contiguous Array
+12. Matrix Block Sum
+13. Make Sum Divisible by P
+14. Check If All the Integers in a Range Are Covered
+15. Plates Between Candles
+
+
+4️⃣ Prefix Sum
+When to think?
+	subarray sum
+	range sum
+	cumulative values
+	negatives present
+
+Default approach
+	prefixSum + HashMap
+	Common variants
+	Count of subarrays
+	Exact sum = K
+
+Classic mistakes?
+	Forgetting prefixSum = 0 case
+	Using sliding window incorrectly
+
+Anchor problem
+	Subarray Sum Equals K
+
+
+1. Subarray sum equals K
+	You cannot follow sliding window here. 
+	Why? Because you have negative numbers, so you won't be able to decide when to move left. 
+
+	Hence, thought of using map and storing if the sum has appear before. 
+	At every point we checked if (sum - k) appeared before. If yes, how many times it appeared. 
+	
+	Previously we used to store every index it appeared? But why to store every index when you only need how many times it appeared? 
+	Hence, instead of maintaining Map<Integer, List<Integer>> we maintained Map<Integer, Integer>. First integer represent sum and the second integer represents count. 
+
+	One edge case: What if summation from 0th index to current index is equal to k. Instead of handling it differently we stored (0, 1) in map. 
+	This edge case is used in many Map problems where you need to store sum or count beforehand. 
+
+2. Continuous Subarray Sum
+	Consider this array: [23,2,6] and k = 7
+	If we do 23 % 7 = 2
+	(23 + 2) % 7 = 4 = (2 + 2) % 7
+	(23 + 2 + 6) % 7 = 3 = (4 + 6) % 7
+	sum % k = previous Remainder % k
+	The number will never go out of range. 
+
+	If n % k = rem
+	(n + k.x) % k = rem
+	It means if till a point sum % k = rem
+	We add the multiple of k in sum, then again its modulo with k will give remainder
+	Hence, we can conclude if we get the same remainder again, we added the multiple of k. 
+	We used this logic for this problem. 
+
+3. Range Sum Query – Immutable
+	We stored the prefixSum beforehand. 
+	For every query if left > 0, we calculated prefixSum[right] - prefixSum[left]. 
+	If left == 0, sum from left to right is prefixSum[right]. 
+
+4. Range Sum Query 2D – Immutable
+	Amazing! It is an extension of 1D problem. 
+	In 1D we stored the sum from 0 to any index. 
+	In 2D problem we store summation of a matrix from (0, 0) to (row, col). 
+
+	When we get a query to find the summation from one cell to another. We calculated the summation from (0,0) to (row, col). 
+	Then subtracted two submatrix sum (0,0) to (row1 - 1, col2) and (0, 0) to (row2, col1 - 1). 
+	Since, we subtracted (0,0) to (row1 - 1, col1 - 1) twice we add it in ans. 
+
+		ans = prefixSum[row2][col2] - prefixSum[row1 - 1][col2] - prefixSum[row2][col1 - 1] + prefixSum[row1 - 1][col1 - 1]. 
+
+	Obviously you need to check if(row1 > 0) && (col1 > 0). 
+	If not you won't be subtracting either prefixSum[row1 - 1][col2] or prefixSum[row2][col1 - 1]. 
+	Since, you won't be subtracting twice, you won't be adding prefixSum[row1 - 1][col1 - 1]. 
+
+	In order to understand the explaination, visualize it. 
+
+5. Find Pivot Index
+	The first approach which came to mind is to make two arrays lsum and rsum. 
+	And for every index check whether lsum[i - 1] = rsum[i + 1]. If yes, we found the pivot index. 
+
+	From the first approach came to the other approach, i thought i will only store rsum array and create lsum integer on the go. 
+	I traversed and at every index added nums[i] to lsum and we already have rsum[i + 1]. We compare lsum[i] and rsum[i]. 
+
+	From the previous approach i thought why to store lsum or rsum in array, why not create both on go. 
+	I stored rsum by iterating over the array. 
+	I iterated over the array again, remove the current element from rsum, so we have sum of all elements from (i + 1) to (n - 1) in rsum and at every index we are adding nums[i] to 	lsum. 
+
+6. Product of Array Except Self
+	The first approach which came to mind is obviously calculate the product of array and for every index divide that number from product. 
+	We are not allowed to use divide operator. 
+
+	The second approach which came to mind is why not to store both leftProd and rightProd beforehand. 
+	Then iterate over array and for every index find leftProd[i - 1] * rightProd[i + 1]. 
+	Handle if i = 0 or i = n - 1. 
+	This approach was good but it was using extra spaces. 
+
+	The third approach, Similar to the pivot index problem, i thought i will calculate only rightProd beforehand and leftProd on go. 
+	It will reduce the space complexity. But we want O(1) space complexity. 
+
+	The final approach, Once, we iterated from 0 to n - 1 and stored in ans the product till (i - 1) at any index i. 
+	We iterated again from n - 1 to 0 and multiplied ans[i] to the product till (i + 1). 
+
+7. Corporate Flight Bookings
+	The first approach is brute force. Traverse over all the bookings and update number of flights booked. 
+	O(n^2). 
+
+	The second approach, when i saw closely it was similar to sweep line algorithm. 
+	I traversed over all the bookings and added bookings[i][0] with positive bookings[i][2] and bookings[i][1] + 1 with negative bookings[i][2]. 
+	I traversed from 1 to n and added the values stored in map. For every index sum = number of bookings. 
+	Draw the graph to understand. 
+
+	Since, n is known and indices are 1…n, no need for HashMap.
+	We can make int[] diff = new int[n + 2]
+	Why (n + 2)? Because we are storing bookings[i][1] + 1. If n = 5, it can go 6. Hence, we need a 7 size array. 
+
+8. Minimum Value to Get Positive Step by Step Sum 
+	The first approach is start from 1 and go to n and for every number check if it is possible to get positive number. 
+
+	The second approach, start from 1, traverse through array and add nums[i]. If sum < 0 at any point, check how much it is less than 1. 
+	If we add that much in "start" then at this point the sum would have been 1. 
+
+9. Car Pooling 
+
+10. Number of Ways to Split Array
+	It is similar to the problems: Find Pivot Index, Product of Array Except Self. 
+	The first approach is brute force: For every index calculate the left sum and right sum. Check if left sum >= right sum. 
+	The second approach is maintain two arrays, lsum and rsum. Iterate and count the number of lsum[i] >= rsum[i + 1]. 
+	The third approach is calculate total once and calculate left sum on the go. 
+
+	All of these problems follow same idea: 
+	Precompute total → maintain left on the fly
+
+11. Contiguous Array
+	The first approach which come to mind is Sliding Window but it won't work. 
+	Why? Because we won't be able to decide when to move left? 
+
+	A little trick need to be used. 
+	It is definite we need to use map. What if we treat 0 as -1 and if we see 0, we add -1 to sum. 
+
+	The core idea: If we see a sum and it already existed it means there are equal number of 0's and 1's between that occurence and current index. 
+
+12. Matrix Block Sum
+	Same as Range Sum Query 2D – Immutable
+
+13. Make Sum Divisible by P 
+	We checked what is the extra modulo which needs to be removed. 
+	We start traversing, found the modulo till that index and checked if (current Modulo - extra Modulo) exists or not. If it exists, it means we found extra modulo. 
+
+	Example: [3,1,4,2] and k = 6
+	Extra modulo = 10 % 6 = 4. 
+	At 2nd index modulo is 2. We found if (2 - 4 + 6) % 6 = 4 exists. 
+	It exists till 1st index which means from 2nd index(prev index) to 2nd index(curr index) we have the extra modulo and length is 1. 
+	
+	Why (curr Modulo - extra modulo + k)? 
+	To avoid negative modulo. 
+	

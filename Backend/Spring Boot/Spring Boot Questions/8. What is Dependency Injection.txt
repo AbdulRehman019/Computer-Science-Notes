@@ -1,0 +1,58 @@
+What is Dependency Injection?
+Dependency Injection (DI)
+It is a design pattern used in the Spring Framework to achieve Inversion of Control (IoC) between classes and their dependencies. Instead of creating dependencies within a class, the dependencies are injected by an external source, making the class more flexible, modular, and easier to test.
+
+
+
+Example:
+Consider a Car class that depends on an Engine class. Without DI, the Car class might create an instance of Engine like this:
+
+public class Car {
+    private Engine engine;
+public Car() {
+    this.engine = new Engine(); // Dependency is created within the class
+}
+
+public void start() {
+    engine.run();
+}
+
+}
+
+
+With DI, the Engine is injected into the Car class, usually through the constructor or setter method:
+
+public class Car {
+    private Engine engine;
+// Constructor Injection
+public Car(Engine engine) {
+    this.engine = engine;
+}
+
+public void start() {
+    engine.run();
+}
+
+}
+
+
+In a Spring application, the Engine instance would be provided by the Spring container, allowing for greater flexibility in managing dependencies:
+
+@Configuration
+public class AppConfig {
+    @Bean
+    public Engine engine() {
+        return new Engine();
+    }
+@Bean
+public Car car() {
+    return new Car(engine()); // Injecting the dependency
+}
+
+}
+
+
+Benefits of Dependency Injection:
+Decoupling: Reduces the dependency between components, making the system more modular.
+Testability: Makes unit testing easier by allowing mock dependencies to be injected.
+Flexibility: Supports changing dependencies without modifying the classes that use them.

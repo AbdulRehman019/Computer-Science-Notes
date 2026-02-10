@@ -1,0 +1,119 @@
+1. What is the flow of react app? Which files run first and what it calls?
+	index.html → main.jsx (or index.js) → App.jsx → Components → Browser UI
+
+	1️⃣ index.html — The real entry point
+		📁 public/index.html (CRA)
+		📁 index.html (Vite)
+
+		Example:
+		<div id="root"></div>
+
+		👉 Browser loads this first
+		👉 React does nothing yet
+		👉 This is just an empty container
+
+	Think of it as an empty plot of land 🏗️
+
+	2️⃣ main.jsx / index.js — React boots here
+		📁 src/main.jsx (Vite)
+		📁 src/index.js (CRA)
+
+		import React from "react";
+		import ReactDOM from "react-dom/client";
+		import App from "./App";
+
+		const root = ReactDOM.createRoot(
+		  document.getElementById("root")
+		);
+
+		root.render(<App />);
+
+		What happens here?
+			React finds <div id="root">
+			React says: “I’ll control everything inside this div”
+			React renders <App />
+
+		🔥 This file runs first in React land
+
+	3️⃣ App.jsx — Root Component
+		function App() {
+		  return (
+		    <div>
+		      <Navbar />
+		      <ContactList />
+		      <Footer />
+		    </div>
+		  );
+		}
+
+	export default App;
+
+	4️⃣ Child Components — Tree grows downward
+		ContactList → ContactCard → Button
+
+		App()
+		 ├── Navbar()
+		 ├── ContactList()
+		 │    ├── ContactCard()
+		 │    └── ContactCard()
+		 └── Footer()
+
+		Each component:
+			Executes as a function
+			Returns JSX
+			React converts JSX → real DOM
+
+	5️⃣ JSX → Virtual DOM → Real DOM
+		When React sees this:
+			<h1>Hello</h1>
+
+		Internally:
+			JSX → JS object
+			React builds Virtual DOM
+			Compares with previous render (diffing)
+			Updates only changed DOM nodes
+			You never touch DOM manually.
+
+	🔄 What happens on state change?
+		Example:
+			setCount(count + 1);
+
+		Flow:
+			State changes
+			→ Component re-runs
+			→ New Virtual DOM
+			→ Diff
+			→ DOM updates
+
+		⚠️ React does NOT reload page
+		⚠️ React does NOT rerun main.jsx
+
+		Only affected components re-run.
+
+	🧪 Full Flow Summary
+		Browser
+		  ↓
+		index.html
+		  ↓
+		main.jsx / index.js
+		  ↓
+		ReactDOM.createRoot()
+		  ↓
+		<App />
+		  ↓
+		Child Components
+		  ↓
+		JSX → Virtual DOM → Real DOM
+
+	🔥 Common Confusions (you might have)
+	❓ Does App.jsx run first?
+		❌ No
+		✅ main.jsx runs first
+
+	❓ Does React read all files?
+		❌ No
+		✅ Only imported files are executed
+
+	❓ Does every component run on every click?
+		❌ No
+		✅ Only components whose state/props change

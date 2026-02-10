@@ -1,0 +1,167 @@
+How does Spring handle circular dependencies between beans?
+In Spring, a circular dependency occurs when two or more beans depend on each other, either directly or indirectly, creating a loop in the dependency graph. For example:
+
+
+
+Direct Circular Dependency:
+BeanA depends on BeanB, and BeanB depends on BeanA.
+
+
+Indirect Circular Dependency:
+BeanA depends on BeanB, BeanB depends on BeanC, and BeanC depends on BeanA.
+
+
+Spring handles circular dependencies using different approaches, depending on the type of dependency and how the beans are configured.
+
+
+
+1. Circular Dependencies in Singleton Scope
+
+
+a. Setter Injection (Resolvable by Default)
+
+
+For singleton beans, Spring can resolve circular dependencies if the beans are injected using setters. This is achieved by:
+1. Instantiating the beans first (without fully initializing them).
+2. Injecting dependencies in a later phase.
+
+
+
+Example:
+
+@Component
+public class BeanA {
+    private BeanB beanB;
+@Autowired
+public void setBeanB(BeanB beanB) {
+    this.beanB = beanB;
+}
+
+}
+@Component
+public class BeanB {
+private BeanA beanA;
+@Autowired
+public void setBeanA(BeanA beanA) {
+    this.beanA = beanA;
+}
+
+}
+
+
+Spring creates instances of BeanA and BeanB without fully initializing them.
+It then injects BeanB into BeanA and BeanA into BeanB, resolving the circular dependency.
+
+
+b. Constructor Injection (Fails by Default)
+
+
+If the beans are injected using constructors, Spring cannot resolve the circular dependency because both beans are required to be fully initialized before they can be injected.
+
+
+
+Example:
+
+@Component
+public class BeanA {
+    private final BeanB beanB;
+@Autowired
+public BeanA(BeanB beanB) {
+    this.beanB = beanB;
+}
+
+}
+@Component
+public class BeanB {
+private final BeanA beanA;
+@Autowired
+public BeanB(BeanA beanA) {
+    this.beanA = beanA;
+}
+
+}
+
+
+Spring throws a BeanCurrentlyInCreationException, as it cannot instantiate BeanA or BeanB due to the mutual dependency.
+
+
+Solution: Use @Lazy to defer initialization:
+
+@Component
+public class BeanA {
+    private final BeanB beanB;
+@Autowired
+public BeanA(@Lazy BeanB beanB) {
+    this.beanB = beanB;
+}
+
+}
+
+
+Here, the @Lazy annotation delays the initialization of BeanB until it is first accessed, breaking the cycle.
+
+
+
+2. Circular Dependencies in Prototype Scope
+
+
+Spring does not support circular dependencies for prototype-scoped beans, regardless of the injection type. This is because prototype beans are created anew every time, and their lifecycle is not managed by the container once instantiated.
+
+
+
+Example:
+
+@Scope("prototype")
+@Component
+public class BeanA {
+    @Autowired
+    private BeanB beanB;
+}
+@Scope("prototype")
+@Component
+public class BeanB {
+@Autowired
+private BeanA beanA;
+}
+
+
+This configuration will result in a BeanCurrentlyInCreationException.
+
+
+Workaround: Use ObjectFactory or Provider to lazily fetch the dependency:
+
+@Component
+@Scope("prototype")
+public class BeanA {
+    private final ObjectFactory<BeanB> beanBFactory;
+@Autowired
+public BeanA(ObjectFactory&lt;BeanB&gt; beanBFactory) {
+    this.beanBFactory = beanBFactory;
+}
+
+}
+
+
+Here, ObjectFactory ensures that BeanB is created only when it is needed, avoiding the circular dependency during instantiation.
+
+
+
+3. Circular Dependencies in ApplicationContext
+If the circular dependency involves beans that are not directly injected into one another but are indirectly referenced via the ApplicationContext, Spring can manage the dependency resolution by ensuring that the ApplicationContext itself is fully initialized before resolving these beans.
+
+
+
+4. Best Practices to Avoid Circular Dependencies
+
+
+Refactor Code: Break the dependency loop by restructuring the design. Consider introducing a third service or interface to decouple the dependencies.
+Use Interfaces: Define one bean to depend on an interface instead of a concrete class, and provide the implementation dynamically.
+Lazy Initialization: Use @Lazy to defer the creation of a dependency until it is first accessed.
+Avoid Constructor Injection: Prefer setter or field injection for dependencies that may introduce a circular reference.
+Use Event Listeners: For loosely coupled communication between beans, consider using Spring’s event-driven mechanism instead of direct dependencies.
+
+
+Conclusion
+
+
+Spring can resolve circular dependencies in singleton-scoped beans using setter injection or lazy initialization. However, for prototype-scoped beans, circular dependencies are not supported by default. Following best practices like decoupling dependencies, refactoring design, or using @Lazy can help prevent or resolve circular dependencies effectively.

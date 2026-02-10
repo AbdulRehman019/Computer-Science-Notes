@@ -32,6 +32,11 @@ Pattern: f(k) - f(k - 1)
 
    Difficult to think. But more efficient.
 
+   When to think this approach?
+   When you are at index right and you can't decide how much it will contribute to your answer and you can't decide whether to move left or not?
+   Because it may happen you move left but when right move ahead previous left can still contribute to the answer. 
+   In such cases think of it. 
+
 Problems solved:
 1. 1248. Count Number of Nice Subarrays
 2. 992. Subarrays with K Different Integers

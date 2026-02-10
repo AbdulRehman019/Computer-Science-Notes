@@ -1,0 +1,32 @@
+What is the difference between spring and Spring boot?
+Key Differences Between Spring and Spring Boot
+
+
+1. Purpose:
+Spring: A comprehensive framework for building Java applications, offering features like dependency injection and transaction management.
+Spring Boot: An extension of Spring that simplifies setup, configuration, and deployment with conventions and pre-configured templates.
+
+
+2. Configuration:
+Spring: Requires extensive manual configuration using XML or Java classes.
+Spring Boot: Provides auto-configuration, reducing the need for manual setup by applying sensible defaults.
+
+
+3. Setup and Initialization:
+Spring: Involves complex and time-consuming setup.
+Spring Boot: Offers a streamlined setup process with starter dependencies and tools like Spring Initializr.
+
+
+4. Dependency Management:
+Spring: Developers manually manage dependencies and versions.
+Spring Boot: Uses starter dependencies that simplify management and ensure compatibility.
+
+
+5. Embedded Server:
+Spring: Requires external servers (e.g., Tomcat) for web applications.
+Spring Boot: Comes with embedded servers, allowing applications to run standalone.
+
+
+6. Production-Ready Features:
+Spring: Lacks out-of-the-box production features; requires additional tools.
+Spring Boot: Includes built-in production-ready features like metrics and health checks.

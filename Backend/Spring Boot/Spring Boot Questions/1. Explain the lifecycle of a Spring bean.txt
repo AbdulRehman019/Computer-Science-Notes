@@ -1,0 +1,127 @@
+Explain the lifecycle of a Spring bean
+	In Spring, a bean is an object that is instantiated, assembled, and managed by the Spring IoC (Inversion of Control) container. 
+	The lifecycle of a Spring bean consists of several phases that a bean goes through from creation to destruction. 
+	Spring provides hooks that allow you to intervene at specific points in this lifecycle.
+
+Here’s a detailed explanation of the Spring bean lifecycle:
+1. Instantiation
+	When the Spring container starts, it creates an instance of the bean. This is done using the bean’s constructor or a factory method, depending on how the bean is defined.
+
+	Default Constructor: If the bean has a default constructor, Spring uses it to instantiate the bean.
+	Example:
+	java public class MyBean { public MyBean() { System.out.println("Bean is instantiated"); } }
+
+2. Dependency Injection (Property Population)
+	After instantiation, Spring injects any dependencies that the bean requires. This can be done through:
+	Constructor injection: Injecting dependencies via the constructor.
+	Setter injection: Injecting dependencies via setter methods.
+	Field injection: Directly injecting dependencies into fields (using @Autowired).
+
+	Example (Setter Injection):
+	public class MyBean {
+	private MyDependency dependency;
+	
+	   public void setDependency(MyDependency dependency) {
+	       this.dependency = dependency;
+	       System.out.println("Dependency is injected");
+	   }
+	}
+
+3. @PostConstruct (Optional Initialization Method)
+	If the bean has a method annotated with @PostConstruct, Spring calls this method after the bean’s dependencies have been injected but before the bean is put into service.
+	This method can be used to perform any custom initialization logic required by the bean.
+
+	Example:
+	import javax.annotation.PostConstruct;
+
+	public class MyBean {
+	@PostConstruct
+		public void init() {
+		System.out.println("Bean is being initialized");
+	}
+	}
+
+4. InitializingBean.afterPropertiesSet() (Optional)
+	If the bean implements the InitializingBean interface, Spring calls the afterPropertiesSet() method as part of the bean's initialization.
+	This method provides a way to perform additional initialization tasks after all properties have been set.
+
+	Example:
+	java public class MyBean implements InitializingBean { @Override public void afterPropertiesSet() throws Exception { System.out.println("afterPropertiesSet() called"); } }
+
+5. Custom Init Method (Specified in Configuration)
+	You can specify a custom initialization method in the bean configuration (using XML or Java configuration).
+	Spring will call this method during the initialization phase, after @PostConstruct and afterPropertiesSet() methods.
+
+	Example (Java Configuration):
+	@Bean(initMethod = "customInit")
+	public MyBean myBean() {
+		return new MyBean();
+	}
+
+	public class MyBean {
+		public void customInit() {
+			System.out.println("Custom init method called");
+		}
+	}
+
+6. Bean Ready for Use
+	After initialization, the bean is ready to be used by the Spring container. At this stage, the bean can be requested and used by other components of the application.
+	It remains in this state as long as the Spring container is running and managing the bean.
+
+7. @PreDestroy (Optional Cleanup Method)
+	Before the bean is destroyed, Spring calls any method annotated with @PreDestroy. 
+	This method can be used to perform any cleanup tasks that need to happen before the bean is removed from the container.
+	This is useful for releasing resources like file handles, closing connections, or performing any final clean-up.
+
+	Example:
+	import javax.annotation.PreDestroy;
+
+	public class MyBean {
+		@PreDestroy
+		public void cleanup() {
+			System.out.println("Bean is about to be destroyed");
+		}
+	}
+
+8. DisposableBean.destroy() (Optional)
+	If the bean implements the DisposableBean interface, Spring will call the destroy() method just before the bean is destroyed.
+	This provides another way to perform any final clean-up logic.
+
+	Example:
+	java public class MyBean implements DisposableBean { @Override public void destroy() throws Exception { System.out.println("destroy() called"); } }
+
+9. Custom Destroy Method (Specified in Configuration)
+	You can specify a custom destroy method in the bean configuration. Spring will invoke this method before destroying the bean.
+	This can be defined similarly to the custom init method, either in XML or Java configuration.
+
+	Example (Java Configuration):
+	@Bean(destroyMethod = "customDestroy")
+	public MyBean myBean() {
+		return new MyBean();
+	}
+
+	public class MyBean {
+		public void customDestroy() {
+			System.out.println("Custom destroy method called");
+		}
+	}
+
+Summary of the Spring Bean Lifecycle:
+	Instantiation: The bean is created.
+	Dependency Injection: Dependencies are injected via constructor, setter, or field injection.
+	@PostConstruct (Optional): Initialization method after dependency injection.
+	afterPropertiesSet() (Optional): Called if the bean implements InitializingBean.
+	Custom Init Method (Optional): User-defined init method specified in configuration.
+	Bean is Ready: The bean is fully initialized and ready for use.
+	@PreDestroy (Optional): Cleanup method before the bean is destroyed.
+	destroy() (Optional): Called if the bean implements DisposableBean.
+	Custom Destroy Method (Optional): User-defined destroy method specified in configuration.
+
+Bean Scopes and Lifecycle Impact:
+	The lifecycle steps described above are mainly relevant to singleton beans, which are created once and managed for the entire lifecycle of the Spring container.
+	Prototype beans, on the other hand, are created and initialized each time they are requested, and Spring does not manage their destruction.
+
+Conclusion:
+	The lifecycle of a Spring bean involves several stages, from instantiation to initialization, use, and destruction. 
+	Spring provides several ways to hook into the bean lifecycle to perform custom logic, such as @PostConstruct, @PreDestroy, InitializingBean, DisposableBean, and custom init/destroy 	methods. 
+	Understanding this lifecycle is important for effectively managing resources, controlling bean behavior, and writing robust, maintainable Spring applications.

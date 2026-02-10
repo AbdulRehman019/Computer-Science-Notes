@@ -1,0 +1,38 @@
+What is Spring Boot Actuator and what are its core features?
+In production environments, it's essential to monitor and manage applications efficiently. Without tools like Spring Boot Actuator, developers would need to implement custom monitoring solutions, making it more difficult to track system health and performance.
+
+
+
+What is it?
+Spring Boot Actuator is a built-in tool that provides production-ready features to help monitor and manage Spring Boot applications. It exposes endpoints that give insights into the application’s health, metrics, and environment, simplifying operations and debugging.
+
+
+
+Core features:
+1. Health Checks (/actuator/health): Provides information about the application's health status.
+Example:
+json { "status": "UP" }
+
+Metrics (/actuator/metrics): Exposes application-level metrics like memory usage, CPU, and request handling times. This helps monitor performance.
+
+Environment Information (/actuator/env): Shows environment properties, including configuration settings, active profiles, and system properties.
+
+HTTP Trace (/actuator/httptrace): Provides details of recent HTTP requests and responses, which is useful for debugging.
+
+Loggers (/actuator/loggers): Shows and allows modifying the logging levels at runtime without restarting the application.
+
+
+
+How is it used?
+You can enable the Actuator by adding the dependency to your project:
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+Once enabled, the endpoints can be accessed and customized in the application.properties or application.yml.
+
+
+
+Key point:
+Spring Boot Actuator helps streamline application management by providing essential monitoring and operational insights without extra setup.

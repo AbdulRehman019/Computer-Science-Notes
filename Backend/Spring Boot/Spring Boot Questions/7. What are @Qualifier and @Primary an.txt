@@ -1,0 +1,152 @@
+What are @Qualifier and @Primary annotations in Spring? How do they resolve ambiguity in bean injection?
+When multiple beans of the same type are defined in the Spring application context, ambiguity can arise during dependency injection. Spring provides the @Qualifier and @Primary annotations to resolve this ambiguity and specify which bean to inject.
+
+
+
+@Qualifier
+
+
+The @Qualifier annotation allows you to specify the exact bean to inject when multiple beans of the same type exist. It works alongside @Autowired to identify the desired bean by its name or custom qualifier.
+
+
+
+Usage
+
+
+Define Multiple Beans of the Same Type:
+```java
+@Component
+public class BeanA {}
+@Component("customBeanA")
+public class BeanB extends BeanA {}
+
+@Component("defaultBeanA")
+public class BeanC extends BeanA {}
+```
+
+
+
+Inject Specific Bean Using @Qualifier:
+```java
+@Component
+public class BeanConsumer {
+
+private final BeanA bean;
+
+@Autowired
+public BeanConsumer(@Qualifier("customBeanA") BeanA bean) {
+this.bean = bean;
+}
+}
+```
+
+In this example:
+- @Qualifier("customBeanA") ensures that BeanB (with the name customBeanA) is injected.
+- Without @Qualifier, Spring would throw a NoUniqueBeanDefinitionException.
+
+
+
+Benefits
+Provides fine-grained control over bean selection.
+Makes the code more explicit about which bean is being used.
+
+
+@Primary
+
+
+The @Primary annotation marks a single bean as the default candidate for injection when no specific qualifier is provided. If multiple beans are of the same type and one is marked with @Primary, Spring will prefer that bean.
+
+
+
+Usage
+
+
+Define Beans with @Primary:
+```java
+@Component
+@Primary
+public class DefaultBeanA extends BeanA {}
+@Component
+public class CustomBeanA extends BeanA {}
+```
+
+
+
+Inject Without @Qualifier:
+```java
+@Component
+public class BeanConsumer {
+
+private final BeanA bean;
+
+@Autowired
+public BeanConsumer(BeanA bean) {
+this.bean = bean;
+}
+}
+```
+
+
+
+In this example:
+- DefaultBeanA is injected because it is marked with @Primary.
+- If no bean is marked with @Primary and no @Qualifier is used, a NoUniqueBeanDefinitionException is thrown.
+
+
+
+Benefits
+
+
+Provides a default fallback when no explicit qualifier is used.
+Simplifies configuration when one bean is more commonly used.
+
+
+Combining @Qualifier and @Primary
+
+
+@Qualifier takes precedence over @Primary. If a bean is explicitly specified with @Qualifier, it will override the @Primary annotation.
+
+
+
+Example:
+
+
+@Component
+@Primary
+public class DefaultBeanA extends BeanA {}
+@Component("customBeanA")
+public class CustomBeanA extends BeanA {}
+@Component
+public class BeanConsumer {
+private final BeanA bean;
+
+@Autowired
+public BeanConsumer(@Qualifier(&quot;customBeanA&quot;) BeanA bean) {
+    this.bean = bean; // Injects CustomBeanA, ignoring @Primary
+}
+
+}
+
+
+Resolving Ambiguity in Bean Injection
+
+
+Use @Qualifier:
+Best for explicitly specifying which bean to inject.
+Recommended when you have multiple beans with clear roles.
+
+
+Use @Primary:
+Best for establishing a default bean for injection.
+Use when one bean is the common choice and others are exceptions.
+
+
+Combine Both:
+Mark one bean as @Primary for general use.
+Use @Qualifier for special cases requiring explicit selection.
+
+
+Conclusion
+
+
+The @Qualifier annotation gives you explicit control over bean selection, while @Primary allows you to define a default bean. Together, they provide powerful tools for resolving ambiguity in Spring's dependency injection, ensuring that the right beans are injected into your components.

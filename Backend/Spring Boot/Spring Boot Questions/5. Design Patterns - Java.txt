@@ -1,0 +1,115 @@
+Design Patterns - Java
+Factory Method Design Pattern
+Definition:
+The Factory Method pattern is a creational design pattern that provides an interface for creating objects in a superclass but allows subclasses to alter the type of objects that will be created. It defines a method that should be used for creating objects rather than instantiating them directly.
+
+
+Key Participants in the Factory Method Pattern
+Creator:
+Declares the factory method, which returns an object of type Product. This can be either an abstract class or an interface.
+
+Concrete Creator:
+Implements the factory method to create and return concrete product instances.
+
+Product:
+Defines the interface of objects the factory method creates.
+
+Concrete Product:
+Implements the Product interface.
+
+Example Scenario
+Consider a scenario where you have an abstract Vehicle class with various concrete subclasses such as Car, Truck, and Motorcycle. Each subclass implements specific details of its type, such as start() and stop() methods.
+
+
+Implementation of Factory Method Pattern
+// Product interface
+public interface Vehicle {
+    void start();
+    void stop();
+}
+// Concrete Products
+public class Car implements Vehicle {
+@Override
+public void start() {
+System.out.println("Car starting…");
+}
+@Override
+public void stop() {
+    System.out.println(&quot;Car stopping...&quot;);
+}
+
+}
+public class Truck implements Vehicle {
+@Override
+public void start() {
+System.out.println("Truck starting…");
+}
+@Override
+public void stop() {
+    System.out.println(&quot;Truck stopping...&quot;);
+}
+
+}
+// Creator interface (or abstract class)
+public interface VehicleFactory {
+Vehicle createVehicle();
+}
+// Concrete Creators
+public class CarFactory implements VehicleFactory {
+@Override
+public Vehicle createVehicle() {
+return new Car();
+}
+}
+public class TruckFactory implements VehicleFactory {
+@Override
+public Vehicle createVehicle() {
+return new Truck();
+}
+}
+
+
+Usage of the Factory Method Pattern
+public class Main {
+    public static void main(String[] args) {
+        VehicleFactory carFactory = new CarFactory();
+        Vehicle car = carFactory.createVehicle();
+        car.start();
+        car.stop();
+    VehicleFactory truckFactory = new TruckFactory();
+    Vehicle truck = truckFactory.createVehicle();
+    truck.start();
+    truck.stop();
+}
+
+}
+
+
+When to Use the Factory Method Pattern
+When object creation is complex: Use the Factory Method pattern when the creation of an object involves complex logic or requires initialization steps that are better handled in a separate method.
+
+When flexibility is needed: Use this pattern when the client code should be unaware of the concrete classes being instantiated, allowing for flexibility in the creation process.
+
+When extending framework or library: It's beneficial when extending a framework or library where the base classes provide a factory method that subclasses can override to provide specific implementations.
+
+Benefits of Using the Factory Method Pattern
+Encapsulates object creation: It encapsulates the object creation logic, centralizing it in one place.
+
+Promotes code flexibility: It promotes code flexibility by allowing subclasses to decide the type of objects to create.
+
+Simplifies client code: It simplifies client code by abstracting the instantiation details, making the client code more maintainable and readable.
+
+Drawbacks of Using the Factory Method Pattern
+Introduces subclasses: It may lead to the proliferation of subclasses if many different variations of products are needed.
+
+Requires familiarity: It requires a good understanding of inheritance and abstraction concepts, which may be complex for beginners.
+
+Example Follow-up Questions
+Q: How does the Factory Method pattern differ from the Abstract Factory pattern?
+A: The Factory Method pattern creates a single object type through inheritance, while the Abstract Factory pattern creates families of related or dependent objects without specifying their concrete classes.
+
+Q: Can you provide a real-world example where the Factory Method pattern is beneficial?
+A: In a framework for UI components, where different components (like buttons, menus) are created using a factory method that subclasses can override to provide customized components.
+
+Q: What are some alternatives to using the Factory Method pattern for object creation?
+A: Dependency Injection (DI) frameworks, Service Locator pattern, and simple constructors or static factory methods are alternatives depending on the complexity and flexibility requirements of object creation.

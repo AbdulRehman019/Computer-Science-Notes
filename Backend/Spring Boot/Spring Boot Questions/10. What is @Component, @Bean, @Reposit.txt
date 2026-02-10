@@ -1,0 +1,76 @@
+What is @Component, @Bean, @Repository, @Controller. Explain difference between them
+What is @Component, @Bean, @Repository, and @Controller? Explain the difference between them.
+📌 Need
+Understanding the roles of @Component, @Bean, @Repository, and @Controller annotations in Spring is essential for correctly configuring and managing Spring beans in an application.
+
+🔍 What is it?
+@Component
+What it is: A generic stereotype annotation indicating that a class is a Spring-managed component.
+How it works: Marks a class as a Spring component, making it eligible for component scanning and automatic bean creation.
+Example:
+java @Component public class MyComponent { // Business logic }
+Simple Analogy: Like a general-purpose worker in a factory.
+
+@Bean
+
+What it is: A method-level annotation used to define a bean explicitly in a configuration class.
+How it works: Marks a method in a @Configuration class as a bean producer. The method’s return value is registered as a bean in the Spring application context.
+Example:
+java @Configuration public class AppConfig { @Bean public MyService myService() { return new MyServiceImpl(); } }
+Simple Analogy: Like a factory method that produces specific parts.
+
+@Repository
+
+What it is: A specialization of @Component used to indicate that a class is a Data Access Object (DAO).
+How it works: Marks a class as a repository, which makes it eligible for Spring’s exception translation and other persistence-related behaviors.
+Example:
+java @Repository public class UserRepository { // Data access methods }
+Simple Analogy: Like a data manager in a factory.
+
+@Controller
+
+What it is: A specialization of @Component used to indicate that a class is a web controller.
+How it works: Marks a class as a controller in a Spring MVC application, handling HTTP requests and returning views or data.
+Example:
+java @Controller @RequestMapping("/users") public class UserController { @GetMapping("/{id}") public String getUser(@PathVariable Long id, Model model) { // Handle request } }
+Simple Analogy: Like a customer service representative handling requests.
+Differences
+@Component vs. @Bean
+@Component is used on the class level to indicate that the class is a Spring-managed component.
+@Bean is used on the method level within a @Configuration class to explicitly define and configure beans.
+
+@Component vs. @Repository
+
+@Component is a general-purpose annotation for any Spring-managed component.
+@Repository is a specialized annotation for DAOs, with additional persistence-related functionalities.
+
+@Component vs. @Controller
+
+@Component is a general-purpose stereotype for any Spring-managed bean.
+@Controller is a specific type of @Component for web controllers in Spring MVC.
+
+@Bean vs. @Repository
+
+@Bean is used in configuration classes to define beans explicitly.
+@Repository is a specialized @Component for data access objects, enabling exception translation.
+
+@Controller vs. @Repository
+
+@Controller handles web requests and returns views or data.
+@Repository handles data access and persistence operations.
+Summary
+@Component: General-purpose Spring-managed component.
+@Bean: Defines beans explicitly in configuration classes.
+@Repository: Specialization of @Component for DAOs with persistence-related features.
+@Controller: Specialization of @Component for handling web requests in Spring MVC.
+Follow-up Questions
+Can you use @Component for web controllers instead of @Controller?
+Yes, but @Controller provides additional functionalities specific to handling web requests.
+
+What is the benefit of using @Repository over @Component?
+
+@Repository provides additional support for data access operations, such as exception translation.
+
+Can @Bean be used with non-@Configuration classes?
+
+No, @Bean methods must be in a class annotated with @Configuration.

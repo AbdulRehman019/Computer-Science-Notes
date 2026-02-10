@@ -1,0 +1,70 @@
+What is scope/life cycle of a bean in spring?
+What is scope/life cycle of a bean in spring?
+📌 Need
+Understanding the scope and life cycle of beans in Spring is crucial for effective management of application components, ensuring that beans are created, initialized, and destroyed according to the required lifecycle and scope.
+
+🔍 What is it?
+Bean Scope
+What it is: Bean scope defines the lifespan and visibility of a bean within the Spring container. It determines how many instances of a bean will be created and how they are managed.
+How it works: Spring provides several scopes for beans, each affecting their lifecycle and visibility within the application context.
+
+Types of Bean Scopes:
+
+Singleton
+Definition: A single instance of the bean is created and shared throughout the entire Spring container.
+Usage: Default scope, used when only one instance of the bean is needed.
+Example: @Scope("singleton")
+Prototype
+Definition: A new instance of the bean is created each time it is requested from the container.
+Usage: Used when each request requires a separate instance of the bean.
+Example: @Scope("prototype")
+Request
+Definition: A new instance is created for each HTTP request in a web application.
+Usage: Common in web applications to manage beans specific to a single request.
+Example: @Scope("request")
+Session
+Definition: A new instance is created for each HTTP session in a web application.
+Usage: Manages beans specific to a user session.
+Example: @Scope("session")
+Application
+Definition: A single instance is created for the entire web application context.
+Usage: Similar to singleton but in the context of a web application.
+Example: @Scope("application")
+Bean Life Cycle
+
+What it is: The bean life cycle encompasses the various stages a bean goes through from its creation to its destruction within the Spring container.
+How it works: The life cycle includes initialization, post-initialization, and destruction phases, with several lifecycle callbacks available for customization.
+
+Life Cycle Phases:
+
+Instantiation
+Definition: The bean is created by the Spring container.
+How it works: Spring uses a constructor or factory method to create the bean instance.
+Populate Properties
+Definition: Dependencies are injected into the bean.
+How it works: Spring sets bean properties and dependencies as specified in the configuration.
+Initialization
+Definition: Initialization logic is executed.
+How it works: The @PostConstruct annotation or InitializingBean interface’s afterPropertiesSet method is invoked.
+Example: @PostConstruct public void init() { }
+Post-Initialization
+Definition: Custom initialization logic can be executed after default initialization.
+How it works: Custom initialization methods defined in the bean’s configuration are called.
+Destruction
+Definition: The bean is destroyed and cleaned up.
+How it works: The @PreDestroy annotation or DisposableBean interface’s destroy method is invoked.
+Example: @PreDestroy public void destroy() { }
+Summary
+Bean Scope: Defines the visibility and lifespan of a bean. Includes Singleton, Prototype, Request, Session, and Application scopes.
+Bean Life Cycle: Encompasses the phases from bean instantiation to destruction, including initialization and post-initialization.
+Follow-up Questions
+What happens if you use the @Scope("prototype") annotation on a bean?
+Answer: A new instance of the bean will be created each time it is requested from the Spring container.
+
+How can you customize the initialization and destruction methods of a bean?
+
+Answer: Use @PostConstruct for initialization and @PreDestroy for destruction, or implement InitializingBean and DisposableBean interfaces.
+
+Can you change the scope of a bean after it has been defined?
+
+Answer: No, the scope of a bean is fixed once defined. Changing the scope would require reconfiguring and reloading the application context.
