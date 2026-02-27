@@ -5,29 +5,42 @@
    An interface in Java is a blueprint of a class that defines a set of abstract methods (and constants) which a class must implement.
    It is used to achieve abstraction and multiple inheritance in Java.
 
-2. Syntax:
+2. Interface vs Abstract Class
+	Definition: 
+			An abstract class is a class that cannot be instantiated and may contain abstract methods (methods without a body) that subclasses must implement. 
+			It can also contain concrete methods with a body.
 
-			Interfaces					Abstract Class
+			An interface is a completely abstract class in which all methods are abstract by default (prior to Java 8). 
+			It defines a contract that implementing classes must adhere to, specifying methods that must be implemented.
 
-	1. Can't provide the implementation of abstract class.	1. Can provide the implementation of interface.
+	Multiple Inheritance:
+			In languages like Java, a class can extend only one abstract class due to single inheritance.
 
-	2. Members of java interface are public	.		2. Members of java interface can be public, protected etc.
+			A class can implement multiple interfaces, allowing for multiple inheritance of type.
 
-	3. A class can implement multiple interface.		3. A class can inherit only one Abstract class.
-	   (Multiple Inheritance)				   (No Multiple Inheritance)
+	Implementation:
+			Can have both abstract and non-abstract methods. It can also have instance variables.
 
-	4. They can only have abstract methods.			4. They can have both abstract as well as non-abstract method.
+			Can only have constants and method declarations. From Java 8 onwards, interfaces can also have default methods (methods with a default implementation) and static 			methods.
 
-	5. Interface has only static and final variables.	5. Can have final, non-final, static and non-static variables.
+	Purpose and Usage:
+			Used when some common functionality among multiple related classes can be abstracted out. It provides a base for subclasses to extend and specialize. 
 
-	6. Can extend another Java interface only.		6. Can extend another Java class and implement multiple Java interfaces.
+			Used to specify a set of methods that a class must implement. Interfaces are used to achieve abstraction and multiple inheritance of type.
 
-	7. Can be implemented using keyword "implements".	7. Can be extended using keyword "extends".
+	Where to Use:
+			Use abstract classes when you want to provide a default implementation of some methods and leave other methods (abstract methods) to be implemented by subclasses. 			Abstract classes are useful when you have a base class that should not be instantiated directly but provides common behavior for its subclasses. 
 
-	8. Example:						8. Example:
-		public interface Drawable {				public abstract class Shape {
-			void draw();						public abstract void draw();
-		}							}
+			Use interfaces when you want to specify a contract that multiple unrelated classes can implement. Interfaces are useful when you want to achieve loose coupling and 			provide a way for unrelated classes to communicate through a common interface.
+
+	- Can an abstract class have constructors?
+	- Answer: Yes, an abstract class can have constructors. These constructors are used when subclasses are instantiated and may initialize the common state defined by the abstract 		class.
+
+	- Why would you choose to use an interface instead of an abstract class?
+	- Answer: You would choose an interface over an abstract class when you need to define a contract for unrelated classes to implement without providing any default behavior. 			Interfaces support multiple inheritance of type, allowing a class to implement multiple interfaces.
+
+	- How does Java 8's introduction of default methods in interfaces affect their usage?
+	- Answer: Java 8 introduced default methods in interfaces, allowing interfaces to have method implementations. This enables interfaces to provide concrete methods without requiring 		implementing classes to override them. Default methods provide flexibility in evolving interfaces without breaking existing implementations.
 
 
 3. Every other rule is same for Interfaces as in Inheritance.

@@ -1,0 +1,69 @@
+What is try/catch in Java?
+	In Java, try/catch is a mechanism used to handle exceptions—unexpected events or errors that occur during the execution of a program. It allows developers to write code that can 	gracefully handle errors, preventing the program from crashing and providing a way to recover or log the error for further analysis.
+
+1. try Block
+	Purpose: The try block contains the code that might throw an exception. It’s where you place the code that you want to monitor for potential errors.
+	Syntax:
+		java try { // Code that might throw an exception }
+
+2. catch Block
+	Purpose: The catch block is used to handle the exception that is thrown in the try block. You can have multiple catch blocks to handle different types of exceptions.
+	Syntax:
+		java catch (ExceptionType e) { // Code to handle the exception }
+
+	Here, ExceptionType is the type of exception you want to catch, and e is a reference to the exception object.
+
+	Example
+		java public class TryCatchExample { 
+			public static void main(String[] args) { 
+				try { 
+					int result = 10 / 0; // This will throw an ArithmeticException 
+					System.out.println("Result: " + result); 
+				} catch (ArithmeticException e) { 
+					System.out.println("Cannot divide by zero."); 
+				} 
+
+				System.out.println("Program continues..."); 
+			} 
+		}
+
+	Explanation:
+		In the example above, the try block contains a division operation that will throw an ArithmeticException because dividing by zero is not allowed.
+		The catch block catches this exception and handles it by printing a message to the console.
+		After handling the exception, the program continues to execute, as shown by the final System.out.println() statement.
+
+
+3. Multiple catch Blocks
+	You can have multiple catch blocks to handle different types of exceptions. Each catch block should handle a specific type of exception.
+
+	Example:
+		try { 
+			int[] numbers = {1, 2, 3}; 
+			System.out.println(numbers[10]); // This will throw an ArrayIndexOutOfBoundsException 
+		} catch (ArrayIndexOutOfBoundsException e) { 
+			System.out.println("Array index is out of bounds."); 
+		} catch (Exception e) { 
+			System.out.println("An error occurred: " + e.getMessage()); 
+		}
+
+
+4. finally Block
+	Purpose: The finally block is optional and contains code that is always executed after the try and catch blocks, regardless of whether an exception was thrown or caught.
+
+	Example:
+		try { 
+			int result = 10 / 2; 
+			System.out.println("Result: " + result); 
+		} catch (Exception e) { 
+			System.out.println("An error occurred."); 
+		} finally { 
+			System.out.println("This block is always executed."); 
+		}
+
+5. When to Use try/catch
+	Error Handling: Use try/catch to handle errors or exceptions that you anticipate might occur, such as file I/O operations, network communication, or parsing user input.
+	Program Continuity: Use it to prevent your program from crashing and to allow the program to continue running or to perform some cleanup actions before exiting.
+
+Follow-up Question
+	What happens if an exception is thrown in the try block, but there is no matching catch block?
+	If an exception is thrown in the try block and there is no matching catch block, the exception is propagated up the call stack, potentially terminating the program if it is not 	caught by any higher-level exception handlers.

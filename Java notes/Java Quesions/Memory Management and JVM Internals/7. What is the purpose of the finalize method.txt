@@ -1,0 +1,32 @@
+What is the purpose of the finalize() method?
+- The finalize() method in Java was designed to provide a way for an object to perform cleanup operations before it is removed from memory by the garbage collector. However, its use is now discouraged and has been deprecated in newer versions of Java.
+- Modern Java practices favor explicit resource management using try-with-resources and the AutoCloseable interface for more predictable and efficient resource handling.
+
+
+
+Purpose of the finalize() Method
+Resource Cleanup:
+The primary purpose of the finalize() method was to allow an object to release resources such as file handles, network connections, or database connections before the object is garbage collected.
+
+Custom Cleanup Logic:
+
+It provided a way to implement custom cleanup logic that needed to be executed before an object was completely discarded by the garbage collector.
+
+
+Modern Alternatives
+try-with-resources: Manages resources automatically and ensures they are closed properly when no longer needed.
+java try (BufferedReader reader = new BufferedReader(new FileReader("file.txt"))) { // Use the resource } catch (IOException e) { e.printStackTrace(); }
+
+AutoCloseable Interface: Provides a standardized way to close resources with the close() method.
+```java
+public class MyResource implements AutoCloseable {
+@Override
+public void close() {
+// Cleanup logic
+}
+}
+
+try (MyResource resource = new MyResource()) {
+// Use the resource
+}
+```

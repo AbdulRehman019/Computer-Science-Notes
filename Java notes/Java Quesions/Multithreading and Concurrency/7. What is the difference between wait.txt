@@ -1,0 +1,21 @@
+What is the difference between wait(), notify(), and notifyAll() in Java?
+The methods wait(), notify(), and notifyAll() are part of the object class in Java and are used for thread communication in synchronized blocks or methods. They help manage the execution order of threads when working with shared resources.
+
+
+
+1. Purpose:
+wait(): This method causes the current thread to release the lock and wait until another thread invokes notify() or notifyAll() on the same object.
+notify(): Wakes up a single thread that is waiting on the object's monitor. If multiple threads are waiting, one of them is chosen arbitrarily.
+notifyAll(): Wakes up all the threads that are waiting on the object's monitor. The threads will compete to acquire the lock once it is released.
+
+
+2. Usage Scenario:
+wait(): Used when a thread needs to wait for a certain condition to be met before proceeding. For example, a producer thread may wait until a buffer is empty.
+notify(): Used when the thread wants to notify exactly one waiting thread to resume execution. For example, after a producer adds an item to the buffer, it might notify one consumer thread.
+notifyAll(): Used when the thread needs to notify all waiting threads, such as when a significant event occurs that all waiting threads should be aware of.
+
+
+3. Behavior:
+wait(): The calling thread enters the waiting state and releases the lock, allowing other threads to acquire it.
+notify(): Only one of the waiting threads is moved to the runnable state, but it will not proceed until the current thread releases the lock.
+notifyAll(): All waiting threads are moved to the runnable state, but they must wait for the lock to be released before any can proceed.

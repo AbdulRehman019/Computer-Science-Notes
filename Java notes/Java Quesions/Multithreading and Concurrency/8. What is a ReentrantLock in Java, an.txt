@@ -1,0 +1,168 @@
+What is a ReentrantLock in Java, and how is it different from the synchronized keyword?
+ReentrantLock is a class in the java.util.concurrent.locks package that provides a more advanced and flexible mechanism for locking resources in a multi-threaded environment. It is part of the Java Concurrency framework and implements the Lock interface.
+
+The term reentrant means that the lock can be acquired multiple times by the same thread without causing a deadlock. This is useful in situations where the thread that holds the lock may need to acquire it again.
+
+
+
+Key Features of ReentrantLock
+
+
+Reentrancy:
+A thread that already holds the lock can re-acquire the lock without blocking itself.
+The lock is released only when it is unlocked as many times as it was locked.
+
+
+Explicit Locking and Unlocking:
+Unlike the synchronized keyword, which automatically handles locking and unlocking, ReentrantLock requires explicit calls to lock() and unlock().
+
+
+Try Locking:
+ReentrantLock provides the tryLock() method, which allows a thread to attempt to acquire the lock without blocking. This is useful for non-blocking operations.
+
+
+Condition Variables:
+ReentrantLock allows the use of Condition objects for better control over thread signaling, such as notifying waiting threads, similar to wait() and notify() used with synchronized blocks.
+
+
+Interruptible Locking:
+ReentrantLock can be configured to allow a thread to interrupt waiting to acquire the lock, using the lockInterruptibly() method.
+
+
+Fair Locking:
+ReentrantLock can be created with a "fair" policy that guarantees threads acquire the lock in the order they requested it. This avoids thread starvation.
+
+
+Difference Between ReentrantLock and synchronized
+
+
+| Aspect | ReentrantLock | synchronized |
+|---------------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------|
+| Lock Acquisition | Requires explicit calls to lock() and unlock() | Implicit; acquired using synchronized blocks or methods |
+| Reentrancy | Supports reentrancy (a thread can acquire the lock multiple times) | Also supports reentrancy (same thread can re-enter synchronized block) |
+| Try Lock | Provides tryLock(), which attempts to acquire the lock without blocking | No direct equivalent; always blocks if the lock is unavailable |
+| Interruptible Locking | Supports interruptible lock acquisition with lockInterruptibly() | Cannot be interrupted while waiting for the lock |
+| Fairness | Can be fair (first-come-first-served) with new ReentrantLock(true) | Does not support fairness |
+| Condition Variables | Can use Condition objects to handle thread communication | Uses wait(), notify(), and notifyAll() for communication |
+| Performance | Slightly more flexible but may have overhead due to explicit lock management | Generally simpler and less flexible |
+
+
+
+Example: Using ReentrantLock
+
+
+import java.util.concurrent.locks.ReentrantLock;
+public class ReentrantLockExample {
+private static final ReentrantLock lock = new ReentrantLock();
+public static void main(String[] args) {
+    Thread thread1 = new Thread(() -&gt; {
+        try {
+            lock.lock();
+            System.out.println(&quot;Thread 1: Lock acquired&quot;);
+            // Simulate some work
+            Thread.sleep(1000);
+            System.out.println(&quot;Thread 1: Lock released&quot;);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    });
+
+    Thread thread2 = new Thread(() -&gt; {
+        try {
+            lock.lock();
+            System.out.println(&quot;Thread 2: Lock acquired&quot;);
+            // Simulate some work
+            Thread.sleep(1000);
+            System.out.println(&quot;Thread 2: Lock released&quot;);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    });
+
+    thread1.start();
+    thread2.start();
+}
+
+}
+
+
+Output:
+
+
+
+Thread 1: Lock acquired
+Thread 2: Lock acquired
+Thread 1: Lock released
+Thread 2: Lock released
+
+
+Example: Using tryLock() with ReentrantLock
+
+
+import java.util.concurrent.locks.ReentrantLock;
+public class TryLockExample {
+private static final ReentrantLock lock = new ReentrantLock();
+public static void main(String[] args) {
+    Thread thread1 = new Thread(() -&gt; {
+        if (lock.tryLock()) {
+            try {
+                System.out.println(&quot;Thread 1: Lock acquired&quot;);
+                Thread.sleep(1000); // Simulate work
+                System.out.println(&quot;Thread 1: Lock released&quot;);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
+            }
+        } else {
+            System.out.println(&quot;Thread 1: Could not acquire lock&quot;);
+        }
+    });
+
+    Thread thread2 = new Thread(() -&gt; {
+        if (lock.tryLock()) {
+            try {
+                System.out.println(&quot;Thread 2: Lock acquired&quot;);
+                Thread.sleep(1000); // Simulate work
+                System.out.println(&quot;Thread 2: Lock released&quot;);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
+            }
+        } else {
+            System.out.println(&quot;Thread 2: Could not acquire lock&quot;);
+        }
+    });
+
+    thread1.start();
+    thread2.start();
+}
+
+}
+
+
+Output:
+
+Thread 1: Lock acquired
+Thread 2: Could not acquire lock
+Thread 1: Lock released
+Thread 2: Lock acquired
+Thread 2: Lock released
+
+
+When to Use ReentrantLock
+
+
+Use ReentrantLock when you need more control over thread synchronization, such as:
+Reentrant lock acquisition (allowing a thread to lock it multiple times).
+Non-blocking lock attempts with tryLock().
+Interruptible locking with lockInterruptibly().
+Fair locking (to avoid thread starvation).
+More complex thread communication (via Condition objects).
+
+If you don't need these advanced features and want simpler syntax, use the synchronized keyword. It is easier to implement and generally works well for basic locking scenarios.

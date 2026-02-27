@@ -1,0 +1,80 @@
+What is the difference between wait() and sleep()?
+wait() and sleep() are two methods in Java used for pausing the execution of threads, but they serve different purposes and operate in distinct ways. Here's a breakdown of their differences:
+
+
+
+wait() Method:
+Belongs to Object Class:
+wait() is a method defined in the java.lang.Object class, not in the Thread class. It is used for inter-thread communication.
+
+Releases the Lock:
+
+When a thread calls wait(), it releases the lock or monitor it holds on the object. This allows other threads to acquire the lock and proceed with their execution.
+
+Must Be Called in a Synchronized Context:
+
+wait() must always be called from within a synchronized block or method. This ensures that the calling thread holds the lock of the object on which wait() is invoked.
+
+Waits Until Notified:
+
+The thread that calls wait() goes into the waiting state and will remain there until another thread calls notify() or notifyAll() on the same object, or until the waiting thread is interrupted.
+
+Used for Thread Communication:
+
+wait() is typically used for allowing threads to communicate with each other. It is commonly used in producer-consumer scenarios where one thread waits for a condition to be fulfilled by another thread.
+
+
+sleep() Method:
+Belongs to Thread Class:
+sleep() is a static method defined in the java.lang.Thread class. It is used to pause the execution of the current thread for a specified period.
+
+Does Not Release the Lock:
+
+When a thread calls sleep(), it does not release the lock or monitor it holds. The thread remains in the sleeping state, holding onto any locks it acquired before calling sleep().
+
+Can Be Called Anywhere:
+
+sleep() can be called from any context, synchronized or not. It does not require the thread to hold any locks or be in a synchronized block.
+
+Pause for a Specified Time:
+
+sleep() causes the current thread to pause execution for a specified duration in milliseconds (and optionally nanoseconds). After the sleep duration ends, the thread transitions back to the runnable state.
+
+Used for Timing Control:
+
+sleep() is used when a thread needs to pause its execution for a certain amount of time, such as implementing timed delays or simulating time-based tasks.
+
+
+Key Differences:
+Purpose: wait() is used for inter-thread communication and synchronization, while sleep() is used for pausing thread execution for a set period.
+Lock Behavior: wait() releases the object's lock, allowing other threads to acquire it, whereas sleep() does not release any locks.
+Context Requirements: wait() must be called within a synchronized context, while sleep() can be called anywhere.
+Wake-Up Mechanism: wait() waits to be notified or interrupted, whereas sleep() automatically wakes up after the specified time elapses.
+
+
+Example Usage:
+Using wait() and notify():
+
+class WaitNotifyExample {
+    public synchronized void waitMethod() throws InterruptedException {
+        System.out.println(Thread.currentThread().getName() + " is waiting.");
+        wait(); // Releases the lock and waits to be notified
+        System.out.println(Thread.currentThread().getName() + " is resumed.");
+    }
+public synchronized void notifyMethod() {
+    System.out.println(Thread.currentThread().getName() + &quot; is notifying.&quot;);
+    notify(); // Wakes up one waiting thread
+}
+
+}
+
+
+Using sleep():
+
+class SleepExample {
+    public void sleepMethod() throws InterruptedException {
+        System.out.println(Thread.currentThread().getName() + " is sleeping.");
+        Thread.sleep(1000); // Pauses the thread for 1 second
+        System.out.println(Thread.currentThread().getName() + " is awake.");
+    }
+}

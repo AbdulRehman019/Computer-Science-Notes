@@ -1,0 +1,30 @@
+Explain the difference between stack and heap memory in Java
+	In Java, stack and heap memory serve distinct roles in managing data during program execution. 
+	Both are critical to memory management but differ in terms of structure, usage, and lifecycle.
+
+Detailed Comparison:
+	1. Purpose:
+		Stack Memory: Stores method calls, local variables, and references to objects. Each thread has its own stack memory, ensuring isolation and thread safety.
+		Heap Memory: Stores all objects created using new. This memory is shared across threads, and objects remain until garbage collected.
+
+	2. Memory Allocation and Lifetime:
+		Stack Memory: Memory is automatically allocated when a method is called and deallocated when the method completes. Local variables are cleared once the method execution ends.
+		Heap Memory: Memory is dynamically allocated when objects are created. Objects stay in heap memory until they are no longer referenced, at which point the garbage collector 			     reclaims the memory.
+
+	3. Speed and Efficiency:
+		Stack Memory: Access to stack memory is faster because its allocation and deallocation follow a straightforward LIFO structure.
+		Heap Memory: Access is slower because it involves dynamic memory allocation and garbage collection overhead.
+
+Example:
+public class Main {
+    public static void main(String[] args) {
+        int num = 5;  // Stored in stack memory
+        String str = new String("Hello");  // Object in heap memory, reference in stack
+    }
+}
+num is stored in the stack.
+The String object is stored in the heap, and the reference to it (str) is stored in the stack.
+
+Summary:
+	Stack Memory is used for method calls and local variables, with fast, automatic memory management and thread safety.
+	Heap Memory is used for objects and is managed by the garbage collector, allowing for dynamic memory allocation but at a slower speed.

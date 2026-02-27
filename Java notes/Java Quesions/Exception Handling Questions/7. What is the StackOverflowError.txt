@@ -1,0 +1,61 @@
+What is the StackOverflowError in Java? Can it be caught with a try-catch block?
+	StackOverflowError is a runtime error in Java that occurs when the call stack memory is exhausted. This typically happens when a program enters deep or infinite recursion, as each 	recursive call consumes stack space.
+
+Causes
+	Infinite Recursion:
+		A method calling itself endlessly without a proper termination condition.
+			java public class Example { 
+				public static void recurse() { 
+					recurse(); // Infinite recursion 
+				} 
+
+				public static void main(String[] args) { 
+					recurse(); // Causes StackOverflowError 
+				} 
+			}
+
+	Excessive Method Calls:
+		A program with extremely deep method calls or heavy recursion due to large input sizes may run out of stack space.
+
+
+	Can It Be Caught with a Try-Catch Block?
+		StackOverflowError is a subclass of Error, which indicates serious problems that applications should not try to catch under normal circumstances. While it can be caught 		using a try-catch block, it is generally not advisable to do so, as it suggests a fundamental issue with the program logic.
+
+	Example of Catching StackOverflowError:
+		public class Example {
+		    	public static void recurse() {
+		        	recurse(); // Infinite recursion
+		    	}
+
+			public static void main(String[] args) {
+        			try {
+            				recurse();
+        			} catch (StackOverflowError e) {
+            				System.out.println("Caught StackOverflowError!");
+        			}
+    			}
+		}
+
+Why Catching It Is Problematic:
+	The JVM is often in an unstable state after a StackOverflowError, and further execution may lead to unpredictable behavior.
+	It’s better to identify and fix the underlying issue (e.g., terminating recursive calls properly).
+
+❓ How to Prevent StackOverflowError
+	Avoid Infinite Recursion:
+		Ensure recursive methods have proper base cases to terminate.
+		java public int factorial(int n) { if (n <= 1) return 1; // Base case return n * factorial(n - 1); }
+
+	Use Iteration Instead of Recursion:
+		Replace recursive logic with iterative approaches for deeply nested calls.
+
+	Tail Recursion Optimization (if supported):
+		Rewrite recursive functions to allow tail-call optimization, though Java does not natively support it.
+
+	Increase Stack Size:
+		For extreme cases, increasing the JVM stack size can help, but it is only a temporary solution.
+		Example: Run the program with -Xss option, e.g., java -Xss2m MyClass.
+
+Key Takeaways
+	StackOverflowError indicates a problem with the call stack due to recursion or excessive method calls.
+	It can technically be caught, but it is better to address the root cause in the program.
+	Adopting robust programming practices, like limiting recursion depth and using iteration where feasible, helps prevent this error.

@@ -1,0 +1,47 @@
+What is the difference between abstraction and encapsulation? How are they implemented in Java?
+	Abstraction and encapsulation are foundational concepts in object-oriented programming, often used together but serving distinct purposes. Here's a comparison:
+
+Purpose:
+	Abstraction focuses on hiding implementation details and showing only the essential features of an object or system.
+	Encapsulation focuses on bundling data (fields) and methods into a single unit and restricting direct access to them to maintain integrity.
+
+Scope:
+	Abstraction is about design—deciding what to expose and what to hide.
+	Encapsulation is about implementation—ensuring controlled access to the data within a class.
+
+Implementation:
+	Abstraction is implemented using abstract classes and interfaces in Java.
+	Encapsulation is implemented using access modifiers (private, protected, public) and getter/setter methods.
+
+Implementation in Java
+	Abstraction:
+		Abstraction is achieved using:
+		Abstract Classes: Classes declared with the abstract keyword may have abstract methods (methods without a body) and concrete methods.
+
+		Example:
+		java abstract class Shape { abstract void draw(); // Abstract method } class Circle extends Shape { void draw() { System.out.println("Drawing a Circle"); } }
+
+		Interfaces: They define a contract that implementing classes must follow.
+
+		Example:
+		java interface Animal { void sound(); } class Dog implements Animal { public void sound() { System.out.println("Bark"); } }
+
+	Encapsulation:
+		Encapsulation is achieved using:
+		Private Fields and Public Methods: Restrict direct access to fields by declaring them private and providing access through public getter and setter methods.
+
+		Example:
+		java class Employee { 
+			private String name; 
+			private int id; 
+
+			public String getName() { return name; } 
+
+			public void setName(String name) { this.name = name; } 
+
+			public int getId() { return id; } 
+
+			public void setId(int id) { this.id = id; } 
+		}
+
+By combining abstraction and encapsulation, Java ensures a clear separation of concerns, enabling developers to create modular, maintainable, and secure applications.

@@ -1,0 +1,34 @@
+What is a bounded type parameter?
+Bounded Type Parameter
+A bounded type parameter in Java is a generic type parameter that is restricted (or bounded) to a specific type or a set of types.
+This type parameter can only accept values of the specified type or its subclasses (in case of upper bounds) or its superclasses (in case of lower bounds).
+This allows you to enforce type safety while still maintaining flexibility with generics.
+
+
+Types of Bounded Type Parameters:
+1. Upper Bounded Type Parameter (extends):
+Restricts the type to a specific class or its subclasses.
+Example:
+java public class Box<T extends Number> { private T value; }
+Here, T can only be a subclass of Number (e.g., Integer, Double).
+
+
+2. Lower Bounded Type Parameter (super):
+Restricts the type to a specific class or its superclasses.
+Example:
+java public static <T> void addNumber(List<? super Integer> list) { list.add(10); }
+
+
+Why Use Bounded Type Parameters?
+1. Type Safety:
+Ensures only specific types are allowed, preventing incorrect usage.
+Example: T extends Number ensures only number types like Integer or Double can be used.
+
+
+2. Access to Methods:
+Allows the use of methods specific to the bounded type.
+Example: T extends Number lets you call doubleValue() on any T.
+
+
+3. Flexibility with Restrictions:
+Enables generic classes or methods to work with a range of types while maintaining constraints.

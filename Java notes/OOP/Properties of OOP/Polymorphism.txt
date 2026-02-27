@@ -7,7 +7,7 @@
 ******* Types Of Polymorphism *******
 1. Compile Time / Static Polymorphism
 	Achieved by method overloading
-	Method overloading means methods have same name but return types, argruements and order of arguements differ.
+	Method overloading means methods have same name but number or type of parameters differ.
 	Example: Multiple constructors			Method Overloading
 		A a1 = new A();				int sum(int a, int b) { return a + b; }
 		A a2 = new A(3,4);			int sum(int a, int b, int c) { return a + b + c; }
@@ -22,8 +22,50 @@
 	Although child class method is called we can not remove parent class method because by parent class method only java will know it has to access "area" method but which
 	"area" method will be accessed on run time will be dependent on object of class method.
 
+3. What is Method Overloading?
+	Method overloading occurs when multiple methods have the same name but differ in the number or type of parameters. 
+	Overloading allows you to perform similar operations with different input types or numbers.
+	The compiler determines which method to call based on the method signature.
+
+4. What is Method Overriding?
+	Method overriding occurs when a subclass provides a specific implementation for a method that is already defined in its superclass.
+	Overriding allows a subclass to provide a custom implementation for a method inherited from the parent class.
+
+5. Can we change the return type while overloading a method?
+	Yes, you can overload a method by changing the return type along with the method signature (i.e., the number or type of parameters). 
+	However, changing only the return type will not be sufficient to overload the method.
+
+6. What happens if a subclass does not override a method?
+	If a subclass does not override a method, the method from the superclass is inherited and used by default.
+
+7. Can we change the return type while overriding a method?
+	No, when overriding a method, the return type must be the same or a covariant type (i.e., a subtype of the original return type). 
+	If the return type is changed, it will not be considered an override.
+
 Ques. How Java determines which method will be called in case of method overriding?
 	Java decides it by Dynamic Method Dispatch.
+
+8. What is dynamic method dispatch? 
+	Dynamic method dispatch is a mechanism by which a call to an overridden method is resolved at runtime, rather than at compile time. 
+	This enables runtime polymorphism, allowing a single method call to exhibit different behaviors depending on the object being referred to.
+
+	Concept of Dynamic Method Dispatch
+		How It Works:
+		When a method is overridden in a subclass, the version of the method that gets called depends on the type of the object being referenced at runtime, not the type of the 		reference variable.
+
+		Java achieves this by maintaining a virtual method table (vtable), where each object contains references to its class's methods. 
+		During runtime, the JVM uses this table to dynamically bind method calls.
+
+9. Can you explain the difference between method overloading and method overriding?
+	Method overloading involves having multiple methods in the same class with the same name but different parameters. 
+	Method overriding occurs when a subclass provides a specific implementation of a method that is already present in its superclass.
+
+10. How does polymorphism relate to inheritance?
+	Polymorphism is closely related to inheritance because it typically involves subclasses overriding methods defined in their superclass. 
+		This allows objects of different classes to be treated as instances of the superclass, enabling polymorphic behavior.
+
+11. Why is dynamic polymorphism considered more flexible than static polymorphism?
+	Dynamic polymorphism allows for the selection of the method to be executed at runtime based on the type of object, which provides more flexibility in terms of behavior 	adaptation compared to static polymorphism, where method resolution is done at compile-time.
 
 ***** Note *******
 	1. Reference type decides which variables/methods will be accessed

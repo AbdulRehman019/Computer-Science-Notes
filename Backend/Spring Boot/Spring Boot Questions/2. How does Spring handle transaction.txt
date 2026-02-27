@@ -17,7 +17,7 @@ Here’s an explanation of how Spring handles transaction rollbacks, including k
 		@Transactional
 		public void performOperation() {
 		    // Code that may throw a runtime exception
-		    if (someCondition) {
+		    if (someCondition) {w
 		        throw new IllegalArgumentException("Invalid input");
 		    }
 		    // Other business logic

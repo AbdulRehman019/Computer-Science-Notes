@@ -1,0 +1,52 @@
+Can we catch more than one exception in a single catch block?
+	Yes, in Java, you can catch multiple exceptions in a single catch block using multi-catch syntax. This feature was introduced in Java 7 and allows you to handle several types of 	exceptions with a single catch block, reducing code duplication and improving readability.
+
+Multi-Catch Syntax
+	Syntax:
+		You can use the vertical bar (|) to separate multiple exception types in a single catch block.
+
+	Example:
+		public class MultiCatchExample {
+		    public static void main(String[] args) {
+		        try {
+		            // Code that might throw multiple exceptions
+		            riskyOperation();
+		        } catch (IOException | SQLException e) {
+		            System.out.println("An error occurred: " + e.getMessage());
+		            // Handle the exception
+		        }
+		    }
+
+		public static void riskyOperation() throws IOException, SQLException {
+		    // Simulate an operation that may throw IOException or SQLException
+		    throw new IOException(&quot;File error&quot;);
+		}
+	}
+
+
+Key Points
+	Exception Types: You can list multiple exception types separated by |. All the listed exceptions are caught by the same catch block.
+
+	Single Exception Variable: The catch block has a single exception parameter (e in the example). The variable type is the common superclass of the listed exceptions. In this case, 				it’s Exception, as both IOException and SQLException extend Exception.
+
+	Handling Exceptions: Inside the catch block, you can handle the exceptions in the same way. You can access the exception message and perform common handling actions.
+
+	Exceptions Must Be Unrelated: The exceptions caught in a multi-catch block must not have a parent-child relationship. For instance, you cannot combine IOException with 					FileNotFoundException in a single catch block because FileNotFoundException is a subclass of IOException.
+
+
+
+Example of Multi-Catch Block
+	public class MultiCatchExample {
+	    public static void main(String[] args) {
+	        try {
+	            // Code that might throw multiple exceptions
+	            throw new IOException("File error"); // This can be IOException or SQLException
+	        } catch (IOException | SQLException e) {
+	            // Handling both IOException and SQLException
+	            System.out.println("Caught exception: " + e.getClass().getName() + " with message: " + e.getMessage());
+	        }
+	    }
+	}
+
+Output:
+	Caught exception: java.io.IOException with message: File error

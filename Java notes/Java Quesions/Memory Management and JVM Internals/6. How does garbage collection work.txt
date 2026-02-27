@@ -1,0 +1,50 @@
+How does garbage collection work in Java, and what are the different types of garbage collectors available?
+Garbage Collection in Java
+Garbage Collection (GC) in Java is an automatic memory management process that frees up memory occupied by objects that are no longer in use.
+This helps prevent memory leaks and ensures efficient use of memory resources.
+
+
+❓ How Garbage Collection Works
+Garbage collection works by identifying and removing objects that are no longer referenced by any part of a program. Here's the typical process:
+
+Object Creation: When an object is created, it is stored in the heap memory.
+Object Referencing: As long as an object is referenced by variables or other objects, it is considered "in use."
+Mark and Sweep: The garbage collector periodically looks for objects that are no longer referenced:
+Mark Phase: It marks all reachable objects starting from root references (like static fields and active thread stacks).
+Sweep Phase: It removes unmarked objects, freeing up memory.
+Compaction: After collecting, it may compact memory by moving objects to make memory allocation more efficient.
+
+
+Types of Garbage Collectors in Java
+Java provides several types of garbage collectors, each optimized for different use cases:
+
+1. Serial Garbage Collector (GC):
+How it works: It uses a single thread to handle garbage collection. Both the mark-and-sweep and compaction phases are handled in a serial manner.
+Best for: Applications with small heaps and single-threaded environments.
+Pros: Simple and low memory overhead.
+Cons: Causes noticeable pauses (stop-the-world) during garbage collection.
+2. Parallel Garbage Collector (Parallel GC):
+How it works: Also known as the throughput collector, it uses multiple threads to speed up the garbage collection process. Both minor and major garbage collections are parallelized.
+Best for: Applications that can afford longer pauses but need to maximize throughput.
+Pros: Higher throughput due to parallel processing.
+Cons: Still experiences stop-the-world pauses.
+3. G1 Garbage Collector (Garbage-First):
+How it works: Divides the heap into regions and performs garbage collection incrementally, prioritizing areas that are mostly garbage.
+Best for: Applications requiring low-pause times with large heaps.
+Pros: Reduces long pauses, provides predictable GC behavior.
+Cons: Slightly higher memory overhead due to regionalized memory.
+4. CMS Garbage Collector (Concurrent Mark-Sweep):
+How it works: Focuses on minimizing pause times by performing most garbage collection concurrently with the application.
+Best for: Low-latency applications that can't afford long GC pauses.
+Pros: Lower pause times because the mark phase runs concurrently with the application.
+Cons: Can cause memory fragmentation and is being replaced by G1 GC in recent Java versions.
+5. Z Garbage Collector (ZGC):
+How it works: A low-latency collector that works concurrently with the application, like CMS, but with better scaling capabilities.
+Best for: Applications requiring very large heaps (multi-terabyte) and minimal pause times.
+Pros: Pause times are consistently low, even with large heaps.
+Cons: Still relatively new and might require more tuning for specific use cases.
+6. Shenandoah Garbage Collector:
+How it works: Similar to ZGC, Shenandoah is also a low-latency collector designed for low-pause times with large heaps.
+Best for: Real-time systems requiring minimal pauses, and scalability in large heap environments.
+Pros: Pause times don't scale with heap size.
+Cons: Still evolving, and tuning may be necessary for optimal performance.

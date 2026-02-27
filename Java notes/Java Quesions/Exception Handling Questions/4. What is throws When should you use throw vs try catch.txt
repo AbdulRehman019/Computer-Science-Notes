@@ -1,0 +1,38 @@
+What is throws? When should you use throws vs try/catch?
+	In Java, throws is used in a method declaration to indicate that the method may throw one or more exceptions. This means that the method does not handle these exceptions itself and 	instead passes the responsibility for handling them to the method that called it.
+
+	throws Keyword
+		Purpose: The throws keyword is used to declare exceptions that a method might throw during its execution. It informs the compiler and the caller of the method that certain 			 exceptions might be thrown, and it is up to the caller to handle them, either with a try/catch block or by propagating the exception further up the call stack.
+
+		Syntax:
+			java public void myMethod() throws IOException, SQLException {
+				// Code that might throw IOException or SQLException 
+			}
+
+		Example:
+			public void readFile(String filePath) throws IOException {
+				FileReader file = new FileReader(filePath);
+				BufferedReader fileInput = new BufferedReader(file);
+
+				// Some code that might throw an IOException
+				fileInput.close();
+			}
+
+			public void anotherMethod() {
+				try {
+					readFile("example.txt");
+				} catch (IOException e) {
+					System.out.println("An error occurred while reading the file: " + e.getMessage());
+				}
+			}
+
+	In this example, thereadFilemethod declares that it may throw anIOException. The caller ofreadFile(in this case,anotherMethod) must handle this exception using atry/catch` block.
+
+When to Use throws vs try/catch
+	Use throws if the method’s purpose is to perform an operation where exception handling should be done by the caller (e.g., reading a file where the caller should decide what to do 	if the file is not found).
+
+	Use try/catch when you need to handle the exception within the method itself, particularly if the method is responsible for ensuring certain operations complete successfully or if 	you want to log the exception and continue execution.
+
+Follow-up Question
+	What happens if a method with throws is called without handling the exception?
+	If a method that declares a throws clause is called without handling the exception (i.e., without a corresponding try/catch block or another throws clause), the code will not 	compile, and the compiler will throw an error, requiring you to handle or further declare the exception.

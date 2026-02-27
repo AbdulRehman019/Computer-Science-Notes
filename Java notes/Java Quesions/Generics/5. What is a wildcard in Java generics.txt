@@ -1,0 +1,133 @@
+What is a wildcard in Java generics? Explain the difference between ? extends T and ? super T
+A wildcard in Java generics is represented by the symbol ?. It is used to specify unknown types in generics, allowing more flexibility when working with generic methods, classes, or interfaces. Wildcards are particularly useful when the exact type of a generic parameter is not known or relevant.
+
+
+
+Types of Wildcards
+
+
+Unbounded Wildcard (?):
+Represents an unknown type.
+Example: List<?> can hold a List of any type.
+
+
+Upper-Bounded Wildcard (? extends T):
+Restricts the wildcard to represent a type that is a subclass (or the same class) of T.
+Example: List<? extends Number> can hold a List of Integer, Double, or Number.
+
+
+Lower-Bounded Wildcard (? super T):
+Restricts the wildcard to represent a type that is a superclass (or the same class) of T.
+Example: List<? super Integer> can hold a List of Integer, Number, or Object.
+
+
+Differences Between ? extends T and ? super T
+
+
+| Aspect | ? extends T | ? super T |
+|-------------------------------|----------------------------------------------|----------------------------------------------|
+| Purpose | Represents a type that is a subclass of T (including T itself). | Represents a type that is a superclass of T (including T itself). |
+| Read/Write Operations | Read: Allows reading elements as T.
+Write: Disallows adding elements (except null). | Read: Allows reading elements as Object.
+Write: Allows adding elements of type T or its subtypes. |
+| Use Case | Used when a method depends on reading elements. | Used when a method depends on writing elements. |
+| Flexibility | Provides flexibility for reading data. | Provides flexibility for writing data. |
+
+
+
+Examples
+
+
+Using ? extends T
+
+
+import java.util.*;
+public class Example {
+public static void printNumbers(List<? extends Number> list) {
+for (Number number : list) {
+System.out.println(number);
+}
+// list.add(10); // Compilation error: cannot add elements
+}
+public static void main(String[] args) {
+    List&lt;Integer&gt; integers = Arrays.asList(1, 2, 3);
+    List&lt;Double&gt; doubles = Arrays.asList(1.1, 2.2, 3.3);
+
+    printNumbers(integers); // Works
+    printNumbers(doubles);  // Works
+}
+
+}
+
+
+Explanation:
+
+
+The method accepts any List of a type that extends Number (e.g., Integer, Double).
+You can read elements as Number, but you cannot add new elements because the exact type is unknown.
+
+
+Using ? super T
+
+
+import java.util.*;
+public class Example {
+public static void addNumbers(List<? super Integer> list) {
+list.add(10);
+list.add(20);
+// Integer num = list.get(0); // Compilation error: cannot infer type
+}
+public static void main(String[] args) {
+    List&lt;Object&gt; objects = new ArrayList&lt;&gt;();
+    List&lt;Number&gt; numbers = new ArrayList&lt;&gt;();
+
+    addNumbers(objects); // Works
+    addNumbers(numbers); // Works
+}
+
+}
+
+
+Explanation:
+- The method accepts any List of a type that is a superclass of Integer (e.g., Number, Object).
+- You can add elements of type Integer or its subtypes, but reading elements is limited to Object.
+
+
+
+Key Points
+
+
+Covariance (? extends T):
+Allows reading elements as T or its supertypes.
+Prevents adding new elements (except null).
+
+
+Contravariance (? super T):
+Allows adding elements of type T or its subtypes.
+Limits reading elements to Object.
+
+
+Use Case Summary:
+Use ? extends T when you need to read data from a structure.
+Use ? super T when you need to write data to a structure.
+
+
+Example Comparison
+
+
+List<? extends Number> list1 = Arrays.asList(1, 2, 3);
+// list1.add(4); // Error: Cannot add elements
+Number num1 = list1.get(0); // Works: You can read as Number
+List<? super Integer> list2 = new ArrayList<>();
+list2.add(4); // Works: You can add elements of type Integer
+Object obj = list2.get(0); // You can only read as Object
+
+
+Conclusion
+
+
+Wildcards in Java generics enhance flexibility by allowing bounded and unbounded types.
+- ? extends T: For reading data of unknown specific types within an upper bound.
+- ? super T: For writing data of specific types within a lower bound.
+
+Understanding these wildcards is crucial for designing flexible and reusable generic code.

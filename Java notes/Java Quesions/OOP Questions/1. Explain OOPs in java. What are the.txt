@@ -1,0 +1,125 @@
+Explain OOPs in java. What are the four pillars of OOPs?
+What is OOP:
+OOP is a programming paradigm based on the concept of objects, which are instances of classes. Objects contain data in the form of fields (attributes) and code in the form of methods (functions). OOP in Java helps in organizing software design around data, or objects, rather than functions and logic.
+
+
+Why We Need OOP:
+OOP is needed to:
+- Promote modularity by breaking down complex problems into smaller, manageable objects.
+- Enhance code reusability through inheritance and polymorphism.
+- Improve maintainability by using encapsulation to protect object states.
+- Facilitate scalability and flexibility by allowing easy modification and extension of code.
+
+
+Problems OOP Solves:
+- Reduces complexity by modeling real-world entities.
+- Avoids redundancy by promoting code reuse.
+- Enhances code maintainability and readability.
+- Supports large-scale software development by allowing multiple developers to work on different objects simultaneously.
+
+
+When and Where to Use OOP:
+- Use OOP when designing software that requires modeling complex real-world systems.
+- It is beneficial in applications that require frequent changes and extensions.
+- Suitable for projects involving multiple developers to promote modularity and collaboration.
+
+
+The Four Pillars of OOP:
+1. Encapsulation:
+	- What: Encapsulation is the bundling of data (attributes) and methods (functions) that operate on the data into a single unit, typically a class. It restricts direct access to some 		components and can prevent the accidental modification of data.
+
+	- Implementation:
+		     public class Employee {
+         		private String name;
+         		private double salary;
+     			
+			public String getName() {
+         			return name;
+     			}
+
+     			public void setName(String name) {
+         			this.name = name;
+     			}
+
+     			public double getSalary() {
+         			return salary;
+     			}
+
+     			public void setSalary(double salary) {
+         			this.salary = salary;
+     			}
+ 		}
+2. Inheritance:
+	What: Inheritance is a mechanism where a new class (subclass) inherits the attributes and methods of an existing class (superclass). It promotes code reuse and establishes a 			hierarchical relationship between classes.
+	
+	Implementation:
+		     public class Animal {
+         		public void eat() {
+             			System.out.println("This animal eats food.");
+         		}
+     	  	     }
+
+ 		     public class Dog extends Animal {
+     			public void bark() {
+         			System.out.println(&quot;The dog barks.&quot;);
+     			}
+ 		     }
+
+
+3. Polymorphism:
+	- What: Polymorphism allows objects of different classes to be treated as objects of a common superclass. It enables one interface to be used for a general class of actions.
+
+	- Types: Compile-time (method overloading) and run-time (method overriding) polymorphism.
+
+	- Implementation:
+		     // Method Overloading (Compile-time Polymorphism)
+		     public class MathUtils {
+		         public int add(int a, int b) {
+		             return a + b;
+		         }
+
+		     	 public double add(double a, double b) {
+         			return a + b;
+     			 }
+		     }
+
+		 // Method Overriding (Run-time Polymorphism)
+ 		public class Animal {
+     			public void makeSound() {
+         			System.out.println(&quot;Animal sound&quot;);
+     			}
+ 		}
+
+	 	public class Dog extends Animal {
+     			@Override
+     			public void makeSound() {
+         			System.out.println(&quot;Dog barks&quot;);
+     			}
+ 		}
+4. Abstraction:
+	- What: Abstraction involves hiding the complex implementation details of a system and exposing only the necessary and relevant parts to the user. It helps in reducing complexity 		and increases the efficiency of code management.
+
+	- Implementation:
+		     // Abstract Class
+     			public abstract class Shape {
+         			abstract void draw();
+     			}
+ 			
+			public class Circle extends Shape {
+     				@Override
+     				void draw() {
+         				System.out.println(&quot;Drawing a circle.&quot;);
+     				}
+ 			}
+
+			 // Interface
+ 			public interface Drawable {
+     				void draw();
+ 			}
+
+			public class Square implements Drawable {
+     				@Override
+     				public void draw() {
+         				System.out.println(&quot;Drawing a square.&quot;);
+     				}
+ 			}

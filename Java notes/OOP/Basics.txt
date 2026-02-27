@@ -89,5 +89,32 @@
 
 	The most common use of the this keyword is to eliminate the confusion between class attributes and parameters with the same name.
 
+14. Summary of super Keyword
+	The super keyword in Java is a reference variable used to refer to the immediate parent class object. 
+	It serves several purposes in inheritance, allowing subclasses to access or invoke the members (methods, constructors, and variables) of their parent class.
+
+	Purpose: The super keyword is used to access members (variables, methods, constructors) of the parent class from the subclass.
+	Main Uses:
+		To access a parent class variable when it is hidden by a subclass variable.
+		To call a parent class method when it is overridden in the subclass.
+		To invoke a parent class constructor from a subclass constructor.
+
+	Important Note: When used to call a parent constructor, super() must be the first statement in the subclass constructor.
+
+15. Summary of this Keyword
+	The this keyword in Java is a reference variable that refers to the current object, the object whose method or constructor is being called. 
+	It is used within an instance method or a constructor to refer to the current object. 
+
+	Purpose: this is used to refer to the current object within an instance method or a constructor.
+	Main Uses:
+		To refer to the instance variables of the current object, especially when they are shadowed by method or constructor parameters.
+		To invoke the current class's methods.
+		To call a constructor from another constructor in the same class (constructor chaining).
+		To return the current class instance, facilitating method chaining. 
+			Example setNumber(int number) {
+    			   this.number = number;
+   			   return this; // Returns current class instance
+			   }
+
 Note:
      We cannot access memory address in java and hence we cannot allocate memory manually, it happens dynamically.

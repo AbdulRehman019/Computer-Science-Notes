@@ -1,0 +1,48 @@
+How do you create a custom exception in Java?
+	In Java, you can create a custom exception by extending the Exception class (for checked exceptions) or the RuntimeException class (for unchecked exceptions). 
+	A custom exception allows you to represent specific error conditions that are relevant to your application's domain.
+
+Steps to Create a Custom Exception:
+	Define the Custom Exception Class:
+		Create a new class that extends either Exception (for a checked exception) or RuntimeException (for an unchecked exception).
+
+	Add Constructors:
+		Provide constructors that can accept custom error messages and other relevant data, such as the cause of the exception.
+
+	Optionally Override Methods:
+		You can override methods like toString() or getMessage() if you want to customize the way the exception message is displayed.
+
+Example:
+	// Custom checked exception
+	public class InvalidAgeException extends Exception {
+    		// Constructor with a custom error message
+    		public InvalidAgeException(String message) {
+        		super(message);
+    		}
+	}
+
+	// Using the custom exception
+	public class Main {
+		public static void validateAge(int age) throws InvalidAgeException {
+			if (age < 18) {
+				throw new InvalidAgeException("Age must be 18 or older.");
+			}
+		}
+	
+		public static void main(String[] args) {
+    			try {
+        			validateAge(16);
+    			} catch (InvalidAgeException e) {
+        			System.out.println(&quot;Caught Exception: &quot; + e.getMessage());
+    			}
+		}
+	}
+
+Two Things to Keep in Mind:
+	Checked vs. Unchecked:
+		Decide whether your custom exception should be a checked or unchecked exception based on the nature of the error. If the caller should handle the error explicitly, use a 		checked exception by extending Exception. If the error is due to a programming mistake or a condition that cannot be easily recovered from, use an unchecked exception by 		extending RuntimeException.
+
+	Descriptive Error Messages:
+		Always provide a clear and descriptive error message in your custom exception. This helps in diagnosing issues quickly when the exception is thrown and caught in the code.
+
+\By creating custom exceptions, you can make your code more readable and maintainable, especially when dealing with domain-specific errors or complex business logic.

@@ -1,0 +1,96 @@
+Explain Inheritance
+
+Inheritance in Java
+	Inheritance is one of the four fundamental principles of Object-Oriented Programming (OOP). 
+	It allows one class (the subclass or child class) to inherit the fields and methods of another class (the superclass or parent class).
+
+What is Inheritance?
+	Inheritance enables a new class to acquire the properties and behaviors of an existing class. 
+	The new class, known as the subclass, can add its own fields and methods in addition to the inherited ones.
+
+Why Do We Need Inheritance?
+	Code Reusability: Inheritance promotes the reuse of existing code. Subclasses can reuse fields and methods of the superclass, avoiding code duplication.
+	Method Overriding: Subclasses can provide specific implementations for methods that are defined in the superclass, which allows for dynamic method resolution.
+	Polymorphism: Inheritance supports polymorphism, enabling objects of different classes to be treated as objects of a common superclass. This is useful for writing flexible and 			reusable code.
+
+What Problem Does It Solve?
+	Reduces Code Duplication: By allowing subclasses to inherit common functionality from a superclass, inheritance reduces code redundancy.
+	Enhances Maintainability: Changes in the common functionality need to be made only in the superclass, which propagates to all subclasses, making the code easier to maintain.
+	Simplifies Code: Inheritance simplifies the code by allowing hierarchical class organization, making it easier to understand and manage.
+
+When to Use Inheritance?
+	When there is a natural hierarchical relationship: Use inheritance when classes have a natural "is-a" relationship, e.g., a Dog "is-a" Animal.
+	To reuse code: When you want to use existing code in new contexts without rewriting it.
+	To implement polymorphism: When you need to handle a group of related objects uniformly.
+
+❓ How to Use Inheritance?
+1. Defining the Superclass:
+	The superclass contains fields and methods that will be inherited by the subclass.
+
+	public class Animal {
+	    private String name;
+	
+	    public Animal(String name) {
+	    	this.name = name;
+	    }
+
+	    public void makeSound() {
+    		System.out.println(&quot;Some generic animal sound&quot;);
+	    }
+
+	    public String getName() {
+    		return name;
+	    }
+	}
+
+2. Defining the Subclass:
+	The subclass extends the superclass using the extends keyword and inherits its properties and methods.
+
+	public class Dog extends Animal {
+    		public Dog(String name) {
+        		super(name); // Call the constructor of the superclass
+    		}
+
+		@Override
+		public void makeSound() {
+    			System.out.println(&quot;Bark&quot;);
+		}
+
+		public void fetch() {
+    			System.out.println(getName() + &quot; is fetching the ball&quot;);
+		}
+	}
+
+3. Using the Subclass:
+	You can create instances of the subclass and use both inherited and newly defined methods.
+
+	public class Main {
+    		public static void main(String[] args) {
+        		Dog dog = new Dog("Buddy");
+        		dog.makeSound(); // Output: Bark
+        		dog.fetch(); // Output: Buddy is fetching the ball
+    		}
+	}
+
+Key Points to Remember
+	super keyword: Used to call the constructor of the superclass or access its members.
+	Method Overriding: Subclasses can override methods of the superclass to provide specific behavior.
+	Single Inheritance: Java supports single inheritance, meaning a class can only extend one superclass. However, multiple inheritance of type can be achieved using interfaces.
+	Access Control: The access specifier of the superclass members determines their visibility in the subclass (e.g., private members are not inherited, protected members are accessible).
+
+Follow-up Questions
+1. What is the difference between super and this?
+	Answer: super is used to refer to the immediate parent class instance, while this refers to the current class instance.
+
+2. Can constructors be inherited?
+	Answer: No, constructors are not inherited, but a subclass can call a superclass constructor using super.
+
+3. What is method overriding?
+	Answer: Method overriding occurs when a subclass provides a specific implementation for a method that is already defined in its superclass.
+
+4. What is the difference between inheritance and composition?
+	Answer: Inheritance defines a "is-a" relationship, whereas composition defines a "has-a" relationship. Composition is generally preferred for greater flexibility.
+
+5. What is multiple inheritance and how does Java handle it?
+	Answer: Multiple inheritance means a class can inherit from multiple classes. 
+	Java does not support multiple inheritance with classes to avoid complexity and ambiguity, but it allows multiple inheritance through interfaces.

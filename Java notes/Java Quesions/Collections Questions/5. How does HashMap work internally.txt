@@ -1,0 +1,79 @@
+How does HashMap work internally?
+	A HashMap in Java is a commonly used data structure that stores key-value pairs and allows for efficient retrieval of values based on their keys. 
+	HashMap uses hashing as its underlying mechanism. Here's a detailed explanation of how HashMap works internally:
+
+1. Underlying Data Structure:
+	Internally, HashMap uses an array of buckets (also known as table). 
+	Each bucket is a linked list (or tree in the case of large buckets in Java 8+). 
+	The bucket array is used to store Map.Entry objects (key-value pairs). 
+	The position of each key-value pair in the bucket array is determined by the hash code of the key.
+
+2. Hashing:
+	Hashing is the process of converting an object (in this case, the key) into an integer value (called a hash code) that serves as the index for storing the key-value pair in the 	array.
+
+	When you insert a key-value pair into a HashMap, Java first computes the hash code of the key using its hashCode() method.
+	The hashCode() method returns an integer. HashMap applies a transformation to this hash code (using bit manipulation techniques to distribute the hash codes more evenly) and then 	calculates the index in the internal array where the entry should be stored.
+
+	Formula for Calculating Index:
+	index = (n - 1) & hash
+	Where n is the length of the bucket array and hash is the hash code of the key after further processing. The bitwise & operator ensures that the index falls within the bounds of 	the array.
+
+3. Adding an Entry (put() operation):
+	When you add a key-value pair using put(key, value):
+	1. The hashCode() of the key is computed.
+	2. The index for storing the entry is calculated using the hash code.
+	3. If the bucket at the calculated index is empty, a new Map.Entry object (which holds the key, value, hash code, and reference to the next entry) is created and stored in that 	bucket.
+	4. If the bucket already contains entries (i.e., there’s a hash collision), HashMap iterates through the linked list (or tree) to check if the key already exists:
+		- If the key exists, the value is updated.
+		- If the key doesn’t exist, a new entry is appended to the linked list (or inserted into the tree).
+
+4. Handling Collisions:
+	Collision occurs when two different keys generate the same hash code (or, more specifically, the same index in the bucket array). HashMap handles collisions using two techniques:
+
+	1. Linked List (Pre-Java 8):
+		- Before Java 8, HashMap resolves collisions by storing the conflicting key-value pairs in a linked list at the same bucket index. New entries are appended to the end of 		the list.
+		- On lookup, HashMap must traverse the linked list to find the correct entry, which can lead to poor performance in cases of high collision rates (O(n) complexity for 			lookups in the worst case).
+
+	Tree (Java 8+):
+	In Java 8, if the number of entries in a bucket exceeds a threshold (8 entries), the linked list is converted into a binary search tree (BST) to improve performance. This reduces 	the time complexity of lookups from O(n) to O(log n).
+
+	When the number of entries falls below a certain threshold (6 entries), the tree is converted back into a linked list.
+
+5. Retrieving a Value (get() operation):
+	When you retrieve a value using get(key):
+	1. The hashCode() of the key is computed.
+	2. The index is calculated using the hash code.
+	3. HashMap checks the bucket at the calculated index:
+		- If the bucket is empty, null is returned.
+		- If the bucket contains entries, HashMap compares the hash code and key using the equals() method to find the correct entry.
+	4. Once the correct entry is found, the value associated with the key is returned.
+
+6. Resizing (Rehashing):
+	HashMap dynamically resizes its internal bucket array when it exceeds a certain load factor to maintain efficiency. 
+	The load factor is the measure of how full the HashMap is allowed to get before it is resized.
+
+	Default Load Factor: 0.75 (i.e., when 75% of the array is filled, HashMap resizes).
+	Threshold: The threshold for resizing is calculated as:
+			threshold = capacity * load factor
+
+	For example, with a default initial capacity of 16 and a load factor of 0.75, the threshold would be 12 (i.e., the array will be resized when the 13th element is inserted).
+
+	When resizing happens, HashMap creates a new bucket array with double the size of the original one. All the existing entries are rehashed and moved to the new array.
+
+7. Performance (Time Complexity):
+	Best Case: O(1) for both put() and get() operations when there are no collisions.
+	Worst Case: O(n) for put() and get() in the case of high collisions (before Java 8). 
+		    After Java 8, the worst case for lookups is improved to O(log n) due to the use of a tree structure in heavily populated buckets.
+
+8. HashMap Important Fields:
+	capacity: The number of buckets in the HashMap.
+	load factor: The measure that controls when the HashMap should resize (default is 0.75).
+	threshold: The point at which the HashMap will be resized (capacity × load factor).
+	modCount: A count of structural modifications (used to detect concurrent modifications).
+
+Summary:
+	HashMap uses an array of buckets (or linked lists/trees) to store key-value pairs.
+	Hashing is used to calculate the index for each key in the bucket array.
+	Collisions are handled using a linked list (pre-Java 8) or binary search trees (post-Java 8) in buckets with multiple entries.
+	HashMap resizes itself dynamically when it exceeds its load factor to maintain performance.
+	The time complexity is O(1) in the average case and O(n) or O(log n) in the worst case, depending on the collision handling mechanism used.

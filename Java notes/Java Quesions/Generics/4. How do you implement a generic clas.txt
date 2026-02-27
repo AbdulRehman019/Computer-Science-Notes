@@ -1,0 +1,131 @@
+How do you implement a generic class in Java?
+Steps to Implement a Generic Class:
+1. Define the Class with a Type Parameter:
+A generic class is declared by adding type parameters in angle brackets (<>) after the class name. You can use a single type parameter (e.g., T) or multiple type parameters (e.g., <T, U>).
+Example:
+```java
+public class Box {
+private T value;
+
+ // Constructor to initialize the value
+ public Box(T value) {
+     this.value = value;
+ }
+// Getter to retrieve the value
+public T getValue() {
+return value;
+}
+// Setter to set the value
+public void setValue(T value) {
+this.value = value;
+}
+}
+```
+
+Explanation: In this example, T is a type parameter that represents any data type. The class Box can now store and operate on any type of data.
+
+
+
+2. Create Objects of the Generic Class:
+How: When creating objects of the generic class, specify the actual type you want the type parameter to represent.
+Example:
+```java
+public class Main {
+public static void main(String[] args) {
+// Creating a Box object for Integer
+Box intBox = new Box<>(10);
+System.out.println("Integer Value: " + intBox.getValue()); // Output: Integer Value: 10
+
+     // Creating a Box object for String
+     Box<String> strBox = new Box<>("Hello");
+     System.out.println("String Value: " + strBox.getValue());  // Output: String Value: Hello
+ }
+}
+```
+
+Explanation:
+
+The intBox object is created to store an Integer value, and the type T is replaced by Integer at compile time.
+The strBox object is created to store a String value, and the type T is replaced by String.
+
+
+3. Using Multiple Type Parameters (Optional):
+How: You can define a generic class with multiple type parameters by separating them with commas.
+Example:
+```java
+public class Pair {
+private K key;
+private V value;
+
+ // Constructor to initialize key and value
+ public Pair(K key, V value) {
+     this.key = key;
+     this.value = value;
+ }
+// Getter for key
+public K getKey() {
+return key;
+}
+// Getter for value
+public V getValue() {
+return value;
+}
+}
+
+public class Main {
+public static void main(String[] args) {
+// Creating a Pair object for String and Integer
+Pair pair = new Pair<>("Age", 25);
+System.out.println("Key: " + pair.getKey() + ", Value: " + pair.getValue());
+// Output: Key: Age, Value: 25
+}
+}
+```
+
+Explanation:
+Here, the Pair class uses two type parameters (K and V). This allows the Pair class to store key-value pairs of any type.
+
+
+
+4. Bounded Type Parameters (Optional):
+How: You can restrict the type parameter to a certain type or its subclasses by using bounded types with the extends keyword.
+Example:
+```java
+public class NumberBox {
+private T number;
+
+ public NumberBox(T number) {
+     this.number = number;
+ }
+public T getNumber() {
+return number;
+}
+public void printDoubleValue() {
+System.out.println(number.doubleValue());
+}
+}
+
+public class Main {
+public static void main(String[] args) {
+// Creating NumberBox objects for Integer and Double
+NumberBox intBox = new NumberBox<>(10);
+intBox.printDoubleValue(); // Output: 10.0
+
+     NumberBox<Double> doubleBox = new NumberBox<>(15.5);
+     doubleBox.printDoubleValue();  // Output: 15.5
+ }
+}
+```
+
+Explanation:
+The NumberBox class only accepts types that are subclasses of Number, like Integer, Double, or Float. This allows you to perform number-specific operations like doubleValue() on the number.
+
+
+
+
+
+Summary:
+To implement a generic class in Java:
+- Define the class with type parameters using angle brackets (<>).
+- Use the type parameter inside the class to declare fields, methods, or constructors that work with the generic type.
+- Instantiate objects of the generic class by specifying the actual data type at the time of object creation.

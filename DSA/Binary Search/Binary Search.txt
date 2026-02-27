@@ -1,0 +1,87 @@
+1. Binary Search
+	When to think of this
+		When the array is sorted. 
+
+	Default approach
+		Give Brute Force(Linear Search) then Binary Search
+
+	Common variants
+		2–4 twists that change the approach
+
+	Classic mistakes
+		In some problems when to use < and when to use <=. 
+		Use <= for i because mid can be equal to i. 
+
+	Anchor problem
+		ONE problem that represents the pattern
+
+2. Rotated Binary Search 
+	When to think of this
+		When the array is sorted but rotated. 
+
+	Default approach
+		Give Brute Force(Linear Search) then Binary Search. 
+		Whenever you will do binary search, one part is sorted. 
+		Build logic on that sorted part. 
+
+	Common variants
+
+	Classic mistakes
+		In some problems when to use < and when to use <=. 
+		Use <= for i because mid can be equal to i. 
+
+	Anchor problem
+		Search in Rotated Binary Search. 
+
+3. Binary Search on Answers 
+	When to think of this
+		When the answer can lie in the range (1, n) or from (start, end). 
+		Apply binary search on possible answers. 
+
+	Default approach
+		Give Brute Force(Linear Search). 
+		Traverse on all possible answers linearly and return the answer when found. 
+		Instead of traversing linearly, traverse using binary search. 
+
+	Common variants
+		Minimum of Maximum or Maximum of Minimum
+
+	Classic mistakes
+		While founding isPossible(), start from count = 1 or day = 1 instead of 0. 
+		It will be easier to write logic. 
+
+	Anchor problem
+		Koko eating bananas 
+		Split Array Largest Sum 
+
+4. Minimum of Maximum Or Maximum of Minimum 
+	When to think of this
+		Extension of Binary Search on Answers. 
+		When the answer can lie in the range (1, n) or from (start, end). 
+		Apply binary search on possible answers. 
+
+	Default approach
+		Give Brute Force(Linear Search). 
+		Traverse on all possible answers linearly and return the answer when found. 
+		Instead of traversing linearly, traverse using binary search.
+
+		Traverse if by this maximum sum, we can split the array into k parts. 
+		If yes, this may be the possible answer and try to find the better answer. Smaller maximum sum. 
+		If no, check for the larger maximum sum. 
+
+		Jo bhi find krna hai, uss particular cheez ke saath jo given condition hai wo satisfy ho rhi hai kya? 
+		Ye check krna hai. 
+
+		Example: Magnetic Force Between Two Balls
+		Iss force ke saatch m balls rakh paana possible hai kya? 
+            	Agar haa, to ye possible answer ho skta hai and hum isse better answer find krne ki koshish krenge mtlb isse jada force ke saath hum m balls rakh skte hai kya?
+
+	Common variants
+		
+
+	Classic mistakes
+		While founding isPossible(), start from count = 1 or day = 1 instead of 0. 
+		It will be easier to write logic. 
+
+	Anchor problem
+		Split Array Largest Sum

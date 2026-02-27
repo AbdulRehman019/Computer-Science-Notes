@@ -1,0 +1,20 @@
+Explain the difference between checked and unchecked exceptions
+	In Java, exceptions are categorized into two main types: checked and unchecked exceptions. Both are used to handle errors and abnormal conditions, but they differ in how they are 	enforced and managed within the code.
+
+Compile-time vs. Runtime Enforcement:
+	Checked Exceptions: These are exceptions that are checked at compile-time. If a method can throw a checked exception, it must either handle it with a try-catch block or declare it 			    using the throws keyword. This ensures that the exception is addressed during development.
+
+	Unchecked Exceptions: These are exceptions that occur at runtime and are not checked at compile-time. They are typically derived from RuntimeException. Unchecked exceptions do not 			      require explicit handling or declaration, which gives developers more flexibility but also requires careful handling to avoid runtime errors.
+
+	Common Examples:
+		Checked Exceptions: Examples include IOException, SQLException, and FileNotFoundException. These exceptions usually represent conditions that are outside the control of the 				    program, such as file handling or network communication errors.
+
+		Unchecked Exceptions: Examples include NullPointerException, ArrayIndexOutOfBoundsException, and IllegalArgumentException. These typically represent programming errors, such 				      as accessing a null reference or providing invalid arguments to a method.
+
+	Use Cases:
+		Checked Exceptions: Use checked exceptions when the caller of a method is expected to handle the exception. For instance, when dealing with file I/O operations, the caller 				    should be aware of potential issues and handle them appropriately.
+
+		Unchecked Exceptions: Use unchecked exceptions for programming errors that could be prevented through proper coding practices, such as null checks or input validation.
+
+	Example:
+		If you're reading data from a file, an IOException (checked exception) might be thrown if the file is not found. This must be handled or declared. On the other hand, a 		NullPointerException (unchecked exception) might occur if you try to call a method on a null object, but this type of error is not required to be handled explicitly at 		compile-time.

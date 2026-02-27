@@ -1,0 +1,133 @@
+Can a generic class extend another generic class in Java? Provide an example
+Yes, a generic class can extend another generic class in Java. When doing so, the subclass can either retain the same generic type parameters as the superclass or define its own.
+
+
+
+Example 1: Retaining the Generic Type Parameter
+
+
+In this case, the subclass extends the superclass and retains its generic type parameter.
+
+
+
+// Generic Superclass
+class Container<T> {
+    private T value;
+public Container(T value) {
+    this.value = value;
+}
+
+public T getValue() {
+    return value;
+}
+
+public void setValue(T value) {
+    this.value = value;
+}
+
+}
+// Generic Subclass
+class ExtendedContainer<T> extends Container<T> {
+public ExtendedContainer(T value) {
+super(value);
+}
+public void displayType() {
+    System.out.println(&quot;Type: &quot; + getValue().getClass().getName());
+}
+
+}
+// Main Class
+public class Main {
+public static void main(String args) {
+ExtendedContainer<String> container = new ExtendedContainer<>("Hello");
+System.out.println("Value: " + container.getValue());
+container.displayType();
+}
+}
+
+
+Output:
+
+
+
+Value: Hello
+Type: java.lang.String
+
+
+Example 2: Defining New Generic Type Parameters
+
+
+The subclass can define additional or completely new generic type parameters.
+
+
+
+// Generic Superclass
+class Pair<K, V> {
+    private K key;
+    private V value;
+public Pair(K key, V value) {
+    this.key = key;
+    this.value = value;
+}
+
+public K getKey() {
+    return key;
+}
+
+public V getValue() {
+    return value;
+}
+
+}
+// Generic Subclass with Additional Type Parameter
+class Triple<K, V, T> extends Pair<K, V> {
+private T third;
+public Triple(K key, V value, T third) {
+    super(key, value);
+    this.third = third;
+}
+
+public T getThird() {
+    return third;
+}
+
+}
+// Main Class
+public class Main {
+public static void main(String args) {
+Triple<String, Integer, Boolean> triple = new Triple<>("Key", 42, true);
+System.out.println("Key: " + triple.getKey());
+System.out.println("Value: " + triple.getValue());
+System.out.println("Third: " + triple.getThird());
+}
+}
+
+
+Output:
+
+
+
+Key: Key
+Value: 42
+Third: true
+
+
+Key Points
+
+
+Inheritance of Generic Parameters:
+If the subclass retains the generic type parameters of the superclass, the relationship between the types remains consistent.
+
+
+Defining Additional Parameters:
+A subclass can define its own additional type parameters, making it more versatile for specific use cases.
+
+
+Bounded Generics:
+Both the superclass and subclass can use bounded generics (<T extends Number>), if needed.
+
+
+Conclusion
+
+
+A generic class can extend another generic class while retaining or modifying type parameters. This feature allows for powerful and flexible generic type hierarchies in Java.

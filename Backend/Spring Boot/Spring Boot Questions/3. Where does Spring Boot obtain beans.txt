@@ -26,8 +26,8 @@ Where does Spring Boot obtain beans when the @Autowired annotation is used?
 			}
 		}
 
-	In this example,@Autowiredinjects theMyServicebean intoMyController. 
-	Spring Boot automatically detectsMyServiceas a bean because it is annotated with@Service(which is a specialized form of@Component`).
+	In this example,@Autowired injects the MyServicebean into My Controller. 
+	Spring Boot automatically detects MyService as a bean because it is annotated with @Service(which is a specialized form of@Component`).
 
 2. @Bean-Defined Beans:
 	Spring Boot can also obtain beans defined explicitly using the @Bean annotation inside a @Configuration class.

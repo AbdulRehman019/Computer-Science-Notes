@@ -1,0 +1,35 @@
+What is a daemon thread
+What is a Daemon Thread?
+Understanding daemon threads is important for effective thread management in Java, especially when dealing with background tasks that should not prevent the program from terminating.
+
+What it is: A low-priority thread that runs in the background to perform tasks such as garbage collection.
+How it works: Daemon threads run continuously in the background but do not prevent the JVM from exiting when all user threads (non-daemon threads) finish execution.
+```java
+public class DaemonThreadExample {
+public static void main(String[] args) {
+Thread daemonThread = new Thread(() -> {
+while (true) {
+System.out.println("Daemon thread running...");
+try {
+Thread.sleep(500);
+} catch (InterruptedException e) {
+e.printStackTrace();
+}
+}
+});
+daemonThread.setDaemon(true);
+daemonThread.start();
+     try {
+         Thread.sleep(2000);
+     } catch (InterruptedException e) {
+         e.printStackTrace();
+     }
+ System.out.println("Main thread finished.");
+
+}
+}
+```
+- Simple Analogy: Like a janitor cleaning an office building at night; the building can close (JVM exit) without waiting for the janitor to finish cleaning.
+
+Summary
+A daemon thread is a background thread that does not prevent the JVM from exiting when all user threads have completed their execution. It is useful for tasks that should run continuously in the background, such as monitoring or housekeeping activities.

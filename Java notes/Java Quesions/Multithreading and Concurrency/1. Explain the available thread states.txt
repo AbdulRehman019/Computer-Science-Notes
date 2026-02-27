@@ -1,0 +1,61 @@
+Explain the available thread states
+Need:
+Understanding the various thread states is essential for effective multi-threaded programming. Without this knowledge, developers may struggle with debugging, optimizing, and managing the lifecycle of threads, leading to inefficient and error-prone applications.
+
+
+What is it?
+In Java, a thread can exist in one of several states during its lifecycle. These states represent the status of a thread at any given point in time and are managed by the Java Virtual Machine (JVM). The thread states are defined in the java.lang.Thread.State enum and include:
+
+NEW: A thread that has been created but has not yet started.
+RUNNABLE: A thread that is ready to run and is waiting for CPU time.
+BLOCKED: A thread that is blocked waiting for a monitor lock.
+WAITING: A thread that is waiting indefinitely for another thread to perform a particular action.
+TIMED_WAITING: A thread that is waiting for another thread to perform an action for up to a specified waiting time.
+TERMINATED: A thread that has exited or finished its execution.
+
+
+How is it used?
+NEW:
+When a thread is created but not yet started, it is in the NEW state. This state is entered when a new Thread object is instantiated.
+Example:
+     Thread t = new Thread(new RunnableTask());
+     // t is in NEW state
+
+
+RUNNABLE:
+A thread in the RUNNABLE state is ready to run but might not be currently running. It is either running or waiting for the CPU scheduler to allocate it CPU time.
+Example:
+     t.start(); // t is in RUNNABLE state after start() is called
+
+
+BLOCKED:
+A thread enters the BLOCKED state when it is waiting to acquire a monitor lock to enter or re-enter a synchronized block or method.
+Example:
+     synchronized (lock) {
+       // Thread t1 is holding the lock
+       // Thread t2 is blocked waiting for the lock
+     }
+
+
+WAITING:
+A thread enters the WAITING state when it is waiting indefinitely for another thread to perform a particular action (such as notify or notifyAll).
+Example:
+     synchronized (lock) {
+       while (condition) {
+         lock.wait(); // t is in WAITING state
+       }
+     }
+
+
+TIMED_WAITING:
+A thread enters the TIMED_WAITING state when it is waiting for another thread to perform an action for up to a specified waiting time.
+Example:
+     synchronized (lock) {
+       lock.wait(1000); // t is in TIMED_WAITING state for 1 second
+     }
+
+
+TERMINATED:
+A thread enters the TERMINATED state when it has completed its execution. This can happen either because the run method has finished or because the thread was terminated abruptly.
+Example:
+     t.join(); // t is in TERMINATED state after run() method completes

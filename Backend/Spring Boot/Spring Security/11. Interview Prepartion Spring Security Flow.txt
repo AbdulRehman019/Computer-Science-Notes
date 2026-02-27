@@ -1,0 +1,102 @@
+JWT Authentication Flow in Spring Security (Notes Version)
+
+When the login request comes for the first time, it will go to Security Filter Chain -> Dispatcher Servlet -> Will use UsernamePasswordBasicAuthentication -> Will create UsernamePasswordAuthenticationToken -> Pass it to AuthenticationManager -> Calls AuthenticationProvider -> Calls UserDetailsService -> Brings the UserDetailsObject -> AuthenticationProvider verifies the password. From the next time, call goes to JwtFilter -> Extract token from header Validate signature Check expiration Extract username Load user details Create Authentication object Set it in SecurityContextHolder how it will decide when to go to jwtfilter and process the second one i mentioned and when it will go for the first one...
+
+Using Spring Security
+✅ Important Correction
+	Request flow is:
+		Client
+		   ↓
+		Security Filter Chain
+		   ↓
+		DispatcherServlet
+		   ↓
+		Controller
+
+👉 Security happens before DispatcherServlet.
+
+🟢 1️⃣ First Time Login Flow
+	When user sends login request:
+	POST /login
+	{
+	  username,
+	  password
+	}
+
+	Flow:
+		Request enters Security Filter Chain
+
+		JwtFilter runs first
+		→ No Authorization header
+		→ Skips processing
+
+	UsernamePasswordAuthenticationFilter checks:
+		Is this /login?
+		Is it POST request?
+
+	If yes:
+		Creates UsernamePasswordAuthenticationToken
+		Sends it to AuthenticationManager
+		AuthenticationManager calls AuthenticationProvider
+		AuthenticationProvider:
+			Calls UserDetailsService
+			Loads UserDetails
+			Verifies password using PasswordEncoder
+			If valid:
+				Authentication successful
+				JWT is generated
+				Token sent back to client
+
+🟢 2️⃣ Subsequent Requests (Protected APIs)
+	Client sends:
+		GET /users
+		Authorization: Bearer <JWT>
+
+	Flow:
+		Request enters Security Filter Chain
+		JwtFilter executes:
+			Extract token from header
+			Validate signature
+			Check expiration
+			Extract username
+			Load user details
+			Create Authentication object
+			Set Authentication in SecurityContextHolder
+			Since authentication is already set:
+				UsernamePasswordAuthenticationFilter skips
+				Authorization check happens:
+				hasRole()
+				hasAuthority()
+				If allowed → Controller executes
+
+	🔥 How Does Spring Decide Which Flow to Use?
+		Spring does NOT dynamically choose one flow.
+
+	👉 All filters run in order.
+
+	Each filter decides:
+		Process the request Or skip it
+		
+		Login flow triggers because:
+			UsernamePasswordAuthenticationFilter is mapped to /login
+		
+		JWT flow triggers because:
+			JwtFilter checks for:
+				Authorization: Bearer <token>
+
+			If header exists → process
+			If not → skip
+
+🧠 Key Concept
+	Spring Security works on:
+		Filter Chain + Conditional Execution
+		It is not “either login flow OR JWT flow”.
+	
+	It is:
+		Every request goes through all filters.
+		Each filter checks whether it should act.
+
+🎯 30-Second Interview Summary
+	JWT authentication works in two phases:
+		During login, UsernamePasswordAuthenticationFilter authenticates credentials using AuthenticationManager, and a JWT is generated.
+		For subsequent requests, a custom JwtFilter validates the token and sets authentication in SecurityContextHolder. Authorization checks are then applied before accessing 		protected resources.

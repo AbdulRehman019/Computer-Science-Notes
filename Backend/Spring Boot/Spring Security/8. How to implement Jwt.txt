@@ -67,7 +67,9 @@ Controller runs
 
 
 
-
+// You do not need to implement basic auth, if implementing jwt
+// /signup -> Any request can access it
+// /login -> 
 🟩 PART 2 — What you implemented when adding JWT
 	When you added JWT authentication, you added 4 things:
 	1️⃣ JwtService
@@ -149,10 +151,12 @@ Authorization: Bearer <token>
 
 🟣 FINAL: COMPLETE SECURITY FLOW (JWT + DB login)
 
+// It won't go through any filter. 
 🔸 SIGNUP
 save user -> encode password -> store in DB
 
-
+// BasicAuth is not implemented, if jwt is implemented. 
+// It will go through UsernamePasswordAuthenticationFilter. 
 🔸 LOGIN FLOW
 POST /api/auth/login
 ↓
@@ -166,7 +170,7 @@ If valid → generate JWT
 ↓
 Return token
 
-
+// It will go throught JwtFilter. 
 🔸 PROTECTED API FLOW
 User sends request with Authorization: Bearer <token>
 ↓

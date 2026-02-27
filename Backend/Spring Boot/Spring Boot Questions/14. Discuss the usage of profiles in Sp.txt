@@ -1,31 +1,31 @@
 Discuss the usage of profiles in Spring Boot
-Profiles in Spring Boot are used to configure different environments for an application, such as development, testing, staging, and production. Profiles allow you to customize the behavior of your application based on the environment it is running in. This helps separate environment-specific configuration from your core application logic, ensuring that settings such as database credentials, logging levels, or external API endpoints can be easily managed and switched.
-
-
+	Profiles in Spring Boot are used to configure different environments for an application, such as development, testing, staging, and production. 
+	Profiles allow you to customize the behavior of your application based on the environment it is running in. 
+	This helps separate environment-specific configuration from your core application logic, ensuring that settings such as database credentials, logging levels, or external API 	endpoints can be easily managed and switched.
 
 Usage of Profiles in Spring Boot
-Defining Profiles:
-Profiles are defined in your application.properties or application.yml file. Each profile can have its own set of properties, allowing you to configure different environments separately.
-#### Example (application.yml):
-```yaml
-spring:
-profiles:
-active: dev
+	Defining Profiles:
+	Profiles are defined in your application.properties or application.yml file. Each profile can have its own set of properties, allowing you to configure different environments 	separately.
 
-spring:
-profiles: dev
-datasource:
-url: jdbc:mysql://localhost/devdb
-username: devuser
-password: devpass
+Example (application.yml):
+	```yaml
+	spring:
+		profiles:
+			active: dev
 
-spring:
-profiles: prod
-datasource:
-url: jdbc:mysql://prodserver/proddb
-username: produser
-password: prodpass
-```
+	spring:
+		profiles: dev
+		datasource:
+			url: jdbc:mysql://localhost/devdb
+			username: devuser
+			password: devpass
+
+	spring:
+		profiles: prod
+		datasource:
+			url: jdbc:mysql://prodserver/proddb
+			username: produser
+			password: prodpass
 
 In the example above:
 - When the dev profile is active, the application will connect to the devdb database.
@@ -33,40 +33,41 @@ In the example above:
 
 Activating Profiles:
 You can activate a profile in several ways:
+	Using the application.properties or application.yml:
+		properties spring.profiles.active=dev
 
-Using the application.properties or application.yml:
-properties spring.profiles.active=dev
-Command-line argument: You can specify the active profile when running the application.
-bash java -jar myapp.jar --spring.profiles.active=prod
-Environment variable: Set the profile through an environment variable.
-bash export SPRING_PROFILES_ACTIVE=prod
-Environment-Specific Configurations:
+	Command-line argument: You can specify the active profile when running the application.
+		bash java -jar myapp.jar --spring.profiles.active=prod
 
-Profiles allow you to configure environment-specific properties, such as:
+	Environment variable: Set the profile through an environment variable.
+		bash export SPRING_PROFILES_ACTIVE=prod
+	
+	Environment-Specific Configurations:
+		Profiles allow you to configure environment-specific properties, such as:
 
-Different databases (dev, test, production).
-Different logging levels for debugging in dev environments and production monitoring.
-Different URLs for external services (e.g., pointing to sandbox APIs in development and production APIs in the live environment).
-Profile-Specific Beans:
+		Different databases (dev, test, production).
+		Different logging levels for debugging in dev environments and production monitoring.
+		Different URLs for external services (e.g., pointing to sandbox APIs in development and production APIs in the live environment).
 
-You can create profile-specific beans that will only be loaded when a specific profile is active. This is useful when you need different beans or configurations for different environments.
-#### Example:
-```java
-@Configuration
-public class MyConfiguration {
+	Profile-Specific Beans:
+		You can create profile-specific beans that will only be loaded when a specific profile is active. This is useful when you need different beans or configurations for 			different environments.
 
-   @Bean
-   @Profile("dev")
-   public DataSource devDataSource() {
-       return new DataSource("jdbc:mysql://localhost/devdb", "devuser", "devpass");
-   }
-@Bean
-@Profile(“prod”)
-public DataSource prodDataSource() {
-return new DataSource(“jdbc:mysql://prodserver/proddb”, “produser”, “prodpass”);
-}
-}
-```
+Example:
+	@Configuration
+	public class MyConfiguration {
+	
+		@Bean
+		@Profile("dev")
+		public DataSource devDataSource() {
+			return new DataSource("jdbc:mysql://localhost/devdb", "devuser", "devpass");
+		}
+	
+		@Bean
+		@Profile(“prod”)
+		public DataSource prodDataSource() {
+			return new DataSource(“jdbc:mysql://prodserver/proddb”, “produser”, “prodpass”);
+		}
+	}
 
 In this example:
 - The devDataSource bean will only be instantiated when the dev profile is active.
@@ -74,49 +75,46 @@ In this example:
 
 Multiple Profiles:
 You can activate multiple profiles at once by specifying them as a comma-separated list.
-properties spring.profiles.active=dev,debug
+	properties spring.profiles.active=dev,debug
+
 This activates both the dev and debug profiles, and Spring Boot will merge the configurations from both profiles.
 
 Default Profile:
-If no profile is explicitly activated, Spring Boot uses the default profile (default). This can be used as a fallback configuration.
-You can define properties under the default profile for a baseline configuration that applies when no specific profile is activated.
+	If no profile is explicitly activated, Spring Boot uses the default profile (default). This can be used as a fallback configuration.
+	You can define properties under the default profile for a baseline configuration that applies when no specific profile is activated.
 
 
 Common Use Cases for Spring Boot Profiles:
-Environment-Specific Configuration:
-Profiles are ideal for managing configuration that varies between environments, such as database settings, API endpoints, logging configurations, or third-party service credentials.
+	Environment-Specific Configuration:
+		Profiles are ideal for managing configuration that varies between environments, such as database settings, API endpoints, logging configurations, or third-party service 		credentials.
 
-Testing:
+	Testing:
+		Profiles like test can be used to run the application in a test environment, with settings such as an in-memory database, different logging levels, or test-specific 			external services.
 
-Profiles like test can be used to run the application in a test environment, with settings such as an in-memory database, different logging levels, or test-specific external services.
-You can also use the @ActiveProfiles annotation to specify profiles in your test cases.
-#### Example:
-java @RunWith(SpringRunner.class) @SpringBootTest @ActiveProfiles("test") public class MyServiceTest { // Test methods }
+		You can also use the @ActiveProfiles annotation to specify profiles in your test cases.
 
-Feature Flags:
-Profiles can be used as feature flags, where certain features or configurations are enabled or disabled depending on the active profile.
+	Example:
+		java @RunWith(SpringRunner.class) @SpringBootTest @ActiveProfiles("test") public class MyServiceTest { // Test methods }
 
-Conditional Beans:
+	Feature Flags:
+		Profiles can be used as feature flags, where certain features or configurations are enabled or disabled depending on the active profile.
 
-You can define beans that only load under certain conditions using profiles, making it easy to swap out implementations for different environments or scenarios (e.g., different DataSource beans for development and production environments).
+	Conditional Beans:
+		You can define beans that only load under certain conditions using profiles, making it easy to swap out implementations for different environments or scenarios (e.g., 			different DataSource beans for development and production environments).
 
 
 Best Practices for Using Profiles:
-Separate Configuration:
-Always separate environment-specific configuration into different profile files (e.g., application-dev.yml, application-prod.yml) to keep the configurations clean and maintainable.
+	Separate Configuration:
+		Always separate environment-specific configuration into different profile files (e.g., application-dev.yml, application-prod.yml) to keep the configurations clean and 			maintainable.
 
-Avoid Hardcoding Profiles:
+	Avoid Hardcoding Profiles:
+		Instead of hardcoding profiles, use environment variables or externalized configuration to switch profiles dynamically based on the deployment environment.
 
-Instead of hardcoding profiles, use environment variables or externalized configuration to switch profiles dynamically based on the deployment environment.
+	Profile Inheritance:
+		Use the default profile as a baseline and override only the necessary configurations in other profiles to avoid redundant configurations.
 
-Profile Inheritance:
-
-Use the default profile as a baseline and override only the necessary configurations in other profiles to avoid redundant configurations.
-
-Security Considerations:
-
-Be careful not to include sensitive data (like production credentials) in development configurations or in version-controlled files. Use tools like Spring Cloud Config or environment variables to manage sensitive configuration.
-
+	Security Considerations:
+		Be careful not to include sensitive data (like production credentials) in development configurations or in version-controlled files. Use tools like Spring Cloud Config or 		environment variables to manage sensitive configuration.	
 
 Conclusion:
-Profiles in Spring Boot provide a powerful and flexible way to manage configuration across different environments. They allow developers to maintain a clean and manageable configuration structure, improve the deployment process, and enable environment-specific behavior, helping streamline development, testing, and production workflows.
+	Profiles in Spring Boot provide a powerful and flexible way to manage configuration across different environments. They allow developers to maintain a clean and manageable 		configuration structure, improve the deployment process, and enable environment-specific behavior, helping streamline development, testing, and production workflows.

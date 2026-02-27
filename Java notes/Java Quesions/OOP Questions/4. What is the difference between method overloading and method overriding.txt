@@ -1,0 +1,69 @@
+What is the difference between method overloading and method overriding?
+
+Why do we need method overloading and method overriding?
+	Both method overloading and method overriding are important concepts in Java that allow you to use the same method name in different ways, either by changing the method signature 	or by providing a new implementation. They help achieve polymorphism, enabling flexible and reusable code.
+
+What is Method Overloading:
+	Method overloading occurs when multiple methods have the same name but differ in the number or type of parameters. 
+	Overloading allows you to perform similar operations with different input types or numbers.
+
+	The compiler determines which method to call based on the method signature.
+
+	Example:
+	class MathOperations {
+    		public int add(int a, int b) {
+        		return a + b;
+    		}
+
+		public double add(double a, double b) {
+    			return a + b;
+		}
+
+		public int add(int a, int b, int c) {
+			return a + b + c;
+		}
+	}
+
+	In the example above, the add method is overloaded with different parameter types and counts.
+
+	Key Points:
+		Signature: The methods differ in the number or type of parameters.
+		Compile-time polymorphism: The method to call is determined at compile-time.
+
+What is Method Overriding:
+	Method overriding occurs when a subclass provides a specific implementation for a method that is already defined in its superclass.
+	Overriding allows a subclass to provide a custom implementation for a method inherited from the parent class.
+
+	Example:
+	class Animal {
+		public void makeSound() {
+			System.out.println(“Some sound”);
+		}
+	}
+
+	class Dog extends Animal {
+		@Override
+		public void makeSound() {
+			System.out.println(“Bark”);
+		}
+	}
+
+	In the example above, the makeSound method is overridden in the Dog class to provide a specific implementation.
+
+Key Points:
+	Method signature: The method in the subclass must have the same signature as the method in the superclass.
+	Runtime polymorphism: The method to call is determined at runtime.
+
+Key Differences:
+	Method Overloading: Same method name, different parameter types or number of parameters; determined at compile-time.
+	Method Overriding: Same method name and parameters, but the implementation is provided by the subclass; determined at runtime.
+
+Follow-up Questions:
+1. Can we change the return type while overloading a method?
+	Yes, you can overload a method by changing the return type along with the method signature (i.e., the number or type of parameters). However, changing only the return type will not 	be sufficient to overload the method.
+
+2. What happens if a subclass does not override a method?
+	If a subclass does not override a method, the method from the superclass is inherited and used by default.
+
+3. Can we change the return type while overriding a method?
+	No, when overriding a method, the return type must be the same or a covariant type (i.e., a subtype of the original return type). If the return type is changed, it will not be 	considered an override.

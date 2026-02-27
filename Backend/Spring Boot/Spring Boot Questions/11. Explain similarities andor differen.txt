@@ -1,67 +1,66 @@
 Explain similarities and/or differences between IOC (Inversion of control) and DI (Dependency Injection)
-Understanding the concepts of Inversion of Control (IoC) and Dependency Injection (DI) helps in designing modular, flexible, and testable applications. While related, they are distinct concepts with specific roles in software architecture.
+	Understanding the concepts of Inversion of Control (IoC) and Dependency Injection (DI) helps in designing modular, flexible, and testable applications. While related, they are 	distinct concepts with specific roles in software architecture.
 
 🔍 What is it?
-Inversion of Control (IoC)
-What it is: A broad design principle where the control of object creation and management is transferred from the application code to an external framework or container.
-How it works: IoC encompasses various patterns to invert the traditional control flow, making the framework or container responsible for managing the lifecycle and dependencies of objects.
-Example:
+	Inversion of Control (IoC)
+		What it is: A broad design principle where the control of object creation and management is transferred from the application code to an external framework or container.
+	
+		How it works: IoC encompasses various patterns to invert the traditional control flow, making the framework or container responsible for managing the lifecycle and 					dependencies of objects.
 
-In a traditional approach, application code creates and manages objects.
-In IoC, an external container (e.g., Spring Framework) manages object creation and lifecycle.
-Dependency Injection (DI)
+		Example:
+			In a traditional approach, application code creates and manages objects.
+			In IoC, an external container (e.g., Spring Framework) manages object creation and lifecycle.
 
-What it is: A specific implementation of IoC where the dependencies of an object are provided by an external entity rather than the object creating them itself.
-How it works: Dependencies are injected into an object using methods such as constructor injection, setter injection, or interface injection.
-Example:
-Constructor Injection: @Inject annotation in Spring Framework.
-```java
-public class Service {
-private final Repository repository;
+	Dependency Injection (DI)
+		What it is: A specific implementation of IoC where the dependencies of an object are provided by an external entity rather than the object creating them itself.
 
-@Autowired
-public Service(Repository repository) {
-this.repository = repository;
-}
-}
-```
+		How it works: Dependencies are injected into an object using methods such as constructor injection, setter injection, or interface injection.
+
+		Example:
+			Constructor Injection: @Inject annotation in Spring Framework.
+
+		public class Service {
+			private final Repository repository;
+
+			@Autowired
+			public Service(Repository repository) {
+				this.repository = repository;
+			}
+		}
 
 Similarities
-Both Promote Decoupling
-Explanation: Both IoC and DI help in reducing the coupling between components, making the system more modular and flexible.
+	Both Promote Decoupling
+	Explanation: Both IoC and DI help in reducing the coupling between components, making the system more modular and flexible.
 
-Both Improve Testability
+	Both Improve Testability
+	Explanation: By abstracting away the creation and management of dependencies, both IoC and DI make it easier to inject mock or stub implementations during testing.
 
-Explanation: By abstracting away the creation and management of dependencies, both IoC and DI make it easier to inject mock or stub implementations during testing.
+	Both Are Used in Frameworks
+	Explanation: Frameworks like Spring and Google Guice use both IoC and DI principles to manage the lifecycle and dependencies of objects.
 
-Both Are Used in Frameworks
+	Differences
+	Scope
+	IoC: A broader concept that refers to any design pattern where control is inverted, not just limited to dependency management. Examples include Event-Driven Programming and Service 		Locator Pattern.
+	DI: A specific type of IoC focused on providing an object's dependencies rather than the object creating them.
 
-Explanation: Frameworks like Spring and Google Guice use both IoC and DI principles to manage the lifecycle and dependencies of objects.
-Differences
-Scope
-IoC: A broader concept that refers to any design pattern where control is inverted, not just limited to dependency management. Examples include Event-Driven Programming and Service Locator Pattern.
-DI: A specific type of IoC focused on providing an object's dependencies rather than the object creating them.
+	Implementation
+	IoC: Can be implemented through various patterns, including Dependency Injection, Service Locator, and Event-Based Programming.
+	DI: Specifically implemented through injecting dependencies via constructors, setters, or interfaces.
 
-Implementation
+	Responsibility
+	IoC: Involves transferring overall control of object creation and lifecycle management to an external entity or framework.
+	DI: Specifically deals with how dependencies are provided to objects.
 
-IoC: Can be implemented through various patterns, including Dependency Injection, Service Locator, and Event-Based Programming.
-DI: Specifically implemented through injecting dependencies via constructors, setters, or interfaces.
-
-Responsibility
-
-IoC: Involves transferring overall control of object creation and lifecycle management to an external entity or framework.
-DI: Specifically deals with how dependencies are provided to objects.
 Summary
-Inversion of Control (IoC): A broad principle where control over object creation and management is transferred to an external entity or framework.
-Dependency Injection (DI): A specific implementation of IoC focused on providing an object's dependencies from an external source.
+	Inversion of Control (IoC): A broad principle where control over object creation and management is transferred to an external entity or framework.
+	Dependency Injection (DI): A specific implementation of IoC focused on providing an object's dependencies from an external source.
+
 Follow-up Questions
-How does Dependency Injection implement Inversion of Control?
-DI is a technique that implements IoC by providing object dependencies through injection rather than allowing the object to create or manage its dependencies.
+	How does Dependency Injection implement Inversion of Control?
+	DI is a technique that implements IoC by providing object dependencies through injection rather than allowing the object to create or manage its dependencies.
 
-What are other patterns that fall under IoC besides Dependency Injection?
+	What are other patterns that fall under IoC besides Dependency Injection?
+	Service Locator Pattern, Event-Driven Programming, and Template Method Pattern.
 
-Service Locator Pattern, Event-Driven Programming, and Template Method Pattern.
-
-Can you use Dependency Injection without Inversion of Control?
-
-No, DI is inherently a form of IoC as it relies on an external entity to manage object dependencies.
+	Can you use Dependency Injection without Inversion of Control?
+	No, DI is inherently a form of IoC as it relies on an external entity to manage object dependencies.
