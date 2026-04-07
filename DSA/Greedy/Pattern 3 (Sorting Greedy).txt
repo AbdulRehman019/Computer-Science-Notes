@@ -1,0 +1,107 @@
+Pattern 3 (Sorting Greedy)
+	This requires:
+		Choosing correct sorting key
+		Proving greedy correctness
+		Understanding exchange argument
+		Trusting irreversible choice
+		This is more abstract.
+
+In pattern 2, we know: 
+	Push
+	Pop best
+	Maintain constraint
+
+PATTERN 3: Sorting-Based Greedy (15 problems)
+	Core idea: sort first, greedy choice later
+		1. Assign Cookies
+		2. Boats to Save People
+		3. Queue Reconstruction by Height
+		4. Largest Number
+		5. Minimum Number of Coins
+		6. Advantage Shuffle
+		7. Two City Scheduling
+		8. Minimum Absolute Difference
+		9. Can Place Flowers
+		10. Wiggle Subsequence
+		11. Partition Array Into Disjoint Intervals
+		12. Maximum Ice Cream Bars
+		13. Reduction Operations to Make the Array Elements Equal
+		14. Maximum Swap
+		15. Maximize Sum After K Negations
+
+In most of the problems in this pattern we are mapping, smallest with smallest or largest with largest or smallest with largest or largest with smallest. 
+
+1. Assign Cookies
+	Sort both
+	Give the smallest cookie to the one with smallest apetite. 
+
+2. Boats to Save People 
+	Sort 
+	Take minimum and maximum weight together, if possible. 
+
+3. Queue Reconstruction by Height 
+
+4. Largest Number 
+
+6. Advantage Shuffle 
+	Map the largest in nums2 with largest in nums1. 
+
+	We put everyone in nums2 in priority queue with their index and sort the nums1. 
+	Get the largest one from prirority queue and map with largest in nums1. 
+	If current largest in nums1 is not greater than current element in prirority queue, this means no one exists to map this element in priority queue. 
+	Hence, at this index assign the smallest one in nums1 because in future there is least chances that smallest in nums1 will be greater than anyone in nums2. 
+
+	Suppose nums1 is 2,8,10 and prirority queue top is 11. Hence no one in nums1 is greater than 11. 
+	At 11 element index we will put the smallest(2). 
+	Why not 8 or 10 because let's suppose next elements in prirority queue was 7 and 6. If we put 8 then again no one will be greater. 
+	If we put 2, then 7 will be matched with 10 and 6 will be matched with 8. 
+
+7. Two City Scheduling
+	If difference between costs[0] and costs[1] is extremely negative, it means cost of reaching city A is extremely less comparatively cost of reaching city B. 
+	If difference between costs[0] and costs[1] is extremely positive, it means cost of reaching city B is extremely less comparatively cost of reaching city A. 
+
+	Hence, we sorted costs on difference between costs[0] ans costs[1] and since for starting persons cost of reaching city A is lesser than cost of reaching city B. 
+	We took n persons from starting for city and remaining n person for city B. 
+
+9. Can Place Flowers
+	We are traversing and greedily placing the flowers if possible. 
+
+10. Wiggle Subsequence
+	I was trying to solve this problem using different appraoches. 
+	But then i saw ziggle mountains, up and down. 
+
+	It means if previous it was increasing we need decreasing. 
+	If previous was decreasing we need increasing. 
+
+	We need to handle equals in the starting, so till it is equal move ahead. 
+	Why to handle equals in starting only not in middle? 
+	If equal comes in middle, don't take it and move ahead and look for greater if previous was negative and look for smaller if previous was positive. 
+
+11. Partition Array Into Disjoint Intervals
+	Suppose we divide array into two parts, then we want Maximum of left <= Minimum of right. 
+	Hence, we found maximum of left for all index and minimum of right for all index. 
+
+	Then we optimize it, why to store both store one and calculate other on the go. 
+
+13. Reduction Operations to Make the Array Elements Equal
+	Approach 1: I wanted largest element, i thought of using prirority queue but i wanted their frequency too. 
+		    Hence, i used treemap to maintain order and get index. 
+
+		    In every step, i took out the largest and nextLargest element and number of operations required to convert all largest to nextLargest will be equal to number of 			    largest. 
+		    Since, i converted all largest to nextLargest, the nextLargest count will increase by count of largest. 
+		    We increased the count of nextLargest and put it in map. 
+
+	Approach 2: I thought we want all large number at once, so what if we sort and start taking from end, all large element will be at end. 
+
+14. Maximum Swap
+	I wanted largest element and their index, hence stored in TreeMap. 
+	In TreeMap, if we have duplicate elements we stored List<Integer> for index. 
+	We started traversing from start and if it is not largest element we swap with largest(which we get from TreeMap) at the farthest index(Why? Example: 1993). 
+	If we get the largest at the start we move ahead removing the largest at the nearest index. 
+
+	We can also use PriorityQueue. 
+
+15. Maximize Sum Of Array After K Negations
+	If all are positive, i want to turn the smallest element to negative so sum decreases least. 
+	If some elements are negative, i want to negate the smallest one, so it contribute maximum to sum. 
+

@@ -1,0 +1,70 @@
+PATTERN 3: Path-Based Recursion — 20 problems
+
+Core idea: maintain path / sum / string
+	1. Path Sum
+	2. Path Sum II
+	3. Path Sum III
+	4. Binary Tree Paths
+	5. Sum Root to Leaf Numbers
+	6. Smallest String Starting From Leaf
+	7. Pseudo-Palindromic Paths
+	8. Longest Path With Different Adjacent Characters
+	9. Maximum Product of Splitted Binary Tree
+	10. Path Sum IV
+	11. All Nodes Distance K in Binary Tree
+	12. Binary Tree Longest Consecutive Sequence
+	13. Count Paths That Sum to a Given Value
+	14. Find Duplicate Subtrees
+	15. Sum of Distances in Tree
+	16. House Robber III
+	17. Path Sum in Binary Tree (Any Path)
+	18. Maximum Width of Binary Tree
+	19. Time Needed to Inform All Employees (tree DFS)
+	20. Path With Maximum Gold
+
+
+While going down, you need to maintain sum, path, string or store in map. 
+It involves backtracking as well. 
+We used to thought, we use root == null for base condition and never used (root.left == null && root.right == null) for base condition because it increase complexity. 
+But we use it immensely here. 
+
+1. Path Sum 
+	You need to maintain sum. 
+	But we reduced from target, hence no extra sum. 
+	If it is a leaf node and target == 0, target exists. 
+
+2. Path Sum 2
+	Maintained a list. 
+	If we reached at leaf node and root.val == target, we found one path. 
+	Everytime we added the current node while going down and removed while going up. 
+
+3. Path Sum 3
+	Approach 1: Iterate over all nodes and for every node check if target exists from that node to any node down. 
+			Time Complexity: O(n^2)
+			Space Complexity: O(h)
+
+	Approach 2: Use Hashing. If (sum - target) exists, target exists, add in the count. 
+			If it exists, how many path exists? map.get(sum - target)
+			Add map.get(sum - target) + left + right. 
+
+4. Binary Tree Paths
+	We are maintaining a list of integer and answer. 
+	if(root == null) we didn't reach left node, either left or right was null. 
+	if(root.left == null && root.right == null) we reach the leaf node and hence can add the path in answer. 
+	Everytime we added the root.val and then moved to left and right. 
+	When going up, we removed current node from path. 
+
+8. Longest Path With Different Adjacent Characters
+	Similar to Maximum Path Sum. 
+
+	Whenever you are given tree with parent array. Consider it as a graph. 
+	Similar to Maximum Path Sum problem: 
+	1. Path will be either that node itself or that node + any other path(single path) whichever is maximum. 
+	2. Answer will either come from any other path or any other path + current node or two longest other path + current node. 
+	   Or it can be node itself. 
+
+9. Maximum Product of Splitted Binary Tree
+	We are returning sum and answer. 
+	Everytime, currSum = leftSum + rightSum + node.val
+	remSum = totalSum - currSum;
+	ans will be either currSum * remSum or it will come from left or right. 

@@ -1,0 +1,115 @@
+1. What is a Git Pull Request?
+	A Pull Request, commonly called a PR, is a way to propose changes to a codebase in a collaborative environment. 
+	When I finish working on a feature or a bug fix on my own branch, I raise a Pull Request to merge my changes into the main or target branch.
+
+	For example, in my project, whenever I complete writing automation scripts for a new feature, I push my code to my feature branch and raise a PR to the main or develop branch. 
+	Before the code is merged, my team lead or a senior member reviews the code, adds comments if any changes are needed, and once it's approved, the PR is merged.
+
+	The main purpose of a Pull Request is:
+		Code review — so that at least one other person verifies the changes before merging
+		Collaboration — team members can comment, suggest improvements, or request changes
+		Quality control — it prevents directly pushing untested or broken code to the main branch
+
+	In tools like GitHub or Bitbucket, a PR also shows the diff — meaning exactly what lines were added, modified, or deleted — which makes review very easy.
+	In short, a Pull Request is a formal request saying — 'I have made these changes, please review and merge them into the main codebase.'
+
+2. How do you create branches in github?
+	There are multiple ways to create a branch in GitHub. In my day to day work I have used both the command line as well as the GitHub UI.
+	
+	The most common way I use is through Git commands in the terminal. First I make sure I am on the latest version of the main branch by running:
+		git checkout main
+		git pull origin main
+
+	Then I create a new branch and switch to it using:
+		git checkout -b feature/login-automation
+		The -b flag creates the branch and switches to it at the same time. 
+		Once I am on the new branch, I make my changes, stage them, commit them, and push the branch to GitHub using:
+			git add .
+			git commit -m "Added automation scripts for login feature"
+			git push origin feature/login-automation
+
+	After pushing, I go to GitHub and raise a Pull Request to merge it into the main or develop branch.
+
+	Apart from this, you can also create a branch directly from the GitHub UI by going to the repository, clicking on the branch dropdown, typing a new branch name, 	and selecting 'Create branch'.
+
+	In our project we followed a proper naming convention for branches like:
+	feature/ — for new automation scripts
+	bugfix/ — for fixing broken test cases
+	hotfix/ — for urgent fixes on main branch
+
+	This made it very easy for the entire team to understand the purpose of each branch just by looking at the name.
+
+3. Write core components of development in CI/CD pipeline?
+	A CI/CD pipeline is an automated process that takes code from a developer's commit all the way to production deployment without manual intervention. 
+	It stands for Continuous Integration and Continuous Delivery or Continuous Deployment. Let me walk you through the core components one by one.
+
+	The first component is Source Code Management. This is where everything starts. 
+	Developers push their code to a version control system like GitHub or Bitbucket. 
+	The pipeline is triggered automatically as soon as a commit or pull request is raised on a specific branch. 
+	In our project, any push to the develop branch would automatically trigger the pipeline.
+
+	The second component is the Build Stage. 
+	Once the code is pushed, the pipeline compiles the code and packages it into a deployable artifact — like a JAR file in Java or a Docker image. 
+	Tools like Maven or Gradle are used for building Java projects. If the build fails, the pipeline stops immediately and the developer is notified.
+
+	The third component is the Testing Stage. This is the most important stage from a QA perspective. It has multiple layers:
+		Unit Tests run first — they are fast and test individual methods or classes
+		Integration Tests run next — they test how different modules or services work together
+		API Tests — tools like RestAssured or Postman Newman are used to validate API responses
+		UI Automation Tests — Selenium test suite runs to validate critical user flows
+		Code Quality Checks — tools like SonarQube scan the code for bugs, vulnerabilities, and code smells
+
+		If any test fails in this stage, the pipeline is stopped and the code is not moved forward.
+
+	The fourth component is the Artifact Management. 
+	Once the build and tests pass, the compiled artifact or Docker image is stored in a central repository like Nexus, JFrog Artifactory, or Docker Hub. This ensures 	that the exact same artifact that was tested is the one that gets deployed — no rebuilding happens at deployment time.
+
+	The fifth component is the Deployment Stage. 
+	The tested and stored artifact is now deployed to the target environment. This usually happens in stages:
+		Dev Environment → QA Environment → Staging Environment → Production
+	Each environment promotion can be automatic or can require a manual approval gate — especially before production deployment.
+
+	The sixth component is Environment Configuration Management. 
+	Each environment — dev, QA, staging, production — has different configurations like database URLs, API keys, and credentials. 
+	Tools like Kubernetes ConfigMaps, AWS Parameter Store, or environment variables are used to manage these configurations separately from the code.
+
+	The seventh component is Monitoring and Notifications. 
+	After deployment, the pipeline monitors the health of the application. If something fails, alerts are sent to the team via email or Slack. 
+	Tools like Grafana, Prometheus, or AWS CloudWatch are used for monitoring. In our project, we had Slack notifications set up — so whenever a pipeline failed, the 	entire team was notified immediately.
+
+4. What are the advantages of implementing CI/CD?
+	CI/CD has been one of the most impactful practices in our project. 
+	It completely changed the way we developed, tested, and delivered software. Let me walk you through the key advantages I have observed and experienced.
+
+	The first and most important advantage is Early Bug Detection. 
+	Before CI/CD, developers would write code for days and testing would happen much later. 
+	By that time, bugs were deeply embedded and very expensive to fix. 
+	With CI/CD, every single code commit triggers an automated build and test run. So if a developer pushes a breaking change, the pipeline catches it within minutes. 	In our project, this drastically reduced the number of bugs reaching the QA environment.
+
+	The second advantage is Faster Release Cycles. 
+	Earlier, releasing a new feature used to take weeks because everything was done manually — building, testing, and deploying. 
+	With CI/CD, this entire process is automated. We were able to release features much faster and more frequently. This gives the business a huge competitive 	advantage because new features reach the customer quickly.
+
+	The third advantage is Consistent and Reliable Deployments. 
+	Manual deployments are error prone — someone might miss a configuration step or deploy the wrong version. 
+	CI/CD ensures that the exact same process runs every single time. 
+	The same artifact that was built and tested is the one that gets deployed to production. This consistency builds confidence in every release.
+
+	The fourth advantage is Immediate Feedback to Developers. 
+	In our project, whenever a pipeline failed, the developer who pushed the code received an immediate Slack notification with the failure details. This means 	developers fix issues while the code is still fresh in their minds rather than coming back to it days later. This saves a lot of debugging time.
+
+	The fifth advantage is Reduced Manual Effort. 
+	Before CI/CD, QA engineers had to manually trigger test runs, manually deploy builds, and manually send status reports. 
+	With CI/CD all of this is automated. As a QA automation engineer, my Selenium and API test suites were integrated into the pipeline and they would run 	automatically on every build. This freed up my time to focus on writing better test cases rather than doing repetitive manual work.
+
+	The sixth advantage is Better Code Quality. 
+	CI/CD pipelines integrate code quality tools like SonarQube that automatically scan every commit for bugs, vulnerabilities, and code smells. 
+	If the code does not meet the quality threshold, the pipeline fails and the code is not moved forward. This enforces a culture of writing clean and maintainable 	code across the entire team.
+
+	The seventh advantage is Faster Recovery from Failures. 
+	Because deployments are automated and every version is stored as an artifact, rolling back to a previous stable version is very quick and easy. 
+	In a manual process, rollback could take hours. With CI/CD it can happen in minutes.
+
+	The eighth advantage is Improved Team Collaboration. 
+	CI/CD creates a shared pipeline that the entire team — developers, QA, and DevOps — can see and monitor. 
+	Everyone knows the current status of the build. If something is broken, the whole team is aware immediately. This transparency improves communication and 	accountability across the team.

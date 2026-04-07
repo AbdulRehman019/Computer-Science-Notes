@@ -1,0 +1,395 @@
+🔹 Architecture & Design (1–10)
+	1. Give me a 2-minute overview of your e-commerce microservices architecture.
+		I built an e-commerce platform using microservices architecture where core domains were separated into independent services — mainly User Service and Product Service.
+		Each service was a standalone Spring Boot application with its own database layer using Spring Data JPA and MongoDB.
+		All services registered themselves with Eureka for service discovery.
+		I used API Gateway as a single entry point to route external client requests dynamically to appropriate services using Eureka.
+		Authentication and authorization were centralized at the Gateway layer using Spring Security to ensure secure access before requests reached internal services.
+		The services communicated over REST APIs.
+		The design allowed independent scaling, fault isolation, and modular development.
+
+	2. Why microservices instead of monolithic architecture?
+		Microservices allow independent deployment and scaling of services.
+		For example, Product Service can scale independently if traffic increases.
+		It also improves fault isolation — failure in one service doesn’t bring down the entire system.
+		Additionally, it supports modular development and better maintainability compared to a tightly coupled monolith.
+
+	3. How did you decide service boundaries?
+		I followed domain-driven separation.
+		User-related operations like registration, authentication, and profile management were grouped into User Service.
+		Product catalog management, retrieval, and updates were grouped into Product Service.
+		Each service owns its data and business logic to avoid tight coupling.
+
+	4. How does a request flow from client to Product Service?
+		The client sends a request to the API Gateway.
+		The Gateway validates the JWT token using Spring Security.
+		If valid, it checks its local registry cache fetched from Eureka to identify available Product Service instances.
+		Using Spring Cloud LoadBalancer, it selects one instance and forwards the request.
+		The request flows through Controller → Service → Repository in the Product Service.
+		The response is returned back through the Gateway to the client.
+
+	5. What problems does API Gateway solve?
+		It acts as a single entry point for clients.
+		It centralizes authentication and authorization.
+		It handles routing and load balancing.
+		It hides internal service details from clients.
+		It simplifies cross-cutting concerns like logging, monitoring, and rate limiting.
+
+	6. What would break if you remove API Gateway?
+		Clients would need to directly call individual services, increasing coupling.
+		Security would have to be implemented in each service separately.
+		Service URLs would be exposed externally.
+		Cross-cutting concerns like rate limiting or centralized logging would become harder to manage.
+
+	7. Why use Eureka instead of hardcoding URLs?
+		Hardcoding service URLs does not support dynamic scaling.
+		If new instances are added or removed, configuration changes would be required.
+		Eureka provides dynamic service discovery and supports load balancing across multiple instances automatically.
+
+	8. What happens if Eureka Server goes down?
+		Services can continue functioning temporarily because they maintain a local cache of the registry.
+		However, new services won’t be able to register, and registry updates won’t propagate.
+		To avoid single point of failure, Eureka should be deployed in a clustered, highly available setup.
+
+	9. How would you scale Product Service for high traffic?
+		I would horizontally scale by running multiple instances of Product Service.
+		Since it registers with Eureka, the Gateway will automatically distribute traffic across instances.
+		Additionally, I would optimize database queries and potentially introduce caching using Redis for frequently accessed products.
+
+	10. What changes if system grows to 10+ services?
+		I would introduce centralized configuration management like Spring Cloud Config.
+		Implement distributed tracing using tools like Zipkin.
+		Add centralized logging using ELK stack.
+		Introduce circuit breaker pattern using Resilience4j.
+		Containerize services using Docker and orchestrate with Kubernetes for better scalability and management.
+	
+
+	// Service Registry
+	11. How does a service register itself with Eureka?
+		Each microservice includes the Eureka Client dependency and is configured with the Eureka Server URL.
+		When the service starts, it sends a registration request to the Eureka Server with its metadata such as service name, host, port, and health check endpoint.
+		After successful registration, it starts sending periodic heartbeats to maintain its presence in the registry.
+
+	12. What is heartbeat mechanism in Eureka?
+		Heartbeat is a periodic signal sent by each registered service to Eureka to indicate that it is alive.
+		By default, the client sends a heartbeat every 30 seconds.
+		If Eureka does not receive heartbeats within a configured timeout duration, it marks that instance as DOWN and eventually removes it from the registry.
+
+	13. What is self-preservation mode?
+		Self-preservation mode is a safety mechanism in Eureka.
+		If Eureka detects a sudden drop in heartbeats from many services — possibly due to network issues — it stops expiring instances to prevent accidental mass deregistration.
+		This protects the system from false removals during network partitions.
+
+		This answer shows maturity.
+
+	14. How does Gateway discover instances from Eureka?
+		The API Gateway is also a Eureka client.
+		On startup, it fetches the service registry and stores it locally.
+		It periodically refreshes the registry in the background.
+		When routing a request, it looks up the service name in its local cache and selects an available instance using Spring Cloud LoadBalancer.
+
+	15. Is Eureka client-side or server-side load balancing?
+		Eureka supports client-side load balancing.
+		The client, such as API Gateway, fetches all available instances from Eureka and then selects one instance locally using a load balancing algorithm like round-robin.
+		Eureka itself does not perform load balancing.
+
+		Very important distinction.
+
+	16. How does Eureka handle multiple instances of the same service?
+		Multiple instances register under the same service name but with different instance IDs and host details.
+		Eureka stores them as separate entries under that service name.
+		Clients fetching that service will receive a list of all healthy instances and perform load balancing across them.
+
+	17. How would you make Eureka highly available?
+		To make Eureka highly available, I would deploy multiple Eureka Server instances in a clustered setup.
+		Each Eureka server would register with the others for replication.
+		If one instance fails, others continue serving registry requests.
+		Additionally, I would deploy them behind a load balancer to distribute traffic.
+
+	// API Gateway
+	18. How did you configure routing in API Gateway?
+		I configured routing using service names registered in Eureka.
+		Routes were defined either in application.yml or using Spring Cloud Gateway route configuration.
+		Each route mapped an incoming path pattern like /products/** to the logical service name like PRODUCT-SERVICE.
+		The Gateway then used Eureka to dynamically resolve instances for that service.
+
+	19. Is your Gateway reactive or MVC based?
+		Spring Cloud Gateway is reactive and built on Project Reactor and WebFlux.
+		It uses a non-blocking I/O model, which makes it more efficient under high concurrency compared to traditional MVC-based gateways like Zuul 1.
+		This improves throughput and scalability.
+
+		If they ask: Did you use WebFlux in services?
+		Say: No, only Gateway is reactive. Backend services were traditional Spring MVC.
+
+	20. How does Gateway perform load balancing?
+		Gateway uses client-side load balancing.
+		It fetches available service instances from Eureka and uses Spring Cloud LoadBalancer to select one instance, typically using a round-robin algorithm.
+		The selection happens locally without calling Eureka for each request.
+
+	21. Where did you implement authentication — Gateway or services?
+		Authentication was centralized at the Gateway layer using Spring Security with JWT.
+		The token was validated before routing the request to downstream services.
+		This prevents duplication of security logic across services.
+		However, services can still perform role-based authorization if needed.
+
+		This shows architectural clarity.
+
+	22. Can Gateway modify request or response?
+		Yes. Gateway supports pre-filters and post-filters.
+		It can modify headers, transform request or response bodies, add correlation IDs, or log request metadata.
+		Filters allow implementing cross-cutting concerns like logging, authentication, or custom header injection.
+
+	23. How would you implement rate limiting in Gateway?
+		Spring Cloud Gateway supports rate limiting using filters like RedisRateLimiter.
+		I would configure a rate limiter per user or per IP using Redis to track request counts.
+		If the request exceeds the defined threshold, Gateway would return a 429 Too Many Requests response.
+
+		Production-level answer.
+
+	24. Difference between API Gateway and Nginx?
+		Nginx is primarily a reverse proxy and load balancer at the infrastructure level.
+		It handles traffic routing and SSL termination but does not understand service discovery at application level by default.
+		API Gateway operates at application layer — it integrates with service discovery like Eureka, applies authentication, request transformation, rate limiting, and other 			business-level concerns.
+		In microservices architecture, Nginx can sit in front of API Gateway, but Gateway handles application-level routing and policies.
+
+	// Security
+	25. How did authentication work in your project?
+		“Authentication was handled at the API Gateway using Spring Security.
+		When a user logged in with credentials, the system validated them against stored user data.
+		Upon successful authentication, a JWT token was generated and returned to the client.
+		For subsequent requests, the client sent the JWT in the Authorization header.
+		The Gateway validated the token before routing the request to downstream services.”
+
+	26. Did you use JWT? Explain token flow.
+		“Yes, I used JWT for stateless authentication.
+		The flow is:
+			User logs in → credentials validated → JWT generated and returned.
+			The token contains user details and roles as claims.
+			For each request, the client includes the JWT in the Authorization header as ‘Bearer token’.
+			The Gateway extracts and validates the token signature and expiration.
+			If valid, the request proceeds; otherwise, a 401 response is returned.”
+			Important: mention stateless nature.
+
+	27. What is AuthenticationManager?
+		“AuthenticationManager is a core Spring Security interface responsible for processing authentication requests.
+		It takes an Authentication object containing credentials and delegates validation to configured providers like DaoAuthenticationProvider.
+		If authentication is successful, it returns a fully authenticated Authentication object.”
+
+	28. What is UserDetailsService?
+		“UserDetailsService is an interface used to load user-specific data from the database.
+		It has a method loadUserByUsername, which fetches user details including username, password, and roles.
+		Spring Security uses it during authentication to validate credentials.”
+
+	29. How are passwords stored?
+		“Passwords are stored in encrypted form in the database.
+		Before saving, passwords are encoded using a PasswordEncoder like BCryptPasswordEncoder.
+		During login, the raw password is compared with the encoded password using the encoder’s match function.”
+		Never say “we decrypt passwords.” That’s wrong.
+
+	30. What is BCrypt and why use it?
+		“BCrypt is a strong one-way hashing algorithm designed for password security.
+		It automatically generates a salt and is computationally expensive, which makes brute-force attacks difficult.
+		Since it’s adaptive, the strength factor can be increased over time as hardware improves.”
+		Strong security answer.
+
+	31. How did you protect endpoints role-wise?
+		“I used role-based authorization using Spring Security configuration.
+		Endpoints were secured using annotations like @PreAuthorize or via security configuration using antMatchers with role restrictions.
+		For example, only users with ADMIN role could access product creation endpoints.”
+
+	32. How would you secure inter-service communication?
+		“Currently, authentication is centralized at the Gateway.
+		To secure inter-service communication in production, I would implement:
+			Internal service authentication using JWT validation inside services
+			Mutual TLS for encrypted service-to-service communication
+			Network-level restrictions using private networks or Kubernetes policies
+			Possibly OAuth2 with client credentials flow for internal service calls”
+
+		This answer shows real-world maturity.
+
+
+
+
+	// Spring Data
+	1️⃣ Why did you choose MongoDB instead of MySQL?
+
+“I chose MongoDB because it provides a flexible schema and is well-suited for handling semi-structured data like orders.
+In Order Service, the data structure can evolve, and MongoDB allows storing nested documents easily without complex joins.
+It also scales horizontally better compared to traditional relational databases.”
+
+2️⃣ What data did you store in MongoDB?
+
+“I used MongoDB primarily for Order Service.
+Each order document contained details like orderId, userId, list of products, product details like price and quantity, and order status.”
+
+3️⃣ How did you design your schema for Order Service?
+
+“I designed the order as a single document containing embedded product details.
+Instead of storing only product IDs, I stored product name, price, and quantity inside the order document to avoid additional service calls later.”
+
+4️⃣ Did you use embedding or referencing? Why?
+
+“I used embedding for product details inside the order document.
+This improves read performance because all required data is available in a single query.
+Since order data is mostly read-heavy and immutable after creation, embedding was a better choice.”
+
+5️⃣ How do you ensure data consistency in MongoDB?
+
+“Since MongoDB doesn’t enforce relational constraints, consistency is handled at the application level.
+Before creating an order, I validated product data by calling Product Service to ensure correctness.”
+
+6️⃣ How did you handle relationships between Order and Product?
+
+“Instead of maintaining a strict relationship, I stored a snapshot of product details inside the order.
+This avoids dependency on Product Service for future reads and ensures historical accuracy.”
+
+7️⃣ What are indexes? Did you use them?
+
+“Indexes improve query performance by allowing faster data retrieval.
+I would create indexes on fields like orderId and userId to optimize search queries.”
+
+(If not implemented, say “I would create” — that’s fine)
+
+8️⃣ How does MongoDB handle transactions?
+
+“MongoDB supports multi-document transactions, but they are generally avoided in microservices due to performance overhead.
+In my case, I relied on eventual consistency rather than distributed transactions.”
+
+9️⃣ What happens if MongoDB goes down?
+
+“In production, MongoDB should be configured as a replica set.
+If the primary node goes down, a secondary node is elected as primary, ensuring high availability.”
+
+🔟 How would you scale MongoDB?
+
+“MongoDB can be scaled horizontally using sharding.
+Data is partitioned across multiple shards, allowing the system to handle large datasets and high traffic efficiently.”
+
+
+
+
+
+
+
+	// Service Communication
+	40️⃣ How does User Service talk to Product Service?
+		“In my current implementation, User Service and Product Service were mostly independent, so there was no direct inter-service communication required.
+		However, I did experiment with internal communication using RestTemplate in one scenario.
+		If I extend the system with features like Cart or Order Service, services would communicate via REST calls using service names resolved through Eureka.”
+
+		Very important: Don’t fake interactions you didn’t build.
+
+	41️⃣ Did you use RestTemplate or WebClient?
+		“I used RestTemplate for internal service calls.
+		It’s synchronous and blocking, which is simpler to implement.
+		However, for production systems or reactive environments, I would prefer WebClient because it supports non-blocking I/O and better scalability.
+		Going forward, I would also consider OpenFeign for cleaner and declarative REST clients.”
+
+		This shows evolution thinking.
+
+		If they ask why OpenFeign?
+		Say:
+			“It reduces boilerplate code and integrates well with Eureka for service discovery.”
+
+	42️⃣ What happens if one service is slow?
+		Strong answer:
+			“If a downstream service is slow, the calling service thread remains blocked in case of RestTemplate.
+			This can lead to increased latency and potential thread pool exhaustion under high traffic.
+			Eventually, it can cause cascading failures if not handled properly.”
+
+		Important keywords:
+			Thread blocking
+			Resource exhaustion
+			Cascading failure
+
+		That sounds experienced.
+
+	43️⃣ How would you implement circuit breaker?
+		“I would use Resilience4j integrated with Spring Boot.
+		A circuit breaker monitors failures of downstream service calls.
+		If failure rate crosses a configured threshold, the circuit opens and stops calling the failing service temporarily.
+		Instead, it can return a fallback response.
+		After a timeout, it moves to half-open state to test if the service has recovered.”
+
+		Mention the 3 states:
+			Closed
+			Open
+			Half-open
+
+		That’s important.
+
+		Now let me improve one thing in your mindset:
+			You said:
+				“There was no need for User and Product to interact.”
+
+		That’s fine technically.
+			But in interview, always show expansion thinking.
+	
+		Add this line:
+			“While the current version did not require cross-service communication, I designed it keeping extensibility in mind for future services like Cart or Order.”
+
+		That shows architectural foresight.
+
+	// Production and Real world concerns
+	44️⃣ How would you implement centralized logging?
+		“I would use a centralized logging stack like ELK — Elasticsearch, Logstash, and Kibana.
+		Each service would push logs to Logstash or use Filebeat.
+		Logs would be indexed in Elasticsearch and visualized in Kibana.
+		Additionally, I would include correlation IDs in logs to trace a request across services.”
+
+		Important keyword: correlation ID.
+
+	45️⃣ How would you monitor health of services?
+		“I would enable Spring Boot Actuator in each service to expose health and metrics endpoints.
+		These endpoints can be monitored using tools like Prometheus and visualized in Grafana.
+		In production, health checks would also be integrated with container orchestration tools like Kubernetes for auto-restart of unhealthy pods.”
+
+		That’s production maturity.
+
+	46️⃣ How would you implement distributed tracing?
+		“I would use distributed tracing tools like Zipkin or Jaeger.
+		Spring Cloud Sleuth can automatically generate trace IDs and span IDs for each request.
+		These trace IDs are propagated across services, allowing us to track a request’s journey end-to-end.”
+
+		Mention trace ID and span ID — important.
+
+	47️⃣ How would you containerize this system?
+		“I would create a Dockerfile for each microservice.
+		Each service would be built into a Docker image.
+		Docker Compose could be used for local multi-service setup.
+		In production, I would use Kubernetes to manage scaling, networking, and health monitoring of containers.”
+
+		Clean and practical.
+
+	48️⃣ What configuration changes for production?
+		“For production, I would:
+			Externalize configuration using Spring Cloud Config or environment variables
+			Enable HTTPS
+			Optimize logging levels
+			Configure proper connection pool settings for database
+			Enable timeouts for inter-service calls
+			Deploy Eureka in clustered mode
+			Add monitoring and alerting”
+
+		Very solid.
+
+	49️⃣ What was the hardest challenge while building this?
+		Give honest + mature answer:
+			“The most challenging part was understanding service discovery and how dynamic routing works internally with Eureka and API Gateway.
+			Debugging routing issues and properly configuring security filters took time.
+			It helped me better understand distributed system concepts.”
+
+		Do not say “nothing was difficult.” That sounds junior.
+
+	50️⃣ If I give you 3 months, how would you improve this system?
+		This is where you show senior thinking.
+		
+		“I would extend it by adding Order and Cart services.
+		Introduce Redis caching for frequently accessed products.
+		Implement Resilience4j for fault tolerance.
+		Add centralized logging and distributed tracing.
+		Containerize using Docker and deploy on Kubernetes.
+		Secure inter-service communication with mTLS or OAuth2.
+		Add CI/CD pipeline for automated deployment.”
+
+		That answer shows growth mindset.

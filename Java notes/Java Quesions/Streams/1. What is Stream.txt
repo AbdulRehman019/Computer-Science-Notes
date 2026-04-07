@@ -1,0 +1,163 @@
+1. What is Stream?
+	A pipeline to process data
+	Does not store data
+	Works on collections/arrays
+
+	👉 Flow:
+	Source → Intermediate Ops → Terminal Op
+
+2. Types of Operations
+	✅ Intermediate (lazy)
+	filter()
+	map()
+	sorted()
+	distinct()
+
+	👉 Return: Stream
+
+	✅ Terminal (final)
+	toList()
+	collect()
+	forEach()
+	toArray()
+
+	👉 Return: Result (List, array, etc.)
+
+3. filter() vs map()
+	✅ filter() → selection
+	.filter(n -> n % 2 == 0)
+
+	👉 Removes elements
+
+	✅ map() → transformation
+	.map(n -> n * 2)
+
+	👉 1 → 1 transformation
+
+4. Prefer Declarative Code
+	❌ Avoid:
+		s.charAt(0) == 'A'
+
+	✔ Prefer:
+		s.startsWith("A")
+
+	👉 Cleaner, readable, industry standard
+
+5. forEach() vs toList()
+	❌ Avoid overusing:
+		.forEach()
+
+	👉 Only for:
+		Logging
+		Side effects
+
+	✅ Prefer:
+		.toList()
+
+	👉 Benefits:
+		Reusable result
+		Clean code
+
+6. Method Reference (Cleaner Code)
+	.map(String::toUpperCase)
+	.map(String::length)
+
+	👉 Better than:
+		.map(s -> s.toUpperCase())
+
+7. Stream Types (VERY IMPORTANT)
+	Stream<T> → objects
+	IntStream → primitives
+
+	Explanation:
+		Arrays use primitive streams → faster
+		Lists use object streams
+
+	Type		Example
+	Stream<T>	list.stream()
+	IntStream	Arrays.stream(int[])
+
+8. Boxing Concept
+	Problem:
+		IntStream → cannot use toList()
+
+	Convert primitive → object
+	Needed when:
+		You want List<Integer> from int[]
+	
+	✅ Solution:
+		.boxed()
+		Arrays.stream(arr)
+		    .map(n -> n * n)
+		    .boxed()
+		    .toList();
+
+9. Optimization Rule
+	❌ Bad:
+		.boxed().map(...)
+
+	✔ Good:
+		.map(...).boxed()
+
+	👉 Rule:
+		Do operations first, box at the end
+
+10. mapToInt() (VERY IMPORTANT)
+	Convert object stream → primitive
+	.mapToInt(String::length)
+
+	Avoids boxing → better performance
+	👉 Converts:
+	Stream<T> → IntStream
+
+	✅ Best for performance:
+	int[] result = list.stream()
+	        .mapToInt(String::length)
+	        .toArray();
+
+11. toArray() Usage
+	Primitive:
+		int[] arr = Arrays.stream(nums)
+		        .map(n -> n * n)
+		        .toArray();
+
+	Object:
+		String[] arr = list.stream()
+		        .toArray(String[]::new);
+
+12. toList() vs collect()
+	Method		Use
+	toList()	Modern, preferred
+	collect()	Advanced cases
+
+	If using collect:
+		import java.util.stream.Collectors;
+
+13. Common Patterns
+	✅ Filter + Map
+	list.stream()
+	    .filter(s -> s.startsWith("a"))
+	    .map(String::toUpperCase)
+	    .toList();
+
+	✅ Remove duplicates + sort
+	list.stream()
+	    .distinct()
+	    .sorted()
+	    .toList();
+
+14. Key Rules (Must Remember)
+	👉 Always think:
+		Can I replace loop with stream?
+
+	👉 Prefer:
+		toList() over forEach()
+
+	👉 Use:
+		method references
+
+	👉 Optimize:
+		Avoid early boxing
+
+	👉 Use:
+		mapToInt() for numbers

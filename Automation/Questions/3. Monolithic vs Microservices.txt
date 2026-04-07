@@ -1,0 +1,107 @@
+1. What is the comparision between monolithic and microservices architecture?
+	What is Monolithic Architecture?
+		A single unified application where all components (UI, business logic, database) are tightly coupled and deployed as one unit.
+
+	What is Microservices Architecture?
+		The application is broken into small, independent services, each responsible for one business function, communicating via APIs (REST/HTTP or messaging queues).
+
+	Advantages & ❌ Disadvantages
+		Monolithic
+		✅ Simple to develop and test initially
+		✅ Easy to debug (single codebase)
+		✅ Less operational overhead
+		✅ No network latency between components
+
+		❌ Hard to scale specific parts
+		❌ One bug/failure affects whole app
+		❌ Slow deployment — entire app redeployed
+		❌ Codebase becomes unmanageable over time
+		❌ Tech stack is locked in
+
+		Microservices
+		✅ Independent deployment of services
+		✅ Better fault isolation
+		✅ Each service is scalable independently
+		✅ Teams can work autonomously
+		✅ Freedom to use best tech per service
+
+		❌ Complex infrastructure (Docker, Kubernetes)
+		❌ Network latency between services
+		❌ Hard to manage distributed transactions
+		❌ More effort in testing (API contracts, integration)
+		❌ Requires DevOps maturity (CI/CD pipelines)
+
+	How does testing differ in Microservices?
+		We rely more on API-level testing (RestAssured) and contract testing (Pact) rather than just UI automation. 
+		Each service is tested independently and integration is verified via API contracts.
+
+	What is the biggest challenge in Microservices testing?
+		Data management and environment setup — each service has its own DB, so setting up test data across multiple services is complex. Also, mocking dependent services is a 		challenge.
+
+	Q: What is Contract Testing?
+		It verifies that the API contract (request/response format) between two services (consumer & provider) doesn't break when either side changes. Tools: Pact.
+
+2. What challenges have you faced while converting a monolithic application to microservices?
+	The first and biggest challenge I faced was around test environment setup. 
+	In the monolithic application, we had a single application running and testing was straightforward. 
+	But when it moved to microservices, suddenly there were multiple independent services, each with their own deployment, their own database, and their own 	configurations. 
+	Setting up and maintaining a stable test environment where all services were running correctly at the same time was very difficult.
+
+	The second challenge was around end-to-end test execution. 
+	Earlier, my Selenium scripts would cover the entire user journey in one flow. 
+	But after the migration, a single user journey like 'login → search product → add to cart → checkout' was now touching 4 or 5 different services. 
+	If even one service was down or unstable, my entire end-to-end test would fail — and it was hard to identify which service caused the failure.
+
+	The third challenge was data management. 
+	In the monolithic app, all data was in one database, so setting up test data was simple. 
+	In microservices, each service had its own database. 
+	So for an end-to-end test, I had to ensure test data was correctly set up across multiple databases and services, which was very time consuming and complex.
+
+	The fourth challenge was around API contract testing. 
+	When services communicate with each other via APIs, if one team changes their API response structure without informing other teams, it breaks the dependent 	services. 
+	I had to learn and implement contract testing using tools like Pact to ensure the API contracts between services were not breaking.
+
+	The fifth challenge was debugging test failures. 
+	In a monolithic app, when a test fails, I could easily trace the issue in a single log file. 
+	But in microservices, the logs were distributed across multiple services. 
+	I had to look at multiple logs from different services to trace where exactly the failure happened. This is where centralized logging tools like ELK Stack or 	Kibana were helpful.
+
+3. Strategies to follow while adopting monolithic applications to microservice application
+	Migrating a monolithic application to microservices is not something that happens overnight. 
+	It requires a well thought out strategy. 
+	From what I have learned and observed in my project, there are several key strategies that teams follow during this transition.
+
+	The first and most widely recommended strategy is the Strangler Fig Pattern. 
+	The idea is that you do not rewrite the entire monolithic application at once. 
+	Instead, you gradually strangle the monolith by extracting one feature or module at a time into a separate microservice. 
+	For example, in our project, the authentication module was the first to be extracted as a separate service. 
+	The rest of the application continued to work as a monolith while the new service ran alongside it. 
+	Over time, more and more modules were extracted until the monolith was completely replaced. 
+	This approach is safe because the application is always running and there is no big bang release.
+
+	The second strategy is Domain Driven Design, or DDD. 
+	Before breaking the monolith, the team sits together and identifies the different business domains in the application — for example, User Management, Order 	Management, Payment, Inventory. Each domain becomes a candidate for a separate microservice. 
+	This ensures that services are broken down logically based on business functionality and not just technical layers.
+
+	The third strategy is to start with the least dependent module. 
+	When deciding which module to extract first, always pick the one that has the least dependencies on other parts of the monolith. 
+	This reduces the risk of breaking things and makes the first migration smoother and faster.
+
+	The fourth strategy is Database Decomposition. 
+	In a monolith, everything shares one database. 
+	When moving to microservices, each service should eventually have its own database. 
+	But this cannot happen all at once. So teams follow a gradual approach — first they separate the schemas within the same database, then slowly move each schema to 	its own independent database. This is called the Database per Service pattern.
+
+	The fifth strategy is to set up a proper API Gateway. 
+	As services get extracted from the monolith, clients should not be calling each service directly. 
+	An API Gateway acts as a single entry point that routes requests to the correct service. 
+	This also helps in handling authentication, rate limiting, and load balancing in one place.
+
+	The sixth strategy is to invest in CI/CD pipelines early. 
+	Each microservice needs to be independently built, tested, and deployed. So setting up automated CI/CD pipelines from the beginning is very important. 
+	In our project we used Jenkins for this — every service had its own pipeline that ran unit tests, API tests, and deployed to the environment automatically.
+
+	The seventh strategy is to define your testing strategy in parallel. 
+	As a QA, I made sure that for every service being extracted, we had API level tests ready using RestAssured, contract tests using Pact, and the existing E2E 	Selenium tests were updated to work with the new service endpoints. We did not wait for the entire migration to finish before writing tests.
+
+	Overall, the key principle is — migrate gradually, test continuously, and never break what is already working.

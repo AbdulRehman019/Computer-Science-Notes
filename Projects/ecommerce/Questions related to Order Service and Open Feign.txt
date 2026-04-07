@@ -1,0 +1,139 @@
+1️⃣ Why did Order Service need to call Product Service?
+
+“Order Service needed to fetch product details like price and availability to validate and create an order correctly.”
+
+2️⃣ What data did you fetch?
+
+“I fetched product details such as product ID, price, and availability/stock status to ensure valid order creation.”
+
+3️⃣ Why Feign instead of RestTemplate?
+
+“Feign provides a declarative way to call APIs, reducing boilerplate code.
+It integrates directly with Eureka for service discovery and supports load balancing out of the box.”
+
+4️⃣ How does Feign integrate with Eureka?
+
+“Feign uses the service name to query Eureka and fetch available instances.
+It then uses Spring Cloud LoadBalancer to select one instance.”
+
+5️⃣ What happens internally on Feign call?
+
+“Feign creates a proxy implementation of the interface.
+When a method is called, it constructs an HTTP request, resolves the service instance using Eureka, and executes the call.”
+
+🔹 Feign Deep Dive (6–12)
+6️⃣ Is Feign synchronous?
+
+“Yes, Feign is synchronous and blocking by default.”
+
+7️⃣ How does Feign perform load balancing?
+
+“It uses Spring Cloud LoadBalancer to select one instance from Eureka, typically using round-robin.”
+
+8️⃣ How to configure timeouts?
+
+“Timeouts can be configured in application properties like connectTimeout and readTimeout.”
+
+9️⃣ What if Product Service is down?
+
+“Feign throws an exception.
+Without fallback, the request fails.
+With fallback, a default response can be returned.”
+
+🔟 Logging Feign requests?
+
+“Feign provides logging levels like FULL, HEADERS, BASIC.
+We can configure it using properties or a logger bean.”
+
+11️⃣ Does Feign retry?
+
+“Yes, Feign can be configured with retry mechanisms, but in Spring Cloud it’s often disabled by default and handled using Resilience4j.”
+
+12️⃣ Feign vs WebClient?
+
+“Feign is declarative and synchronous.
+WebClient is reactive and non-blocking.
+Feign is simpler, WebClient is more scalable under high concurrency.”
+
+🔹 Failure Handling (13–18)
+13️⃣ What if Product Service is slow?
+
+“Order Service thread will block, increasing latency and potentially causing thread exhaustion.”
+
+14️⃣ How to prevent hanging?
+
+“Configure timeouts and use circuit breaker to fail fast.”
+
+15️⃣ Did you implement fallback?
+
+“If not implemented, I would add fallback using Resilience4j or Feign fallback methods to return default responses.”
+
+16️⃣ Feign + Resilience4j?
+
+“Wrap Feign calls with circuit breaker annotation.
+If failure threshold is reached, fallback method is triggered.”
+
+17️⃣ Circuit breaker flow?
+
+“Closed → normal calls
+Open → fail fast
+Half-open → test recovery”
+
+18️⃣ What response if Product fails?
+
+“Return a meaningful error like ‘Product service unavailable’ or fallback response depending on business requirement.”
+
+🔹 Data Consistency (19–23)
+19️⃣ Ensure correct price?
+
+“Always fetch latest price from Product Service during order creation instead of trusting client input.”
+
+20️⃣ Price changes after cart?
+
+“Final validation should happen during order placement using latest data.”
+
+21️⃣ Ensure stock availability?
+
+“Call Product Service to validate stock before confirming order.”
+
+22️⃣ If out of stock?
+
+“Reject the order with proper error response.”
+
+23️⃣ Distributed transactions?
+
+“Use eventual consistency or Saga pattern instead of traditional transactions.”
+
+🔹 Advanced Thinking (24–30)
+24️⃣ Call Product every time?
+
+“Yes for consistency, but can optimize with caching.”
+
+25️⃣ Reduce dependency?
+
+“Use caching or event-driven approach to store product snapshots in Order Service.”
+
+26️⃣ Would caching help?
+
+“Yes, cache product details like price and reduce repeated calls.”
+
+27️⃣ Event-driven architecture?
+
+“Product Service can publish events like price updates, and Order Service can consume and update local data.”
+
+28️⃣ Using Kafka?
+
+“Product Service publishes events → Kafka → Order Service consumes and updates its database.”
+
+29️⃣ If Product unavailable?
+
+“Depending on business, either fail order or queue it for retry.”
+
+30️⃣ Make Order Service resilient?
+
+“Use circuit breaker, retries, caching, and fallback mechanisms.”
+
+🔥 Feign Code Explanation
+
+“Feign client is defined using @FeignClient with service name.
+Spring creates a proxy, resolves service using Eureka, and handles REST communication automatically.”

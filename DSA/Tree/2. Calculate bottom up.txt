@@ -1,0 +1,51 @@
+PATTERN 2: Height / Diameter / Balanced Tree — 15 problems
+
+Core idea: postorder → compute info bottom-up
+
+1. Diameter of Binary Tree
+2. Balanced Binary Tree
+3. Height of Binary Tree
+4. Maximum Path Sum
+5. Minimum Height Trees
+6. Binary Tree Maximum Path Sum
+7. Binary Tree Tilt
+8. Longest Univalue Path
+9. Find Leaves of Binary Tree
+10. Count Complete Tree Nodes
+11. Sum of Left Leaves
+12. Sum Root to Leaf Numbers
+13. Deepest Leaves Sum
+14. Count Good Nodes in Binary Tree
+15. Maximum Difference Between Node and Ancestor
+
+Go till the end and return either int or int[] and calculate when returning. 
+1. Diameter of Binary Tree
+2. Balanced Binary Tree
+3. Height of Binary Tree
+4. Maximum Path Sum
+5. Minimum Height Trees
+6. Binary Tree Maximum Path Sum
+7. Binary Tree Tilt
+8. Longest Univalue Path
+9. Find Leaves of Binary Tree
+
+Or calculate while going. 
+11. Sum of Left Leaves
+12. Sum Root to Leaf Numbers
+13. Deepest Leaves Sum
+14. Count Good Nodes in Binary Tree
+
+
+
+6. Binary Tree Maximum Path Sum
+	You won't take the maximum answer as path because maximum can be left + right + curr. 
+	You will take path as either left + curr or right + curr. 
+
+	We are returning two things: 
+	1. Path 
+	2. Answer
+
+	At every node: 
+	1. Path will be either that node itself or that node + left path or that node + right path, whichever is maximum. 
+	2. Answer will either come from left or right or leftPath + current node or rightPath + current node or leftPath + rightPath + currentNode. 
+	   Or it can be node itself. 

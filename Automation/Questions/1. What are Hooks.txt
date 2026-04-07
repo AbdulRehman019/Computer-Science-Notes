@@ -1,0 +1,267 @@
+1. What are Hooks?
+	Hooks are special methods that run automatically at specific points in the test lifecycle — before or after scenarios/steps. 
+	They are used for setup and teardown logic like launching a browser, taking screenshots, closing connections, etc.
+
+	@Before → Scenario Runs → @After
+	           ↓         ↑
+	      @BeforeStep  @AfterStep  (around each step)
+
+	Hooks are defined in Java classes (not in feature files) and are picked up automatically by Cucumber.
+
+	Hooks are not visible in Gherkin — they run silently behind the scenes.
+
+	@Before
+	Runs before every scenario.
+	Used for setup — launching browser, initializing driver, clearing DB, etc.
+
+	@After
+	Runs after every scenario — even if the scenario fails.
+	Used for teardown — closing browser, taking failure screenshots, logging, clearing test data.
+
+	@After receives an optional Scenario object — very useful to check pass/fail status and attach screenshots.
+	Interview tip: "@After always runs even if the scenario fails — that's why it's the right place for browser teardown and screenshot capture."
+
+	@BeforeStep
+	Runs before every individual step inside a scenario.
+	Less commonly used — but useful for logging, highlighting elements, or resetting state before each step.
+
+	@AfterStep
+	Runs after every individual step inside a scenario.
+	Useful for step-level screenshots, logging after each action, or reporting.
+
+2. How do you handle dynamic web elements in Selenium?
+	Dynamic web elements are elements whose attributes (like id, class, name, xpath) change every time the page loads or on user interaction. 
+	This is one of the most common real-world challenges in Selenium automation.
+
+	Why Are Elements Dynamic?
+		Auto-generated IDs (e.g., id="input_38472" changes each load)
+		Elements loaded via AJAX/JavaScript after page load
+		Elements that appear/disappear based on user actions
+		Timestamps or session tokens in attributes
+
+	Strategies to Handle Dynamic Elements
+	1. Use Stable Attributes in XPath / CSS
+		Avoid using auto-generated IDs. Instead, use attributes that don't change like name, type, placeholder, text, etc.
+
+		// Fragile - ID changes every time
+		driver.findElement(By.id("input_38472"));
+
+		// Stable - uses placeholder attribute
+		driver.findElement(By.xpath("//input[@placeholder='Enter username']"));
+
+	2. Use contains() in XPath
+		When part of the attribute value is stable but the rest changes:
+			// ID like "username_btn_12345" — only "username_btn" is stable
+			driver.findElement(By.xpath("//*[contains(@id, 'username_btn')]"));
+
+			// Class partially stable
+			driver.findElement(By.xpath("//*[contains(@class, 'submit-button')]"));
+
+	3. Use starts-with() in XPath
+		When the beginning of an attribute is consistent:
+			driver.findElement(By.xpath("//*[starts-with(@id, 'product_')]"));
+
+	4. Locate by Text using text() or normalize-space()
+		// Exact text match
+		driver.findElement(By.xpath("//button[text()='Submit']"));
+
+		// Handles extra spaces
+		driver.findElement(By.xpath("//button[normalize-space()='Submit']"));
+
+		// Partial text
+		driver.findElement(By.xpath("//button[contains(text(),'Subm')]"));
+
+	5. Use Explicit Waits (Most Important ✅)
+		Dynamic elements may not be present immediately. Use WebDriverWait instead of Thread.sleep().
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+		// Wait until element is visible
+		WebElement element = wait.until(
+		    ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@id='submit']"))
+		);
+
+		// Wait until element is clickable
+		wait.until(ExpectedConditions.elementToBeClickable(By.id("loginBtn")));
+
+		// Wait until element is present in DOM
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.name("username")));
+
+	6. Handle Elements Inside iFrames
+		Dynamic elements are sometimes inside iFrames and can't be directly accessed:
+			// Switch to iframe first
+			driver.switchTo().frame("iframeId");
+			driver.findElement(By.id("elementInsideFrame")).click();
+
+			// Switch back to main page
+			driver.switchTo().defaultContent();
+
+	7. Use JavaScriptExecutor as Fallback
+		When normal click or interaction fails on dynamic elements:
+			JavascriptExecutor js = (JavascriptExecutor) driver;
+			WebElement element = driver.findElement(By.id("dynamicBtn"));
+			js.executeScript("arguments[0].click();", element);
+
+	8. Handle Dynamic Dropdowns / Lists
+		// Wait for dropdown options to load, then select
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
+		    By.xpath("//ul[@class='dropdown']/li")
+		));
+		List<WebElement> options = driver.findElements(By.xpath("//ul[@class='dropdown']/li"));
+		for (WebElement option : options) {
+		    if (option.getText().equals("India")) {
+		        option.click();
+		        break;
+		    }
+		}
+
+3. Testing Annotations in Java (JUnit 5 & TestNG)
+	Annotations are special markers starting with @ that define when and how test methods execute. They control the test execution flow.
+
+	🔷 JUnit 5 Annotations
+	Execution Flow
+		BeforeAll → BeforeEach → Test → AfterEach (repeats for each test) → AfterAll
+
+	@Test
+		Marks a method as a test case.
+
+	@BeforeAll
+		Runs once before all tests in the class.
+		Used for global setup like browser launch or DB connection.
+		Must be static.
+
+	@AfterAll
+		Runs once after all tests in the class.
+		Used for cleanup like closing browser or DB.
+		Must be static.
+
+	@BeforeEach
+		Runs before every test method.
+		Used for setup like opening URL or preparing test data.
+
+	@AfterEach
+		Runs after every test method.
+		Used for cleanup like clearing cookies or logging out.
+
+	@Disabled
+		Skips a test method.
+		Used for temporarily disabling broken or incomplete tests.
+
+	@DisplayName
+		Provides a readable name for test reports.
+
+	@ParameterizedTest
+		Runs the same test with multiple inputs.
+		Used for data-driven testing.
+
+	@RepeatedTest
+		Executes the same test multiple times.
+		Useful for flaky tests.
+
+	@Nested
+		Used to group related test cases within a class.
+
+	@Tag
+		Used to categorize tests (e.g., smoke, regression) for selective execution.
+
+	🔶 TestNG Annotations
+	Execution Flow
+		BeforeSuite → BeforeTest → BeforeClass → BeforeMethod → Test → AfterMethod (repeats) → AfterClass → AfterTest → AfterSuite
+
+	@BeforeSuite / @AfterSuite
+		Runs once before and after the entire test suite.
+		Used for global setup and reporting.
+
+	@BeforeTest / @AfterTest
+		Runs before and after <test> tag in XML.
+		Used for grouping-level setup.
+
+	@BeforeClass / @AfterClass
+		Runs once before and after all test methods in a class.
+		Used for browser setup and teardown.
+
+	@BeforeMethod / @AfterMethod
+		Runs before and after each test method.
+		Used for navigation, cleanup, and reset.
+
+	@Test
+		Marks a test method. Each test is independent.
+
+		Important TestNG @Test Attributes
+		priority → Controls execution order
+		enabled → Enables or disables a test
+		groups → Categorizes tests (smoke, regression)
+		dependsOnMethods → Runs test after another test
+		timeOut → Fails test if it exceeds time
+		retryAnalyzer → Retries failed tests
+		dataProvider → Supports data-driven testing
+
+	@DataProvider
+		Used for data-driven testing.
+		Runs the same test multiple times with different inputs.
+
+4. What are the advantages of POM? 
+	POM is a design pattern in Selenium where you create a separate class for each web page that contains all the locators and methods related to that page. 
+	It separates test logic from page interaction logic.
+
+	📄 Without POM vs With POM
+		❌ Without POM (Bad Practice)
+			Everything mixed in test class — messy!
+			Same locators repeated again — code duplication!
+
+		✅ With POM (Good Practice)
+			Page Class — LoginPage.java
+			Test Class — LoginTest.java
+
+	✅ Advantages of POM
+	🔹 Code Reusability
+	Locators and methods are written once in the page class and reused across multiple test classes.
+	No need to rewrite the same locators again!
+
+	🔹 Easy Maintenance (Most Important ✅)
+	If a locator changes, you update it in only one place — the page class.
+
+	🔹 Readability & Clean Code
+	Test classes are clean and readable — they read like plain English.
+	Reads like a user story!
+
+	🔹 Separation of Concerns
+	Page classes handle → How to interact with the page (locators + actions)
+	Test classes handle → What to verify (assertions + test logic)
+
+	🔹 Reduces Code Duplication (DRY Principle)
+	Don't Repeat Yourself — same locator or action is never written twice.
+
+	🔹 Scalability
+	As the application grows, you simply add new page classes without touching existing ones.
+
+	🔹 Supports Team Collaboration
+	Different team members can work on different page classes simultaneously without conflicts.
+	No conflicts! ✅
+
+	🔹 Better Debugging
+	When a test fails, you know exactly which page class and method to check.
+
+	🚀 POM with PageFactory (Enhanced POM)
+		PageFactory is a built-in Selenium utility that makes POM even cleaner using @FindBy annotations.
+		PageFactory annotation — cleaner than By locators
+
+	🎯 Common Interview Questions & Answers
+		Q: What is POM and why do we use it?
+		POM is a design pattern where each web page has a dedicated class containing its locators and methods. 
+		We use it for maintainability, reusability, and clean separation between test logic and page interactions.
+
+		Q: What is the difference between POM and PageFactory?
+		POM is the design pattern. 
+		PageFactory is a Selenium class that implements POM more efficiently using @FindBy annotations and lazy element initialization via PageFactory.initElements().
+
+		Q: What is the biggest advantage of POM?
+		Maintainability — when a locator changes, you update it in only one place (the page class) instead of hunting through all test files.
+
+		Q: Can one page class call another page class?
+		Yes! For example, LoginPage.login() can return a HomePage object after successful login — this is called page chaining.
+
+		Q: What is the difference between POM and regular framework?
+		Without POM, locators and test logic are mixed together causing duplication and maintenance issues. 
+		POM cleanly separates concerns, making the framework scalable and maintainable.

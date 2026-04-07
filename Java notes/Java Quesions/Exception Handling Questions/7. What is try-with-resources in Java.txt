@@ -1,0 +1,61 @@
+What is try-with-resources in Java? How does it simplify resource management?
+	Try-with-resources is a feature introduced in Java 7 that simplifies resource management by automatically handling the closure of resources such as file streams, sockets, and 	database connections. These resources must implement the AutoCloseable interface (or its subclass, Closeable).
+
+Simplifying Resource Management
+	Automatic Closure of Resources
+		In traditional try-catch-finally blocks, resources need to be explicitly closed in the finally block to prevent resource leaks. 
+		Try-with-resources eliminates this requirement, as resources declared in the try block are automatically closed at the end of the block, regardless of whether an exception 		occurs.
+
+	Concise and Readable Code
+		Using try-with-resources significantly reduces boilerplate code by avoiding explicit resource management, making the code easier to read and maintain.
+
+	Example: Traditional Try-Catch-Finally
+		BufferedReader reader = null;
+		try {
+		    reader = new BufferedReader(new FileReader("example.txt"));
+		    System.out.println(reader.readLine());
+		} catch (IOException e) {
+		    e.printStackTrace();
+		} finally {
+		    if (reader != null) {
+		        try {		
+		            reader.close();
+		        } catch (IOException e) {
+		            e.printStackTrace();
+		        }
+		    }
+		}
+
+	Example: Try-With-Resources
+		try (BufferedReader reader = new BufferedReader(new FileReader("example.txt"))) {
+		    System.out.println(reader.readLine());
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+
+	In the try-with-resources version:
+	- The BufferedReader is automatically closed at the end of the block.
+	- The code is shorter, cleaner, and less error-prone.
+
+Advanced Usage
+	Managing Multiple Resources
+		You can manage multiple resources by declaring them in the same try statement, separated by semicolons.
+
+	try (
+	    FileReader fileReader = new FileReader("file.txt");
+	    BufferedReader bufferedReader = new BufferedReader(fileReader)
+	) {
+	    System.out.println(bufferedReader.readLine());
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+
+	Exception Handling and Suppressed Exceptions
+		If an exception occurs while closing the resource, it is suppressed and can be accessed using the getSuppressed() method on the primary exception.
+
+Benefits
+	Automatic Cleanup: Reduces the risk of resource leaks.
+	Improved Readability: Removes verbose finally blocks.
+	Robustness: Ensures proper resource management even during exceptions.
+
+Try-with-resources is a modern and efficient way to handle resource management, making Java applications safer and more maintainable.

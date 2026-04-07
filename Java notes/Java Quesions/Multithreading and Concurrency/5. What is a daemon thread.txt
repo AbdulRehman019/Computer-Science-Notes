@@ -1,5 +1,4 @@
 What is a daemon thread
-What is a Daemon Thread?
 Understanding daemon threads is important for effective thread management in Java, especially when dealing with background tasks that should not prevent the program from terminating.
 
 What it is: A low-priority thread that runs in the background to perform tasks such as garbage collection.

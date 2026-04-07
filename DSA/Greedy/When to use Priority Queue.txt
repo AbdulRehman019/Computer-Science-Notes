@@ -1,0 +1,47 @@
+Scheduling & Priority Queue Greedy
+
+PATTERN 2: Scheduling & Priority Queue Greedy (20 problems)
+	Core idea: choose next best using heap
+		1. Task Scheduler
+		2. Reorganize String
+		3. K Closest Points to Origin
+		4. Top K Frequent Elements
+		5. IPO
+		6. Furthest Building You Can Reach
+		7. Find K Pairs with Smallest Sums
+		8. Minimum Cost to Hire K Workers
+		9. Course Schedule III
+		10. Schedule Tasks on Minimum Machines
+		11. Hand of Straights
+		12. Reduce Array Size to The Half
+		13. Maximize Capital
+		14. Minimum Refueling Stops
+		15. Maximum Performance of a Team
+		16. Car Pooling (heap)
+		17. Rearrange String K Distance Apart
+		18. Maximum Units on a Truck
+		19. Single-Threaded CPU
+		20. Seat Reservation Manager
+
+1. When you want k minimum or k maximum. 
+	When you want something to be done before or after, because it's sum is high or it is maximum or minimum. 
+	2. Reorganize String: You want to add those letters first whose frequency is higher. 
+	6. Furthest Building You Can Reach: You want to jump those heights with ladder whose jump is higher. 
+
+2. Jb mujhe dono point ka use krna hota hai. For example mujhe start point ek range tk chahiye aur fir uss range me jo maximum end ho wo chahiye tb hum pehle i traverse krwa dete hai jb tk  	wo satisfy ho rha hai aur uske end points priority queue me add krlete hai. Jb starting point out of range jaayega tb hum priority queue se nikal kr apne answer me add krlenge. 
+
+	Start aur end interval nhi, yha 'i'(start) array pr traverse kr rha hai aur priority queue me time ya profit ja rha hai. 
+
+	Example: 
+		Minimum Time to Make Rope Colorful
+		IPO
+		Minimum Number of Refueling Stops
+		Single Threaded CPU
+		Seat Reservation Manager
+
+3. K Closest Points to Origin 
+   Top K Frequent Elements
+   Put into priority queue and take out from priority queue. 
+
+
+

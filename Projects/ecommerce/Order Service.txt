@@ -1,0 +1,279 @@
+Order Service
+
+1. User and Product are Many-to-Many (Conceptually)
+2. In relational DB, we would create:
+	user  <--->  order  <--->  product
+	Order becomes the join entity.
+	But in microservices, it’s not about SQL relationships.
+	It’s about transaction modeling.
+
+3. How to think of OrderItem Entity and why can't we take List<Product> in Order Entity?
+	Because an Order is not just:
+		User + List of Products
+		An order represents a transaction.
+		Each product inside order has its own transactional properties:
+			quantity
+			priceAtPurchase(Price Snapshot)
+			discount (future)
+			tax (future)
+			subtotal
+
+		This data does NOT belong to Product service.
+		It belongs to the Order context.
+
+	Why Not Just List<Product>?
+		Problem 1: Service Boundary Violation
+		Problem 2: Product Changes Over Time
+		Problem 3: Quantity Is Missing
+		Problem 4: Product Might Be Deleted
+
+4. What is Saga Pattern and how have you impemented in your project?
+	Saga = A sequence of local transactions
+	Each step has a compensating action.
+
+	Instead of:
+	❌ One big distributed transaction (not possible in microservices)
+
+	We do:
+	✅ Small transactions
+	✅ If something fails → undo previous step
+
+	Orchestration-Based Saga (Simple Version)
+		Order Service controls the flow.
+
+		Step-by-Step Flow
+		1️⃣ Create Order (Local Transaction)
+			Save order:
+				status = PENDING
+
+			Why PENDING?
+				Because business process not completed yet.
+
+			Save in Mongo.
+			Now we have OrderId.
+
+		2️⃣ Call Product Service → Reduce Stock
+			Order → Product Service
+			API:
+				POST /products/{id}/reduce-stock
+
+			Now 2 possibilities:
+			✅ Case A: Stock Reduction Successful
+				Product Service reduces stock.
+				Now Order Service:
+					Update order:
+						status = CONFIRMED
+						Saga completed successfully.
+
+			❌ Case B: Stock Reduction Failed
+				Possible reasons:
+					Out of stock
+					Product not found
+					Product service down
+
+				Now we run compensating action:
+					Update order:
+						status = CANCELLED
+
+				We DO NOT delete order.
+				We mark it cancelled.
+
+				Saga finished with failure.
+
+			🧱 Why Not Create Order After Reducing Stock?
+				Because if stock reduces first
+				And order save fails
+
+				Then stock is gone
+				But no order exists
+
+				Harder to recover.
+
+			So best practice:
+				✔ First create record
+				✔ Then complete business process
+
+			🧠 That’s Orchestration Saga
+			One service (Order) controls all steps.
+
+			Simple.
+			Perfect for your project.
+
+	Event-Driven Saga (Advanced)
+		Uses message broker like Kafka.
+		Flow
+			1. Order Service
+				Save order (PENDING)
+				Publish OrderCreatedEvent
+
+			2. Product Service
+				Consume event
+				Reduce stock
+				Publish:
+					StockReducedEvent
+					OR StockFailedEvent
+
+			3. Order Service
+				Consume event
+				Update order:
+					CONFIRMED
+					CANCELLED
+
+5. what is idempotency?
+	An operation is idempotent if:
+		Performing it multiple times produces the same result as performing it once.
+
+	If client retries the same request 3 times
+	System should behave as if it was executed once.
+
+   Why Is It Important in Your Order Service?
+	Because in microservices:
+		Network can fail
+		Timeout can happen
+		Client may retry
+		Gateway may retry
+		Load balancer may retry
+
+	Without idempotency:
+		User clicks “Place Order” once
+		But 2 orders get created.
+
+	Disaster.
+
+	Without Idempotency
+		User sends:
+			POST /orders
+
+		Server creates order → CONFIRMED
+		But response fails due to timeout.
+		Client retries.
+		Now second order is created.
+		User charged twice.
+
+	With Idempotency
+		Client sends:
+			POST /orders
+			Header: Idempotency-Key: abc123
+
+		Order Service logic:
+			Check if request with key abc123 already processed.
+			If yes → return existing order.
+			If no → create new order and store key.
+
+		Now even if request comes 5 times,
+		Only one order exists.
+
+6. what is circuit breaker and how to implement it?
+	Circuit Breaker is a resilience pattern.
+	It prevents your system from repeatedly calling a failing service.
+	Think of it like an electrical circuit breaker in your house.
+	If there’s a fault → it trips → stops current flow.
+
+	In microservices:
+		If Product Service is down
+		Order Service should STOP calling it repeatedly.
+
+	Otherwise:
+		Threads get blocked
+		Memory fills up
+		Entire system crashes
+		This is called cascading failure.
+
+	Circuit Breaker States
+		There are 3 states:
+		1️⃣ CLOSED (Normal)
+			Calls go through
+			Failures are monitored
+
+		2️⃣ OPEN (Service is failing)
+			Calls are blocked immediately
+			Fallback method is executed
+
+		3️⃣ HALF-OPEN (Testing recovery)
+			After wait time
+			Allow few test calls
+			If success → CLOSE
+			If fail → OPEN again
+
+	How To Implement (Spring Boot + Resilience4j)
+	1. You add dependency:
+		spring-cloud-starter-circuitbreaker-resilience4j
+
+	2. Enable Circuit Breaker
+		In application.yml:
+			resilience4j:
+			  circuitbreaker:
+			    instances:
+			      productService:
+			        slidingWindowSize: 5
+			        failureRateThreshold: 50
+			        waitDurationInOpenState: 10s
+
+		Meaning:
+			Monitor last 5 calls
+			If 50% fail → open circuit
+			Stay open for 10 seconds
+
+	3. Use Annotation in Order Service
+		@CircuitBreaker(name = "productService", fallbackMethod = "productFallback")
+		public ProductResponse getProduct(String productId) {
+		    return webClient.get()
+		            .uri("http://PRODUCT-SERVICE/products/" + productId)
+		            .retrieve()
+		            .bodyToMono(ProductResponse.class)
+		            .block();
+		}
+
+7. Why are you using @PostMapping for fetch calls?
+	@PostMapping("/getAllProductsByIds")
+    	public ResponseEntity<List<ProductResponse>> getAllProductsByIds(@RequestBody List<String> productIds) {
+        	return ResponseEntity.ok(productService.getAllProductsByIds(productIds));
+    	}
+
+	We can make post calls for fetching in microservices. 
+	In microservices we often use POST when sending complex payloads.
+	avoids URL limits
+	easier payload evolution
+	consistent with bulk operations
+
+	We need to send request body to fetch the data. 
+	Using GET with a request body is not recommended because many HTTP clients and intermediaries do not support it. 
+	For bulk operations that require sending a list of IDs, microservices typically use a POST endpoint with a request body.
+
+	
+// Things to implement tomorrow: 
+Change reduce-stock to reduce-stock in bulk. 
+Although you validated stock in order-service but then you called for product-service. 
+If two requests come with quantity 5 and your stock was 5. They both passed the check in order-service and they both call product-service. 
+
+
+
+1. After saving the order, i had savedOrder. If i again save the order after changing status and i am returning savedOrder, will it reflect changes?
+2. Idempotency Race Condition. 
+	Handled using @Indexed(unique = true)
+3. Performance Issue
+	We were making n calls for n products. 
+	We created one api to return all products by apis. 
+4. Architecture issue 
+	Order Service check stock
+	Product Service reduce stock
+
+	Better approach:
+		Order Service → reserveStock()
+		Product Service → validates + reduces atomically
+
+
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcjMwMDkwNzZAZ21haWwuY29tIiwiaWF0IjoxNzczNjg2MDcyLCJleHAiOjE3NzM2ODc4NzJ9.WXCT3equRzSKEfyOPzfqw3YEgJUhs0naibM352vVskU"
+
+
+Problems Arising: 
+	What if my order was created but stock was not reduced? 
+	My order was not saved but the status is pending. In catch, i changed it to cancel but didn't saved do i need to save it in catch?
+	I throw error it is saying "Error in reducing stock". But how to debug what went wrong?
+
+	I will try this order again but the idempotency key will be same. My order status won't change and stock won't be reduce according to my logic. 
+
+How to enable debugging?
+How to enable Feign exception debugging?
+How to implement GlobalExceptionHandler?
+Where in my project can i use Kafka?

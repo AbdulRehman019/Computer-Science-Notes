@@ -4,7 +4,7 @@ What is the importance of finally blocks in Java?
 Key Points about finally Block
 	Guaranteed Execution: The finally block is guaranteed to execute after the try block and any catch blocks, regardless of whether an exception was thrown or not. This ensures that 			      essential cleanup operations are performed even if an exception occurs.
 
-	Resource Management: It is commonly used for resource management tasks such as closing files, releasing database connections, or other cleanup operations. This is crucial to prevent 			     resource leaks, which can lead to performance issues or other problems.
+	Resource Management: It is commonly used for resource management tasks such as closing files, releasing database connections, or other cleanup operations. This is crucial to 				     prevent resource leaks, which can lead to performance issues or other problems.
 
 	Execution Regardless of Exceptions: Even if a return statement, throw statement, or an exception occurs within the try or catch blocks, the code in the finally block will still be 					    executed.
 

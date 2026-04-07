@@ -1,0 +1,24 @@
+PATTERN 1: Tree Traversals (DFS & BFS) — 20 problems
+
+Core idea: preorder / inorder / postorder / level order
+
+1. Binary Tree Preorder Traversal
+2. Binary Tree Inorder Traversal
+3. Binary Tree Postorder Traversal
+4. Binary Tree Level Order Traversal
+5. Binary Tree Level Order Traversal II
+6. Zigzag Level Order Traversal
+7. Average of Levels in Binary Tree
+8. Maximum Depth of Binary Tree
+9. Minimum Depth of Binary Tree
+10. Binary Tree Right Side View
+11. Binary Tree Left Side View
+12. N-ary Tree Preorder Traversal
+13. N-ary Tree Level Order Traversal
+14. Level Order Traversal (Recursive)
+15. Binary Tree Vertical Order Traversal
+16. Diagonal Traversal of Binary Tree
+17. Boundary Traversal of Binary Tree
+18. Top View of Binary Tree
+19. Bottom View of Binary Tree
+20. Morris Inorder Traversal
