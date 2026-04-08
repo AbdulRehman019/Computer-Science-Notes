@@ -36,7 +36,7 @@
 		Each service is tested independently and integration is verified via API contracts.
 
 	What is the biggest challenge in Microservices testing?
-		Data management and environment setup — each service has its own DB, so setting up test data across multiple services is complex. Also, mocking dependent services is a 		challenge.
+		Data management and environment setup — each service has its own DB, so setting up test data across multiple services is complex. Also, mocking dependent 		services is a challenge.
 
 	Q: What is Contract Testing?
 		It verifies that the API contract (request/response format) between two services (consumer & provider) doesn't break when either side changes. Tools: Pact.

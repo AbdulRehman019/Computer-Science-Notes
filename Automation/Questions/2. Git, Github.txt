@@ -113,3 +113,74 @@
 	The eighth advantage is Improved Team Collaboration. 
 	CI/CD creates a shared pipeline that the entire team — developers, QA, and DevOps — can see and monitor. 
 	Everyone knows the current status of the build. If something is broken, the whole team is aware immediately. This transparency improves communication and 	accountability across the team.
+
+5. What is branching in CI/CD and how it is followed? What are its advantages?
+	Branching in CI/CD refers to the practice of using separate Git branches for different stages of development, and having the CI/CD pipeline behave differently 	based on which branch the code is pushed to. 
+	It is not just about creating branches in Git — it is about how those branches are connected to your automated pipeline and deployment environments.
+
+	We had the following branches:
+		main        → Production ready code only -> Production Environment
+		develop     → Integration branch — all features merged here -> QA Environment
+		feature/*   → Individual feature development -> Development Environment
+		bugfix/*    → Bug fixes -> Development Environment
+		hotfix/*    → Urgent fixes directly on production
+		release/*   → Final testing before production -> Staging Environment
+
+	The flow we followed was:
+	When a developer starts working on a new feature, they create a feature/ branch from develop. 
+	They work on their feature, push the code, and raise a Pull Request back to develop. 
+	At this point the CI pipeline triggers automatically — it runs the build, unit tests, and API tests on that feature branch. 
+	If everything passes, the PR is approved and merged into develop.
+
+	On the develop branch, a more comprehensive pipeline runs — including integration tests, Selenium UI automation tests, and code quality checks. This is our QA 	environment pipeline.
+	Once enough features are accumulated on develop and the team decides to prepare for release, a release/ branch is created from develop. This branch is deployed to 	the Staging environment where final regression testing happens.
+
+	After the release branch is fully tested and approved, it is merged into main. 
+	The pipeline on main is the most strict one — it deploys directly to Production and has a manual approval gate before deployment.
+	If there is an urgent bug in production, a hotfix/ branch is created directly from main, fixed, tested, and merged back into both main and develop so both are in 	sync.
+
+	Advantages of Branching in CI/CD
+	1. Isolated Development
+		Every feature or fix is developed in its own branch without affecting other work. Developers can work in parallel without stepping on each other's code.
+
+	2. Environment Stability
+		Each branch maps to a specific environment. This ensures the QA environment always has integrated code, staging always has release-ready code, and 			production always has fully approved code.
+
+	3. Controlled and Safe Deployments
+		Code does not jump directly from development to production. 
+		It passes through multiple stages — Dev, QA, Staging — before reaching Production. 
+		Each stage acts as a quality gate.
+
+	4. Early Bug Detection Per Branch
+		Since every branch triggers its own pipeline, bugs are caught at the earliest possible stage — even before the code is merged into develop. This prevents 		bad code from polluting shared branches.
+
+	5. Faster Hotfixes Without Disrupting Flow
+		The hotfix/ branch allows urgent production fixes to be delivered quickly without waiting for all the features currently in development to be ready. The 		normal development flow continues uninterrupted.
+
+	6. Complete Audit Trail
+		Every branch, commit, PR, pipeline run, and deployment is tracked. If something goes wrong in production, you can trace exactly which branch, which commit, 		and which pipeline run caused it.
+
+	7. Supports Team Collaboration at Scale
+		Multiple teams can work on multiple features simultaneously using separate branches. The CI/CD pipeline validates each team's work independently before 		integration.
+
+	8. Rollback is Easy
+		Since each branch deployment creates a versioned artifact, rolling back to a previous stable version is quick and straightforward without affecting other 		branches.
+
+6. Challenges in CI/CD?
+	The first challenge I faced was Flaky Tests. This was the most frustrating day to day challenge. Flaky tests are tests that sometimes pass and sometimes fail 	without any code change. In our Selenium automation suite, some tests were dependent on network speed, page load time, or dynamic elements — and they would 	randomly fail in the pipeline. This caused false alarms and the team started losing trust in the pipeline results. We handled this by adding proper explicit waits, 	fixing unstable locators, and implementing a retry mechanism for failed tests.
+
+	The second challenge was Slow Pipeline Execution. As our test suite grew, the pipeline started taking a very long time to complete. At one point our full 	regression suite was taking close to 2 hours to finish. This defeated the purpose of CI/CD because developers were waiting too long for feedback. We solved this by 	parallelizing our test execution using Selenium Grid and splitting tests into smaller independent jobs that ran simultaneously.
+
+	The third challenge was Environment Management. Maintaining consistent environments across Dev, QA, Staging, and Production was very difficult. Many times a test 	would pass in QA but fail in Staging because of configuration differences or different versions of dependencies. We addressed this by containerizing our 	environments using Docker so every environment was identical.
+
+	The fourth challenge was Test Data Management. Every time the pipeline ran, it needed fresh and consistent test data. In a shared QA environment, multiple 	pipelines running simultaneously would interfere with each other's test data causing random failures. We handled this by creating isolated test data sets for each 	pipeline run and cleaning up after each execution.
+
+	The fifth challenge was Managing Pipeline as Code. Initially our Jenkins pipeline configuration was done manually through the UI. When Jenkins crashed or needed to 	be rebuilt, we lost all our pipeline configurations. We solved this by moving to Pipeline as Code using Jenkinsfile stored in the Git repository itself. This way 	the pipeline configuration was version controlled just like the application code.
+
+	The sixth challenge was Security in the Pipeline. The pipeline had access to sensitive information like database credentials, API keys, and cloud access tokens. 	Storing these as plain text in configuration files was a security risk. We addressed this by using secrets management tools like Jenkins Credentials Store and AWS 	Secrets Manager to securely inject credentials at runtime without exposing them in the codebase.
+
+	The seventh challenge was Handling Microservices Dependencies. In our microservices project, some services depended on other services to be up and running for 	integration tests to pass. If one dependent service was down or had an issue, all the pipelines that depended on it would fail even though the code being tested 	was perfectly fine. We handled this by using mock servers and service virtualization to simulate dependent services during testing.
+
+	The eighth challenge was Onboarding the Entire Team. CI/CD is not just a tool — it is a culture change. Initially some developers were resistant to the strict 	pipeline rules like mandatory PR reviews and not being allowed to push directly to main. Getting everyone on the team aligned with the CI/CD practices and 	discipline took time and consistent effort from the team leads.
+
+	The ninth challenge was Monitoring and Debugging Pipeline Failures. When a pipeline failed, identifying the root cause was not always straightforward — especially 	in a microservices setup with distributed logs. We set up centralized logging and Slack notifications with direct links to the failed stage so the team could 	quickly identify and fix the issue.
